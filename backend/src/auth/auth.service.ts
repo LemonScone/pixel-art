@@ -12,12 +12,14 @@ import Imysql from 'mysql2/typings/mysql/lib/protocol/packets';
 import * as bcrypt from 'bcrypt';
 import { AuthCredentialsDto } from './dto/auth-crendentials.dto';
 import { User } from './user.model';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
   constructor(
     @Inject(DB_CONNECTION)
     private readonly pool: Pool,
+    private jwtService: JwtService,
   ) {}
 
   async getUserInfo(id: string): Promise<User> {
@@ -30,7 +32,7 @@ export class AuthService {
 
       return result[0];
     } catch (error) {
-      throw new InternalServerErrorException(error);
+      throw new InternalServerErrorException();
     } finally {
       connectionPool.release();
     }
@@ -44,7 +46,7 @@ export class AuthService {
 
       return result[0] ? true : false;
     } catch (error) {
-      throw new InternalServerErrorException(error);
+      throw new InternalServerErrorException();
     } finally {
       connectionPool.release();
     }
@@ -79,26 +81,33 @@ export class AuthService {
                                     );
       `);
     } catch (error) {
-      throw new InternalServerErrorException(error);
+      throw new InternalServerErrorException();
     } finally {
       connectionPool.release();
     }
   }
 
-  async signIn(authCredentialsDto: AuthCredentialsDto): Promise<string> {
+  async signIn(
+    authCredentialsDto: AuthCredentialsDto,
+  ): Promise<{ accessToken: string }> {
     const { userId, password } = authCredentialsDto;
 
     const connectionPool: PoolConnection = await this.pool.getConnection();
     try {
       const user = await this.getUserInfo(userId);
-
       if (user && (await bcrypt.compare(password, user.password))) {
-        return 'login success';
+        const payload = { userId };
+        const accessToken = await this.jwtService.sign(payload);
+
+        return {
+          accessToken,
+        };
       } else {
         throw new UnauthorizedException('login failed');
       }
     } catch (error) {
-      throw new InternalServerErrorException(error);
+      console.log(error);
+      throw new InternalServerErrorException();
     } finally {
       connectionPool.release();
     }
