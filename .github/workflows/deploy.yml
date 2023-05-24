@@ -18,6 +18,7 @@ jobs:
           key: ${{ secrets.REMOTE_PRIVATE_KEY }}
           script: |
             cd /home/ubuntu/pixel-art
+            git pull origin main
             cd backend
             npm i --force
             npm run build
