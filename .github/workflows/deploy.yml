@@ -10,6 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - run: echo 'github action'
       - name: executing remote ssh commands
         uses: appleboy/ssh-action@v0.1.10
         with:
