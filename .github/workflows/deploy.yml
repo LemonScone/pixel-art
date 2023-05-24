@@ -17,6 +17,7 @@ jobs:
           username: ${{ secrets.REMOTE_USER }}
           key: ${{ secrets.REMOTE_PRIVATE_KEY }}
           script: |
+            PATH=$PATH:/home/${{secrets.REMOTE_USER}}/.nvm/versions/node/v18.16.0/bin 
             cd /home/ubuntu/pixel-art
             git pull origin main
             cd backend
