@@ -1,5 +1,6 @@
 import {
-  BadRequestException,
+  ConflictException,
+  HttpStatus,
   Inject,
   Injectable,
   InternalServerErrorException,
@@ -60,7 +61,7 @@ export class AuthService {
       const existUserId = await this.existUserId(userId);
 
       if (existUserId) {
-        throw new BadRequestException(`이미 존재하는 아이디입니다.`);
+        throw new ConflictException();
       }
 
       const salt = await bcrypt.genSalt();
@@ -81,7 +82,13 @@ export class AuthService {
                                     );
       `);
     } catch (error) {
-      throw new InternalServerErrorException();
+      if (error.status === HttpStatus.CONFLICT) {
+        throw new ConflictException('이미 존재하는 아이디입니다.');
+      } else {
+        throw new InternalServerErrorException(
+          '회원가입 중 오류가 발생했습니다.',
+        );
+      }
     } finally {
       connectionPool.release();
     }
@@ -103,11 +110,14 @@ export class AuthService {
           accessToken,
         };
       } else {
-        throw new UnauthorizedException('login failed');
+        throw new UnauthorizedException();
       }
     } catch (error) {
-      console.log(error);
-      throw new InternalServerErrorException();
+      if (error.status === HttpStatus.UNAUTHORIZED) {
+        throw new UnauthorizedException('로그인 실패');
+      } else {
+        throw new InternalServerErrorException();
+      }
     } finally {
       connectionPool.release();
     }
