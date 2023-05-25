@@ -16,6 +16,6 @@ export class AppController {
   @UseGuards(AuthGuard())
   @ApiBearerAuth('access-token')
   test(@Req() req) {
-    console.log({ req });
+    console.log(req.user);
   }
 }

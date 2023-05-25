@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class SignInSuccessResponseDto {
+export class LoginSuccessResponseDto {
   @ApiProperty({
     example: 'token',
     description: '토큰',
@@ -9,7 +9,7 @@ export class SignInSuccessResponseDto {
   accessToken: string;
 }
 
-export class SignInFailedResponseDto {
+export class LoginFailedResponseDto {
   @ApiProperty({
     example: '로그인에 실패했습니다.',
     description: '로그인 실패 메시지',
