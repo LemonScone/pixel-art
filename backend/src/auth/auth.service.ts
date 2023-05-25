@@ -10,7 +10,7 @@ import { DB_CONNECTION } from 'src/constants';
 import { AuthCreateUserDto } from './dto/auth-create-user.dto';
 import Imysql from 'mysql2/typings/mysql/lib/protocol/packets';
 import * as bcrypt from 'bcrypt';
-import { AuthCredentialsDto } from './dto/auth-crendentials.dto';
+import { AuthCredentialsDto } from './dto/auth-credentials.dto';
 import { User } from './user.model';
 import { JwtService } from '@nestjs/jwt';
 
