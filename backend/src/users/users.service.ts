@@ -1,9 +1,7 @@
 import {
-  HttpStatus,
+  HttpException,
   Inject,
   Injectable,
-  InternalServerErrorException,
-  Logger,
   UnauthorizedException,
 } from '@nestjs/common';
 import { Pool, PoolConnection } from 'mysql2/promise';
@@ -12,6 +10,7 @@ import { UsersRegisterDto } from './dto/users-register.dto';
 import * as bcrypt from 'bcrypt';
 import { AuthCredentialsDto } from 'src/auth/dto/auth-credentials.dto';
 import { User } from 'src/auth/user.model';
+import { Token } from 'src/auth/token.model';
 
 @Injectable()
 export class UsersService {
@@ -21,12 +20,18 @@ export class UsersService {
     const connectionPool: PoolConnection = await this.pool.getConnection();
     try {
       const [result] = await connectionPool.execute(
-        `SELECT id, password, nickname, current, provider FROM USER WHERE id = '${id}'`,
+        `SELECT id
+              , password
+              , nickname
+              , current
+              , provider
+          FROM USER 
+         WHERE id = '${id}'`,
       );
 
       return result[0];
     } catch (error) {
-      throw new InternalServerErrorException();
+      throw new HttpException({ message: error.message, error }, error.status);
     } finally {
       connectionPool.release();
     }
@@ -41,8 +46,7 @@ export class UsersService {
 
       return result[0] ? true : false;
     } catch (error) {
-      Logger.error(error);
-      throw new InternalServerErrorException(error.message);
+      throw new HttpException({ message: error.message, error }, error.status);
     } finally {
       connectionPool.release();
     }
@@ -78,11 +82,31 @@ export class UsersService {
         nickname,
       };
     } catch (error) {
-      Logger.error(error);
-      throw new InternalServerErrorException(error.message);
+      throw new HttpException({ message: error.message, error }, error.status);
     } finally {
       connectionPool.release();
     }
+  }
+
+  async insertUserRefreshToken(userId: string, refreshToken: string) {
+    const connectionPool: PoolConnection = await this.pool.getConnection();
+
+    try {
+      const hashedRefreshToken = await this.getHashedRefreshToken(refreshToken);
+      await connectionPool.execute(
+        `INSERT INTO TOKEN (content, userId) VALUES ('${hashedRefreshToken}', '${userId}');`,
+      );
+    } catch (error) {
+      throw new HttpException({ message: error.message, error }, error.status);
+    } finally {
+      connectionPool.release();
+    }
+  }
+
+  async getHashedRefreshToken(refreshToken: string) {
+    const saltOrRounds = await bcrypt.genSalt();
+    const hashedRefreshToken = await bcrypt.hash(refreshToken, saltOrRounds);
+    return hashedRefreshToken;
   }
 
   async login(authCredentialsDto: AuthCredentialsDto) {
@@ -101,20 +125,57 @@ export class UsersService {
 
       const passwordMatch = await bcrypt.compare(password, result[0].password);
       if (!passwordMatch) {
-        throw new UnauthorizedException();
+        throw new UnauthorizedException('아이디 또는 비밀번호를 확인해주세요.');
       }
 
-      return result;
+      return result[0];
     } catch (error) {
-      Logger.error(error);
-
-      if (error.status === HttpStatus.UNAUTHORIZED) {
-        throw new UnauthorizedException();
-      } else {
-        throw new InternalServerErrorException(error.message);
-      }
+      throw new HttpException({ message: error.message, error }, error.status);
     } finally {
       connectionPool.release();
     }
+  }
+
+  async getRefreshTokenId(userId: string, refreshToken: string) {
+    const connectionPool: PoolConnection = await this.pool.getConnection();
+    try {
+      const [tokens] = await connectionPool.execute(
+        `SELECT id
+              , content
+           FROM TOKEN 
+          WHERE userId = '${userId}'`,
+      );
+
+      let refreshTokenId = null;
+      for (const token of tokens as Token[]) {
+        const storedRefreshToken = token.content;
+        if (await bcrypt.compare(refreshToken, storedRefreshToken)) {
+          refreshTokenId = token.id;
+          break;
+        }
+      }
+
+      return refreshTokenId;
+    } catch (error) {
+      throw new HttpException({ message: error.message, error }, error.status);
+    } finally {
+      connectionPool.release();
+    }
+  }
+
+  async getUserByRefreshToken(
+    refreshToken: string,
+    userId: string,
+  ): Promise<Omit<User, 'password'>> {
+    const refreshTokenId = await this.getRefreshTokenId(userId, refreshToken);
+
+    if (!refreshTokenId) {
+      return null;
+    }
+
+    const user = await this.getUserInfo(userId);
+    const { password, ...rest } = user;
+
+    return rest;
   }
 }
