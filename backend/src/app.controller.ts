@@ -14,7 +14,7 @@ export class AppController {
 
   @Post('/authTest')
   @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth('access-token')
+  @ApiBearerAuth('accessToken')
   test(@Req() req) {
     console.log(req.user);
   }

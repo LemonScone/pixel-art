@@ -85,18 +85,10 @@ export class AuthService {
 
   async refresh(refreshToken: string): Promise<{ accessToken: string }> {
     try {
-      // TODO: access token이 만료되었을 때 실행된다.
-      // refresh token 유효성 확인
-
-      // token이 유효한지 + 만료되지 않았는지? this.jwtService.verify
-      // 유효 x -> 로그아웃
       const decodeRefreshToken = this.jwtService.verify(refreshToken, {
         secret: process.env.JWT_REFRESH_SECRET,
       });
 
-      // 유효 O, DB에 존재하는지 확인
-      //  - 유효 x -> 로그아웃
-      //  - 유효 O, access token 재발급
       const userId = decodeRefreshToken.userId;
       const user = await this.usersService.getUserByRefreshToken(
         refreshToken,

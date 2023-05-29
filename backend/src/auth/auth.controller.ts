@@ -63,7 +63,7 @@ export class AuthController {
     }
 
     const { accessToken, refreshToken } = loginResults;
-    res.cookie('refresh_token', refreshToken, {
+    res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
     });
 
@@ -91,7 +91,7 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ): Promise<LogoutSuccessResponseDto | LogoutFailedResponseDto> {
     await this.authService.logout(req.user.refreshTokenId);
-    res.clearCookie('refresh_token');
+    res.clearCookie('refreshToken');
 
     return {
       message: '로그아웃 되었습니다.',
@@ -114,9 +114,9 @@ export class AuthController {
     status: HttpStatus.BAD_REQUEST,
   })
   async refresh(@Req() req: Request) {
-    const refreshToken = req.cookies['refresh_token'];
+    const refreshToken = req.cookies['refreshToken'];
     if (!refreshToken) {
-      throw new BadRequestException('refresh token이 존재하지 않습니다.');
+      throw new UnauthorizedException('refresh token이 존재하지 않습니다.');
     }
     const newAccessToken = await this.authService.refresh(refreshToken);
 

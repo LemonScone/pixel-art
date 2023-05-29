@@ -17,12 +17,12 @@ export class JwtAuthGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<any> {
     try {
       const request = context.switchToHttp().getRequest();
-      const access_token = request
+      const accessToken = request
         .get('Authorization')
         .replace('Bearer', '')
         .trim();
 
-      const user = await this.jwtService.verify(access_token, {
+      const user = await this.jwtService.verify(accessToken, {
         secret: process.env.JWT_SECRET,
       });
 
