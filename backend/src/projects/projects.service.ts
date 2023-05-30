@@ -17,6 +17,56 @@ export class ProjectsService {
     private readonly pool: Pool,
   ) {}
 
+  async getProjectByUserId(userId: string): Promise<Project> {
+    const connectionPool: PoolConnection = await this.pool.getConnection();
+    try {
+      const query = `SELECT id
+                          , userId
+                          , animate
+                          , cellSize
+                          , gridColumns
+                          , gridRows
+                          , pallete
+                          , title
+                          , description
+                          , isPublished 
+                      FROM PROJECT 
+                      WHERE userId = '${userId}';
+                      `;
+      const [result]: any = await connectionPool.execute(query);
+
+      const query_frame = `SELECT A.id AS projectId
+                                , B.id
+                                , B.grid
+                                , B.animateInterval
+                            FROM PROJECT A
+                            JOIN FRAME B
+                              ON A.id = B.projectId
+                            WHERE A.userId = '${userId}';
+                          `;
+
+      const [result_frame]: any = await connectionPool.execute(query_frame);
+
+      const combinedResult = result.map((project) => {
+        const frames = result_frame
+          .filter((frame) => frame.projectId === project.id)
+          .map(({ id, grid, animateInterval }) => ({
+            id,
+            grid,
+            animateInterval,
+          }));
+        return { ...project, frames };
+      });
+
+      return combinedResult;
+    } catch (error) {
+      console.log(error);
+      throw new HttpException({ message: error.message, error }, error.status);
+    } finally {
+      connectionPool.release();
+    }
+  }
+
   async getProjectById(id: number): Promise<Project> {
     const connectionPool: PoolConnection = await this.pool.getConnection();
     try {

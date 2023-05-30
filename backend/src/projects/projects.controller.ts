@@ -6,6 +6,7 @@ import {
   Post,
   Param,
   Body,
+  Req,
 } from '@nestjs/common';
 import { ProjectsService } from './projects.service';
 import { Project } from './project.model';
@@ -17,6 +18,13 @@ import { UpdateProjectDto } from './dto/update-project-dto';
 @Controller('projects')
 export class ProjectsController {
   constructor(private readonly projectsService: ProjectsService) {}
+
+  @Get()
+  //TODO 인증 auth 모듈 완료 후 작업
+  //TODO useGuard로 req.user에서 id 조회 가능
+  getProjectByUserId(@Req() req) {
+    return this.projectsService.getProjectByUserId(req.id);
+  }
 
   @Get(':id')
   @ApiOperation({
