@@ -60,7 +60,6 @@ export class ProjectsService {
 
       return combinedResult;
     } catch (error) {
-      console.log(error);
       throw new HttpException({ message: error.message, error }, error.status);
     } finally {
       connectionPool.release();
