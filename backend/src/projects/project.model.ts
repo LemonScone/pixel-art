@@ -1,3 +1,5 @@
+import { Frame } from './frame.model';
+
 export interface Project {
   id: number;
   userId: string;
@@ -9,4 +11,6 @@ export interface Project {
   title: string;
   description: string;
   isPublished: boolean;
+
+  frames: Frame[];
 }

@@ -5,10 +5,13 @@ import {
   IsBoolean,
   IsNumber,
 } from 'class-validator';
+import { FrameDto } from './frame-dto';
 
-export class UpdateProjectDto {
-  @IsNumber()
-  id: number;
+export class CreateProjectDto {
+  @IsString()
+  @MinLength(4)
+  @MaxLength(20)
+  userId: string;
 
   @IsBoolean()
   animate: boolean;
@@ -31,16 +34,5 @@ export class UpdateProjectDto {
   @IsString()
   pallete: string;
 
-  @IsString()
-  @MinLength(4)
-  @MaxLength(50)
-  title: string;
-
-  @IsString()
-  @MinLength(4)
-  @MaxLength(255)
-  description: string;
-
-  @IsBoolean()
-  isPublished: boolean;
+  frames: FrameDto[];
 }

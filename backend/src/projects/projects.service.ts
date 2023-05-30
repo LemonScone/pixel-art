@@ -7,8 +7,8 @@ import {
 import { Pool, PoolConnection } from 'mysql2/promise';
 import { DB_CONNECTION } from 'src/constants';
 import { Project } from './project.model';
-import { CreateProjectDto } from './dto/create-dto';
-import { UpdateProjectDto } from './dto/update-dto';
+import { CreateProjectDto } from './dto/create-project-dto';
+import { UpdateProjectDto } from './dto/update-project-dto';
 
 @Injectable()
 export class ProjectsService {
@@ -20,24 +20,36 @@ export class ProjectsService {
   async getProjectById(id: number): Promise<Project> {
     const connectionPool: PoolConnection = await this.pool.getConnection();
     try {
-      const [result] = await connectionPool.execute(
-        `SELECT id
-                , userId
-                , animate
-                , cellSize
-                , gridColumns
-                , gridRows
-                , pallete
-                , title
-                , description
-                , isPublished 
-                FROM PROJECT 
-                WHERE id = ${id}`,
-      );
+      const query_project = `SELECT id
+                                  , userId
+                                  , animate
+                                  , cellSize
+                                  , gridColumns
+                                  , gridRows
+                                  , pallete
+                                  , title
+                                  , description
+                                  , isPublished 
+                              FROM PROJECT 
+                              WHERE id = ${id};
+                              `;
+      const [result] = await connectionPool.execute(query_project);
+
+      const query_frame = `SELECT id
+                                , projectid
+                                , grid
+                                , animateInterval
+                            FROM FRAME 
+                            WHERE projectId = ${id};
+                            `;
+
+      const [result_frame] = await connectionPool.execute(query_frame);
 
       if (!result[0]) {
         throw new BadRequestException('존재하지 않는 프로젝트입니다.');
       }
+
+      result[0]['frames'] = result_frame;
       return result[0];
     } catch (error) {
       throw new HttpException({ message: error.message, error }, error.status);
@@ -47,41 +59,68 @@ export class ProjectsService {
   }
 
   async createProject(createProjectDto: CreateProjectDto): Promise<Project> {
-    const { userId, animate, cellSize, gridColumns, gridRows, pallete } =
-      createProjectDto;
+    const {
+      userId,
+      animate,
+      cellSize,
+      gridColumns,
+      gridRows,
+      pallete,
+      frames,
+    } = createProjectDto;
 
     if (!userId) throw new BadRequestException('userId가 유효하지 않습니다.');
 
     const connectionPool: PoolConnection = await this.pool.getConnection();
     try {
-      await connectionPool.execute(`INSERT INTO PROJECT
-                                      (
-                                        userId
-                                      ,  animate
-                                      ,  cellSize
-                                      ,  gridColumns
-                                      ,  gridRows
-                                      ,  pallete
-                                      ,  isPublished
-                                      )
-                                    VALUES (
-                                      '${userId}'
-                                    , ${animate}
-                                    , ${cellSize}
-                                    , ${gridColumns}
-                                    , ${gridRows}
-                                    , '${pallete}'
-                                    , false
-                                    );
-        `);
+      await connectionPool.beginTransaction();
 
-      const queryResult = await connectionPool.query(
-        `SELECT LAST_INSERT_ID();`,
-      );
+      const query_project = `INSERT INTO PROJECT
+                            (
+                              userId
+                            ,  animate
+                            ,  cellSize
+                            ,  gridColumns
+                            ,  gridRows
+                            ,  pallete
+                            ,  isPublished
+                            )
+                            VALUES (
+                              '${userId}'
+                            , ${animate}
+                            , ${cellSize}
+                            , ${gridColumns}
+                            , ${gridRows}
+                            , '${pallete}'
+                            , false
+                            );
+      `;
 
-      const lastInsertId: number = queryResult[0][0]['LAST_INSERT_ID()'];
-      return await this.getProjectById(lastInsertId);
+      const [result] = await connectionPool.execute(query_project);
+
+      const query_frame = `INSERT INTO FRAME
+                          (
+                            projectId
+                          ,  grid
+                          ,  animateInterval
+                          )
+                          VALUES ?;
+                          `;
+
+      const values_frame = [
+        frames.map((obj) => [
+          result['insertId'],
+          obj.grid,
+          obj.animateInterval,
+        ]),
+      ];
+
+      await connectionPool.query(query_frame, values_frame);
+
+      await connectionPool.commit();
+      return await this.getProjectById(result['insertId']);
     } catch (error) {
+      await connectionPool.rollback();
       throw new HttpException({ message: error.message, error }, error.status);
     } finally {
       connectionPool.release();
@@ -101,6 +140,7 @@ export class ProjectsService {
       title,
       description,
       isPublished,
+      frames,
     } = updateProjectDto;
 
     const connectionPool: PoolConnection = await this.pool.getConnection();
@@ -111,18 +151,40 @@ export class ProjectsService {
         throw new BadRequestException('존재하지 않는 프로젝트입니다.');
       }
 
-      await connectionPool.execute(`UPDATE PROJECT SET
+      await connectionPool.beginTransaction();
+
+      const query_project = `UPDATE PROJECT SET
                                     animate = ${animate}
-                                    , cellSize = ${cellSize}
-                                    , gridColumns = ${gridColumns}
-                                    , gridRows = ${gridRows}
-                                    , pallete = '${pallete}'
-                                    , title = '${title}'
-                                    , description = '${description}'
-                                    , isPublished = ${isPublished}
-                                    WHERE id = ${id}
-      `);
+                                  , cellSize = ${cellSize}
+                                  , gridColumns = ${gridColumns}
+                                  , gridRows = ${gridRows}
+                                  , pallete = '${pallete}'
+                                  , title = '${title}'
+                                  , description = '${description}'
+                                  , isPublished = ${isPublished}
+                              WHERE id = ${id}
+                              `;
+      await connectionPool.execute(query_project);
+
+      const query_frame = `
+        UPDATE FRAME SET 
+        grid = CASE id
+          ${frames.map((obj) => `WHEN ${obj.id} THEN ?`).join(' ')}
+        END,
+        animateInterval = CASE id
+          ${frames.map((obj) => `WHEN ${obj.id} THEN ?`).join(' ')}
+        END
+        WHERE id IN (${frames.map((obj) => obj.id).join(', ')})
+      `;
+      const gridValue = frames.map((f) => f.grid);
+      const animateIntervalValue = frames.map((f) => f.animateInterval);
+      const values_frame = [...gridValue, ...animateIntervalValue];
+
+      await connectionPool.query(query_frame, values_frame);
+
+      await connectionPool.commit();
     } catch (error) {
+      await connectionPool.rollback();
       throw new HttpException({ message: error.message, error }, error.status);
     } finally {
       connectionPool.release();
@@ -138,11 +200,19 @@ export class ProjectsService {
         throw new BadRequestException('존재하지 않는 프로젝트입니다.');
       }
 
-      await connectionPool.execute(`DELETE FROM PROJECT WHERE id = ${id}`);
+      await connectionPool.beginTransaction();
+      const query_frame = `DELETE FROM FRAME WHERE projectId = ${id}`;
+      const query_project = `DELETE FROM PROJECT WHERE id = ${id}`;
+
+      await connectionPool.execute(query_frame);
+      await connectionPool.execute(query_project);
+
+      await connectionPool.commit();
     } catch (error) {
+      await connectionPool.rollback();
       throw new HttpException({ message: error.message, error }, error.status);
     } finally {
-      connectionPool.release();
+      await connectionPool.release();
     }
   }
 
@@ -155,10 +225,11 @@ export class ProjectsService {
         throw new BadRequestException('존재하지 않는 프로젝트입니다.');
       }
 
-      await connectionPool.execute(`UPDATE PROJECT SET
-                                    isPublished = ${status}
-                                    WHERE id = ${id}
-      `);
+      const query = `UPDATE PROJECT SET
+                            isPublished = ${status}
+                            WHERE id = ${id}
+                      `;
+      await connectionPool.execute(query);
     } catch (error) {
       throw new HttpException({ message: error.message, error }, error.status);
     } finally {

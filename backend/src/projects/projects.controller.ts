@@ -9,9 +9,9 @@ import {
 } from '@nestjs/common';
 import { ProjectsService } from './projects.service';
 import { Project } from './project.model';
-import { CreateProjectDto } from './dto/create-dto';
+import { CreateProjectDto } from './dto/create-project-dto';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { UpdateProjectDto } from './dto/update-dto';
+import { UpdateProjectDto } from './dto/update-project-dto';
 
 @ApiTags('propjects')
 @Controller('projects')
