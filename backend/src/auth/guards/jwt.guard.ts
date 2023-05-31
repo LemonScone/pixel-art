@@ -22,12 +22,14 @@ export class JwtAuthGuard implements CanActivate {
         .replace('Bearer', '')
         .trim();
 
-      const user = await this.jwtService.verify(accessToken, {
+      const user = await this.jwtService.verifyAsync(accessToken, {
         secret: process.env.JWT_SECRET,
       });
 
-      request.user = user;
-      return user;
+      const { sub, nickname, current, provider } = user;
+      request.user = { id: sub, nickname, current, provider };
+
+      return true;
     } catch (error) {
       throw new UnauthorizedException();
     }

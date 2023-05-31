@@ -9,8 +9,8 @@ import { DB_CONNECTION } from 'src/constants';
 import { AuthCredentialsDto } from './dto/auth-credentials.dto';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from 'src/users/users.service';
-import { User } from './user.model';
 import { ConfigService } from '@nestjs/config';
+import { AccessTokenPayload } from './payload.model';
 
 @Injectable()
 export class AuthService {
@@ -33,8 +33,11 @@ export class AuthService {
         return null;
       }
 
-      const { password, ...rest } = loginResults;
-      const accessToken = await this.generateAccessToken(rest);
+      const { id, password, ...rest } = loginResults;
+
+      const payload = { sub: id, ...rest };
+      const accessToken = await this.generateAccessToken(payload);
+
       const refreshToken = await this.generateRefreshToken(
         authCredentialsDto.userId,
       );
@@ -55,7 +58,7 @@ export class AuthService {
     }
   }
 
-  async generateAccessToken(user: Omit<User, 'password'>): Promise<string> {
+  async generateAccessToken(user: AccessTokenPayload): Promise<string> {
     return this.jwtService.signAsync(user);
   }
 
@@ -85,9 +88,12 @@ export class AuthService {
 
   async refresh(refreshToken: string): Promise<{ accessToken: string }> {
     try {
-      const decodeRefreshToken = this.jwtService.verify(refreshToken, {
-        secret: process.env.JWT_REFRESH_SECRET,
-      });
+      const decodeRefreshToken = await this.jwtService.verifyAsync(
+        refreshToken,
+        {
+          secret: process.env.JWT_REFRESH_SECRET,
+        },
+      );
 
       const userId = decodeRefreshToken.userId;
       const user = await this.usersService.getUserByRefreshToken(
