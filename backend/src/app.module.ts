@@ -8,6 +8,8 @@ import { UsersModule } from './users/users.module';
 import { JwtAuthGuard } from './auth/guards/jwt.guard';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from './users/users.service';
+import { ProjectsModule } from './projects/projects.module';
+import { ArtworksModule } from './artworks/artworks.module';
 
 @Module({
   imports: [
@@ -16,6 +18,8 @@ import { UsersService } from './users/users.service';
     }),
     AuthModule,
     UsersModule,
+    ProjectsModule,
+    ArtworksModule,
   ],
   controllers: [AppController],
   providers: [AppService, dbProvider, UsersService, JwtAuthGuard, JwtService],
