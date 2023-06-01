@@ -11,7 +11,6 @@ import * as bcrypt from 'bcrypt';
 import { AuthCredentialsDto } from 'src/auth/dto/auth-credentials.dto';
 import { User } from 'src/auth/user.model';
 import { Token } from 'src/auth/token.model';
-import { AccessTokenPayload } from 'src/auth/payload.model';
 
 @Injectable()
 export class UsersService {
@@ -162,21 +161,5 @@ export class UsersService {
     } finally {
       connectionPool.release();
     }
-  }
-
-  async getUserByRefreshToken(
-    refreshToken: string,
-    userId: string,
-  ): Promise<AccessTokenPayload> {
-    const refreshTokenId = await this.getRefreshTokenId(userId, refreshToken);
-
-    if (!refreshTokenId) {
-      return null;
-    }
-
-    const user = await this.getUserInfo(userId);
-    const { id, password, ...rest } = user;
-
-    return { sub: id, ...rest };
   }
 }

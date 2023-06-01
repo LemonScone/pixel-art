@@ -86,26 +86,16 @@ export class AuthService {
     }
   }
 
-  async refresh(refreshToken: string): Promise<{ accessToken: string }> {
+  async refresh(userId: string): Promise<{ accessToken: string }> {
     try {
-      const decodeRefreshToken = await this.jwtService.verifyAsync(
-        refreshToken,
-        {
-          secret: process.env.JWT_REFRESH_SECRET,
-        },
-      );
-
-      const userId = decodeRefreshToken.userId;
-      const user = await this.usersService.getUserByRefreshToken(
-        refreshToken,
-        userId,
-      );
+      const user = await this.usersService.getUserInfo(userId);
 
       if (!user) {
         throw new UnauthorizedException('Invalid user!');
       }
 
-      const accessToken = await this.generateAccessToken(user);
+      const { id, ...rest } = user;
+      const accessToken = await this.generateAccessToken({ sub: id, ...rest });
 
       return { accessToken };
     } catch (error) {

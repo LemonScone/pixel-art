@@ -6,7 +6,6 @@ import {
   Req,
   Res,
   UnauthorizedException,
-  BadRequestException,
   UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
@@ -17,7 +16,7 @@ import {
   LoginSuccessResponseDto,
   LoginFailedResponseDto,
 } from './dto/auth-login-response.dto';
-import { Response, Request } from 'express';
+import { Response } from 'express';
 import { UsersService } from 'src/users/users.service';
 import { JwtRefreshGuard } from './guards/jwt-refresh.guard';
 import {
@@ -98,6 +97,7 @@ export class AuthController {
     };
   }
 
+  @UseGuards(JwtRefreshGuard)
   @Post('refresh')
   @ApiOperation({
     summary: '새 access token 생성',
@@ -113,12 +113,9 @@ export class AuthController {
     description: 'access token 생성 실패',
     status: HttpStatus.BAD_REQUEST,
   })
-  async refresh(@Req() req: Request) {
-    const refreshToken = req.cookies['refreshToken'];
-    if (!refreshToken) {
-      throw new UnauthorizedException('refresh token이 존재하지 않습니다.');
-    }
-    const newAccessToken = await this.authService.refresh(refreshToken);
+  async refresh(@Req() req: any) {
+    const { userId } = req.user;
+    const newAccessToken = await this.authService.refresh(userId);
 
     return newAccessToken;
   }
