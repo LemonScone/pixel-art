@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { AppService } from './app.service';
-import { AuthGuard } from '@nestjs/passport';
+import { JwtAuthGuard } from './auth/guards/jwt.guard';
 
 @Controller()
 export class AppController {
@@ -13,9 +13,9 @@ export class AppController {
   }
 
   @Post('/authTest')
-  @UseGuards(AuthGuard())
-  @ApiBearerAuth('access-token')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('accessToken')
   test(@Req() req) {
-    console.log({ req });
+    console.log(req.user);
   }
 }

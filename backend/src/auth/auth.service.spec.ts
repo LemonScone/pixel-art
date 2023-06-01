@@ -15,4 +15,11 @@ describe('AuthService', () => {
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
+
+  describe('logout', () => {
+    it('should pass if call to non existent user', async () => {
+      const result = await service.logout(4);
+      expect(result).toBeDefined();
+    });
+  });
 });
