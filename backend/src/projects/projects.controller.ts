@@ -7,23 +7,24 @@ import {
   Param,
   Body,
   Req,
+  UseGuards,
 } from '@nestjs/common';
 import { ProjectsService } from './projects.service';
 import { Project } from './project.model';
 import { CreateProjectDto } from './dto/create-project-dto';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { UpdateProjectDto } from './dto/update-project-dto';
+import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
 
+@UseGuards(JwtAuthGuard)
 @ApiTags('propjects')
 @Controller('projects')
 export class ProjectsController {
   constructor(private readonly projectsService: ProjectsService) {}
 
   @Get()
-  //TODO 인증 auth 모듈 완료 후 작업
-  //TODO useGuard로 req.user에서 id 조회 가능
   getProjectByUserId(@Req() req) {
-    return this.projectsService.getProjectByUserId(req.id);
+    return this.projectsService.getProjectByUserId(req.user.id);
   }
 
   @Get(':id')
@@ -50,8 +51,11 @@ export class ProjectsController {
     status: 200,
     description: '성공적으로 프로젝트를 생성했습니다.',
   })
-  createProject(@Body() createProjectDto: CreateProjectDto): Promise<Project> {
-    return this.projectsService.createProject(createProjectDto);
+  createProject(
+    @Req() req,
+    @Body() createProjectDto: CreateProjectDto,
+  ): Promise<Project> {
+    return this.projectsService.createProject(req.user.id, createProjectDto);
   }
 
   @Patch(':id')
