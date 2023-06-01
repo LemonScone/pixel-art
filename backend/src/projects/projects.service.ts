@@ -107,18 +107,12 @@ export class ProjectsService {
     }
   }
 
-  async createProject(createProjectDto: CreateProjectDto): Promise<Project> {
-    const {
-      userId,
-      animate,
-      cellSize,
-      gridColumns,
-      gridRows,
-      pallete,
-      frames,
-    } = createProjectDto;
-
-    if (!userId) throw new BadRequestException('userId가 유효하지 않습니다.');
+  async createProject(
+    userId: string,
+    createProjectDto: CreateProjectDto,
+  ): Promise<Project> {
+    const { cellSize, gridColumns, gridRows, pallete, frames } =
+      createProjectDto;
 
     const connectionPool: PoolConnection = await this.pool.getConnection();
     try {
@@ -136,7 +130,7 @@ export class ProjectsService {
                             )
                             VALUES (
                               '${userId}'
-                            , ${animate}
+                            , ${frames.length > 1}
                             , ${cellSize}
                             , ${gridColumns}
                             , ${gridRows}
@@ -147,24 +141,26 @@ export class ProjectsService {
 
       const [result] = await connectionPool.execute(query_project);
 
-      const query_frame = `INSERT INTO FRAME
-                          (
-                            projectId
-                          ,  grid
-                          ,  animateInterval
-                          )
-                          VALUES ?;
-                          `;
+      if (frames.length > 0) {
+        const query_frame = `INSERT INTO FRAME
+                            (
+                              projectId
+                            ,  grid
+                            ,  animateInterval
+                            )
+                            VALUES ?;
+                            `;
 
-      const values_frame = [
-        frames.map((obj) => [
-          result['insertId'],
-          obj.grid,
-          obj.animateInterval,
-        ]),
-      ];
+        const values_frame = [
+          frames.map((obj) => [
+            result['insertId'],
+            obj.grid,
+            obj.animateInterval,
+          ]),
+        ];
 
-      await connectionPool.query(query_frame, values_frame);
+        await connectionPool.query(query_frame, values_frame);
+      }
 
       await connectionPool.commit();
       return await this.getProjectById(result['insertId']);
@@ -181,7 +177,6 @@ export class ProjectsService {
     updateProjectDto: UpdateProjectDto,
   ): Promise<void> {
     const {
-      animate,
       cellSize,
       gridColumns,
       gridRows,
@@ -203,7 +198,7 @@ export class ProjectsService {
       await connectionPool.beginTransaction();
 
       const query_project = `UPDATE PROJECT SET
-                                    animate = ${animate}
+                                    animate = ${frames.length > 1}
                                   , cellSize = ${cellSize}
                                   , gridColumns = ${gridColumns}
                                   , gridRows = ${gridRows}

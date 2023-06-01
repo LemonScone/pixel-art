@@ -1,21 +1,7 @@
-import {
-  IsString,
-  MaxLength,
-  MinLength,
-  IsBoolean,
-  IsNumber,
-} from 'class-validator';
+import { IsString, MaxLength, MinLength, IsNumber } from 'class-validator';
 import { FrameDto } from './frame-dto';
 
 export class CreateProjectDto {
-  @IsString()
-  @MinLength(4)
-  @MaxLength(20)
-  userId: string;
-
-  @IsBoolean()
-  animate: boolean;
-
   @IsNumber()
   @MinLength(1)
   @MaxLength(3)
