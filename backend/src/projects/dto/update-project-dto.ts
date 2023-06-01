@@ -11,9 +11,6 @@ export class UpdateProjectDto {
   @IsNumber()
   id: number;
 
-  @IsBoolean()
-  animate: boolean;
-
   @IsNumber()
   @MinLength(1)
   @MaxLength(3)
