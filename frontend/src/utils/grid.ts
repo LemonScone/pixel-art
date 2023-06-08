@@ -46,3 +46,26 @@ export const resizeGrid = (
 
   return newGrid;
 };
+
+export const getTargetIndexes = (
+  start: number,
+  size: number,
+  columns: number,
+  rows: number
+) => {
+  const indexes = [];
+  for (let i = 0; i < size; i++) {
+    for (let j = 0; j < size; j++) {
+      const value = start + columns * i + j;
+      if (value >= columns * rows) {
+        break;
+      }
+      indexes.push(value);
+      if ((value + 1) % columns === 0) {
+        break;
+      }
+    }
+  }
+
+  return indexes;
+};
