@@ -1,3 +1,5 @@
+import { GRID_HOVER_COLOR_FIRST, GRID_HOVER_COLOR_SECOND } from "../constants";
+
 export const resizeGrid = (
   grid: string[],
   originRows: number,
@@ -68,4 +70,28 @@ export const getTargetIndexes = (
   }
 
   return indexes;
+};
+
+export const getGridBackgroundIndex = (
+  id: number,
+  columns: number,
+  rowIdx: number
+) => {
+  let gridBgIdx = 0;
+
+  if (columns % 2 === 0) {
+    if (rowIdx % 2 === 0) {
+      gridBgIdx = id % 2;
+    } else {
+      gridBgIdx = id % 2 === 0 ? 1 : 0;
+    }
+  } else {
+    gridBgIdx = id % 2;
+  }
+
+  return gridBgIdx;
+};
+
+export const getGridBackgroundHoverColor = (gridBgIdx: string) => {
+  return gridBgIdx === "0" ? GRID_HOVER_COLOR_FIRST : GRID_HOVER_COLOR_SECOND;
 };
