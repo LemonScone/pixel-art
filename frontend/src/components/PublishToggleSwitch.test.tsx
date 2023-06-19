@@ -2,10 +2,15 @@ import { render, screen } from "@testing-library/react";
 import PublishToggleSwitch from "./PublishToggleSwitch";
 
 describe("PublishToggleSwitch", () => {
-  it("should render ON, OFF text", () => {
+  it("should render toggle switch", async () => {
     render(<PublishToggleSwitch />);
 
-    expect(screen).toHaveTextContent("ON");
-    expect(screen).toHaveTextContent("OFF");
+    const toggleSwitch = screen.getByRole("switch");
+    expect(toggleSwitch).toBeInTheDocument();
+
+    const on = screen.getByText(/on/i);
+    const off = screen.getByText(/off/i);
+    expect(on).toBeInTheDocument();
+    expect(off).toBeInTheDocument();
   });
 });

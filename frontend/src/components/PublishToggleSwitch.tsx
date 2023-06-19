@@ -10,11 +10,22 @@ const PublishToggleSwitch = () => {
         htmlFor="publish"
         className="inline-flex cursor-pointer items-center rounded bg-gray-300 p-1 text-gray-800"
       >
-        <input id="publish" type="checkbox" className="peer hidden" />
-        <span className="rounded bg-gray-500 px-4 py-2 text-sm peer-checked:bg-gray-300">
+        <input
+          id="publish"
+          type="checkbox"
+          role="switch"
+          className="peer hidden"
+        />
+        <span
+          aria-hidden="true"
+          className="rounded bg-gray-500 px-4 py-2 text-sm peer-checked:bg-gray-300"
+        >
           OFF
         </span>
-        <span className="rounded bg-gray-300 px-4 py-2 text-sm peer-checked:bg-primary-color">
+        <span
+          aria-hidden="true"
+          className="rounded bg-gray-300 px-4 py-2 text-sm peer-checked:bg-primary-color"
+        >
           ON
         </span>
       </label>
