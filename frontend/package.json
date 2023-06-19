@@ -8,7 +8,8 @@
     "build": "tsc && vite build",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
-    "test": "vitest"
+    "test": "vitest",
+    "tailwind": "npx tailwindcss -i ./src/index.css -o ./tests/index.css"
   },
   "dependencies": {
     "@heroicons/react": "^2.0.18",
