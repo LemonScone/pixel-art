@@ -1,6 +1,7 @@
 import { PencilIcon } from "@heroicons/react/24/outline";
 import React, { useState } from "react";
 import useOutsideClick from "../hooks/useOutsideClick";
+import { Indexable } from "../types/Indexable";
 
 const PencilSizes = [1, 2, 3, 4, 5];
 
@@ -27,10 +28,7 @@ const Pencil = ({
 
   const selectedClass = "bg-gray-200";
 
-  type TextSizeVariantsType = {
-    [key: number]: string;
-  };
-  const textSizeVariants: TextSizeVariantsType = {
+  const textSizeVariants: Indexable<string> = {
     1: "w-2",
     2: "w-3",
     3: "w-4",

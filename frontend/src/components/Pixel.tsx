@@ -1,5 +1,6 @@
 import React from "react";
 import { getGridBackgroundIndex } from "../utils/grid";
+import { Indexable } from "../types/Indexable";
 
 type PixelProps = {
   id: number;
@@ -49,11 +50,8 @@ const Pixel = ({
     onPointerLeave(id);
   };
 
-  type GridBackgroundColorType = {
-    [key: number]: string;
-  };
 
-  const gridBackgroundColor: GridBackgroundColorType = {
+  const gridBackgroundColor: Indexable<string> = {
     0: "bg-[#d9d9d9]",
     1: "bg-white",
   };

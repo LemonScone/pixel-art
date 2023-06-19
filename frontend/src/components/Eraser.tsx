@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import useOutsideClick from "../hooks/useOutsideClick";
+import { Indexable } from "../types/Indexable";
 
 const EraserSizes = [1, 2, 3, 4, 5];
 
@@ -29,10 +30,7 @@ const Eraser = ({
 
   const selectedClass = "bg-gray-200";
 
-  type TextSizeVariantsType = {
-    [key: number]: string;
-  };
-  const textSizeVariants: TextSizeVariantsType = {
+  const textSizeVariants: Indexable<string> = {
     1: "w-2",
     2: "w-3",
     3: "w-4",
