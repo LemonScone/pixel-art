@@ -7,7 +7,7 @@ import PixelContainer from "./components/PixelContainer";
 import grid_sample from "./fixtures/grid";
 import { INITIAL_TOOL_OPTIONS } from "./constants";
 
-import type { Tool } from "./models";
+import type { Tool, ToolOption } from "./models";
 
 import Navbar from "./components/Navbar";
 import ToolConatiner from "./components/ToolConatiner";
@@ -28,6 +28,18 @@ function App() {
   const [columns, setColumns] = useState(20);
   const [rows, setRows] = useState(20);
 
+  const handleChangeToolSize = (({tool, size}: {tool: keyof ToolOption, size: number}) => {
+    setToolOptions((prevOptions) => {
+      return {
+        ...prevOptions,
+        [tool]: {
+          ...prevOptions[tool],
+          size
+        }
+      }
+    })
+  })
+
   return (
     <>
       <div className="min-h-screen bg-black">
@@ -39,7 +51,8 @@ function App() {
                 <ToolConatiner
                   selectedTool={selectedTool}
                   toolOptions={toolOptions}
-                  onChangeToolOptions={setToolOptions}
+                  onChangeToolSize={handleChangeToolSize}
+                  onChangeTool={({tool}) => setSelectedTool(tool) }
                 />
                 <div className="flex flex-grow flex-col items-center p-10">
                   <div className="h-72 w-72 touch-none select-none sm:h-80 sm:w-80 md:h-96 md:w-96 lg:h-[32rem] lg:w-[32rem]  xl:h-[50rem] xl:w-[50rem]">

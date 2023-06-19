@@ -1,42 +1,63 @@
 import { PencilIcon } from "@heroicons/react/24/outline";
 import React, { useState } from "react";
-import { ToolOption } from "../models";
 
 const PencilSizes = [1, 2, 3, 4, 5];
 
 const Pencil = ({
-  selectedTool,
+  selected,
   size,
-  onChangeToolOptions,
+  onChangeTool,
+  onChangeToolSize,
 }: {
-  selectedTool: string;
+  selected: boolean;
   size: number;
-  onChangeToolOptions: (options: ToolOption) => void;
+  onChangeTool: () => void;
+  onChangeToolSize: ({ size }: { size: number }) => void;
 }) => {
-  const [showPopover, setShowPopover] = useState(false);
+  const [showToolbar, setShowToolbar] = useState(false);
 
-  const popOverVariants = {
+  const toolbarVariants = {
     hidden: "hidden",
     show: "",
   };
 
   const selectedClass = "bg-gray-200";
 
+  type TextSizeVariantsType = {
+    [key: number]: string;
+  };
+  const textSizeVariants: TextSizeVariantsType = {
+    1: "w-2",
+    2: "w-3",
+    3: "w-4",
+    4: "w-5",
+    5: "w-6",
+  };
+
   return (
     <>
       <a
         type="button"
         role="button"
-        className="relative cursor-pointer rounded-lg bg-primary-color-600 p-1 text-gray-900 hover:bg-primary-color hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-primary-color"
-        onClick={() => setShowPopover((prevShow) => !prevShow)}
+        className={
+          selected
+            ? "relative cursor-pointer rounded-lg bg-primary-color-600 p-1 text-gray-900 hover:bg-primary-color focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-primary-color"
+            : "relative cursor-pointer rounded-lg p-1 text-gray-400 hover:bg-primary-color-600  focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-primary-color"
+        }
+        onClick={() => {
+          setShowToolbar((prevShow) => !prevShow);
+          onChangeTool();
+        }}
       >
         <span className="sr-only">Pencil</span>
         <PencilIcon className="h-6 w-6" aria-hidden="true" />
         <div
-          role="tooltip"
+          role="toolbar"
+          aria-label="select pencil size"
+          aria-hidden={!showToolbar}
           className={`${
-            popOverVariants[showPopover ? "show" : "hidden"]
-          } absolute left-0 z-20 -mt-14 ml-8 w-fit rounded bg-white p-4 shadow-lg transition duration-150 ease-in-out`}
+            toolbarVariants[showToolbar ? "show" : "hidden"]
+          } absolute left-0 z-20 -ml-[9.6rem] mt-36 w-fit  rotate-90 rounded bg-white p-2 shadow-lg transition duration-150 ease-in-out md:-mt-12 md:ml-8 md:rotate-0`}
         >
           <svg
             className="bott om-0  absolute left-0 top-0 -ml-2 h-full"
@@ -77,14 +98,31 @@ const Pencil = ({
           <div className="flex justify-evenly text-sm font-bold text-gray-800">
             {PencilSizes.map((pencilSize) => {
               return (
-                <div
+                <button
                   key={pencilSize}
                   className={`${
                     pencilSize === size ? selectedClass : ""
-                  } flex flex-col items-center px-4 py-2`}
+                  } flex items-center px-4  py-2 md:flex-col`}
+                  onClick={() => onChangeToolSize({ size: pencilSize })}
                 >
-                  ⬛ <span>{pencilSize}</span>
-                </div>
+                  <div className="mr-2 flex h-6 items-center md:mr-0 md:items-end">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      xmlnsXlink="http://www.w3.org/1999/xlink"
+                      fill="#000000"
+                      version="1.1"
+                      id="Capa_1"
+                      viewBox="0 0 94 94"
+                      xmlSpace="preserve"
+                      className={`${textSizeVariants[pencilSize]}`}
+                    >
+                      <g>
+                        <path d="M94,88c0,3.312-2.688,6-6,6H6c-3.314,0-6-2.688-6-6V6c0-3.313,2.686-6,6-6h82c3.312,0,6,2.687,6,6V88z" />
+                      </g>
+                    </svg>
+                  </div>
+                  <div className="-rotate-90 md:rotate-0">{pencilSize}</div>
+                </button>
               );
             })}
           </div>

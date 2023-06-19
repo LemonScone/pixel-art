@@ -11,14 +11,14 @@ const UndoRedo = () => {
         type="button"
         className="rounded-lg bg-neutral-900 p-1 text-gray-100 hover:text-primary-color focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-primary-color"
       >
-        <span className="sr-only">Pencil</span>
+        <span className="sr-only">undo</span>
         <ArrowUturnLeftIcon className="h-6 w-6" aria-hidden="true" />
       </button>
       <button
         type="button"
         className="rounded-lg bg-neutral-900 p-1 text-gray-100 hover:text-primary-color focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-primary-color"
       >
-        <span className="sr-only">Pencil</span>
+        <span className="sr-only">redo</span>
         <ArrowUturnRightIcon className="h-6 w-6" aria-hidden="true" />
       </button>
     </div>
