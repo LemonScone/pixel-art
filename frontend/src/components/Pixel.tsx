@@ -50,7 +50,6 @@ const Pixel = ({
     onPointerLeave(id);
   };
 
-
   const gridBackgroundColor: Indexable<string> = {
     0: "bg-[#d9d9d9]",
     1: "bg-white",
@@ -59,6 +58,7 @@ const Pixel = ({
   const gridBgIdx = getGridBackgroundIndex(id, columns, rowIdx);
   return (
     <div
+      data-testid="pixel"
       data-grid-bg-idx={gridBgIdx}
       className={`pixel w-[calc(100%/${columns})] h-100 border-neutral-500 transition-all ${gridBackgroundColor[gridBgIdx]}`}
       style={{ backgroundColor: color }}

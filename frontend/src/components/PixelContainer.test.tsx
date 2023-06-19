@@ -1,5 +1,4 @@
-import { fireEvent, render } from "@testing-library/react";
-import "@testing-library/jest-dom";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { vi } from "vitest";
 
 import MockPointerEvent from "../../__mocks__/MockPointerEvent";
@@ -28,7 +27,7 @@ describe("PixelContainer", () => {
     },
     selectedTool = "pen" as Tool,
   }) => {
-    return render(
+    render(
       <PixelContainer
         columns={columns}
         rows={rows}
@@ -43,9 +42,9 @@ describe("PixelContainer", () => {
   it("should render a grid of pixels", () => {
     const columns = 16;
     const rows = 16;
-    const { container } = renderPixels({ columns, rows });
+    renderPixels({ columns, rows });
 
-    const pixels = container.getElementsByClassName("pixel");
+    const pixels = screen.getAllByTestId("pixel");
     expect(pixels.length).toBe(columns * rows);
   });
 
@@ -71,12 +70,12 @@ describe("PixelContainer", () => {
       const toolOptions = getToolOptionsWithPenSize(size);
 
       it("should update the color of 1 pixel", () => {
-        const { container } = renderPixels({
+        renderPixels({
           toolOptions,
           onUpdateGrid,
         });
 
-        const pixels = container.getElementsByClassName("pixel");
+        const pixels = screen.getAllByTestId("pixel");
 
         const pixel = pixels[0];
 
@@ -90,12 +89,12 @@ describe("PixelContainer", () => {
         const toolOptions = getToolOptionsWithPenSize(size);
 
         it("should update the color of 4 pixel", () => {
-          const { container } = renderPixels({
+          renderPixels({
             toolOptions,
             onUpdateGrid,
           });
 
-          const pixels = container.getElementsByClassName("pixel");
+          const pixels = screen.getAllByTestId("pixel");
 
           const pixel = pixels[0];
 
@@ -112,12 +111,12 @@ describe("PixelContainer", () => {
         const toolOptions = getToolOptionsWithPenSize(size);
 
         it("should update the color of 9 pixel", () => {
-          const { container } = renderPixels({
+          renderPixels({
             toolOptions,
             onUpdateGrid,
           });
 
-          const pixels = container.getElementsByClassName("pixel");
+          const pixels = screen.getAllByTestId("pixel");
 
           const pixel = pixels[0];
 
@@ -134,12 +133,12 @@ describe("PixelContainer", () => {
         const toolOptions = getToolOptionsWithPenSize(size);
 
         it("should update the color of 16 pixel", () => {
-          const { container } = renderPixels({
+          renderPixels({
             toolOptions,
             onUpdateGrid,
           });
 
-          const pixels = container.getElementsByClassName("pixel");
+          const pixels = screen.getAllByTestId("pixel");
 
           const pixel = pixels[0];
 
@@ -156,12 +155,12 @@ describe("PixelContainer", () => {
         const toolOptions = getToolOptionsWithPenSize(size);
 
         it("should update the color of 25 pixel", () => {
-          const { container } = renderPixels({
+          renderPixels({
             toolOptions,
             onUpdateGrid,
           });
 
-          const pixels = container.getElementsByClassName("pixel");
+          const pixels = screen.getAllByTestId("pixel");
 
           const pixel = pixels[0];
 
