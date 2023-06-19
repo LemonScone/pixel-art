@@ -28,17 +28,23 @@ function App() {
   const [columns, setColumns] = useState(20);
   const [rows, setRows] = useState(20);
 
-  const handleChangeToolSize = (({tool, size}: {tool: keyof ToolOption, size: number}) => {
+  const handleChangeToolSize = ({
+    tool,
+    size,
+  }: {
+    tool: keyof ToolOption;
+    size: number;
+  }) => {
     setToolOptions((prevOptions) => {
       return {
         ...prevOptions,
         [tool]: {
           ...prevOptions[tool],
-          size
-        }
-      }
-    })
-  })
+          size,
+        },
+      };
+    });
+  };
 
   return (
     <>
@@ -52,7 +58,7 @@ function App() {
                   selectedTool={selectedTool}
                   toolOptions={toolOptions}
                   onChangeToolSize={handleChangeToolSize}
-                  onChangeTool={({tool}) => setSelectedTool(tool) }
+                  onChangeTool={({ tool }) => setSelectedTool(tool)}
                 />
                 <div className="flex flex-grow flex-col items-center p-10">
                   <div className="h-72 w-72 touch-none select-none sm:h-80 sm:w-80 md:h-96 md:w-96 lg:h-[32rem] lg:w-[32rem]  xl:h-[50rem] xl:w-[50rem]">

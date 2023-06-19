@@ -72,6 +72,43 @@ describe("ToolContainer", () => {
       expect(onChageTool).toHaveBeenCalled();
       expect(onChageTool).toHaveBeenCalledWith({ tool: "pen" });
 
+      const eraserButton = screen.getByRole("button", {
+        name: /eraser/i,
+      });
+
+      await user.click(eraserButton);
+
+      expect(onChageTool).toHaveBeenCalled();
+      expect(onChageTool).toHaveBeenCalledWith({ tool: "eraser" });
     });
   });
+
+  describe("when click the eraser button after pen toolbar visible", () => {
+    it("shows eraser toolbar and pen toolbar is not visible", async () => {
+      renderComponent()
+
+      const pencilButton = screen.getByRole("button", {
+        name: /pencil/i,
+      });
+      await user.click(pencilButton);
+
+      const penSizeSelectToolbar = screen.getByRole("toolbar", {
+        name: /select pencil size/i,
+      });
+
+      expect(penSizeSelectToolbar).toBeVisible();
+
+      const eraserButton = screen.getByRole("button", {
+        name: /eraser/i,
+      });
+      await user.click(eraserButton);
+
+      const eraserSizeSelectToolbar = screen.getByRole("toolbar", {
+        name: /select eraser size/i,
+      });
+
+      expect(eraserSizeSelectToolbar).toBeVisible()
+      expect(penSizeSelectToolbar).not.toBeVisible()
+    })
+  })
 });

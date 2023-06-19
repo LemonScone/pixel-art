@@ -17,14 +17,14 @@ type ToolContainerProps = {
     tool: keyof ToolOption;
     size: number;
   }) => void;
-  onChangeTool: ({tool} : {tool: keyof ToolOption}) => void
-}
+  onChangeTool: ({ tool }: { tool: keyof ToolOption }) => void;
+};
 
 const ToolConatiner = ({
   selectedTool,
   toolOptions,
   onChangeToolSize,
-  onChangeTool
+  onChangeTool,
 }: ToolContainerProps) => {
   return (
     <div className="ml-2 flex flex-col items-center md:ml-4 md:items-start">
@@ -34,10 +34,19 @@ const ToolConatiner = ({
         <Pencil
           selected={selectedTool === "pen"}
           size={toolOptions.pen.size}
-          onChangeTool={() => onChangeTool({tool: "pen"})}
-          onChangeToolSize={({ size }) => onChangeToolSize({ tool: "pen", size })}
+          onChangeTool={() => onChangeTool({ tool: "pen" })}
+          onChangeToolSize={({ size }) =>
+            onChangeToolSize({ tool: "pen", size })
+          }
         />
-        <Eraser />
+        <Eraser
+          selected={selectedTool === "eraser"}
+          size={toolOptions.eraser.size}
+          onChangeTool={() => onChangeTool({ tool: "eraser" })}
+          onChangeToolSize={({ size }) =>
+            onChangeToolSize({ tool: "eraser", size })
+          }
+        />
         <EyeDropper />
         <Move />
       </div>

@@ -1,5 +1,6 @@
 import { PencilIcon } from "@heroicons/react/24/outline";
 import React, { useState } from "react";
+import useOutsideClick from "../hooks/useOutsideClick";
 
 const PencilSizes = [1, 2, 3, 4, 5];
 
@@ -15,6 +16,9 @@ const Pencil = ({
   onChangeToolSize: ({ size }: { size: number }) => void;
 }) => {
   const [showToolbar, setShowToolbar] = useState(false);
+
+  const handleClickOutside = () => setShowToolbar(false);
+  const ref = useOutsideClick(handleClickOutside);
 
   const toolbarVariants = {
     hidden: "hidden",
@@ -39,10 +43,11 @@ const Pencil = ({
       <a
         type="button"
         role="button"
+        ref={ref}
         className={
           selected
             ? "relative cursor-pointer rounded-lg bg-primary-color-600 p-1 text-gray-900 hover:bg-primary-color focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-primary-color"
-            : "relative cursor-pointer rounded-lg p-1 text-gray-400 hover:bg-primary-color-600  focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-primary-color"
+            : "relative cursor-pointer rounded-lg p-1 text-gray-400 hover:bg-primary-color-600 hover:text-gray-900  focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-primary-color"
         }
         onClick={() => {
           setShowToolbar((prevShow) => !prevShow);

@@ -102,7 +102,7 @@ describe("PixelContainer", () => {
           fireEvent.pointerDown(pixel);
 
           expect(
-            GRID.filter(pixel => pixel === toolOptions.pen.color).length
+            GRID.filter((pixel) => pixel === toolOptions.pen.color).length
           ).toBe(size ** 2);
         });
       });
@@ -124,7 +124,7 @@ describe("PixelContainer", () => {
           fireEvent.pointerDown(pixel);
 
           expect(
-            GRID.filter(pixel => pixel === toolOptions.pen.color).length
+            GRID.filter((pixel) => pixel === toolOptions.pen.color).length
           ).toBe(size ** 2);
         });
       });
@@ -146,7 +146,7 @@ describe("PixelContainer", () => {
           fireEvent.pointerDown(pixel);
 
           expect(
-            GRID.filter(pixel => pixel === toolOptions.pen.color).length
+            GRID.filter((pixel) => pixel === toolOptions.pen.color).length
           ).toBe(size ** 2);
         });
       });
@@ -168,7 +168,7 @@ describe("PixelContainer", () => {
           fireEvent.pointerDown(pixel);
 
           expect(
-            GRID.filter(pixel => pixel === toolOptions.pen.color).length
+            GRID.filter((pixel) => pixel === toolOptions.pen.color).length
           ).toBe(size ** 2);
         });
       });
