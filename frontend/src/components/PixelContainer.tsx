@@ -5,7 +5,7 @@ import Pixel from "./Pixel";
 import { getGridBackgroundHoverColor, getTargetIndexes } from "../utils/grid";
 import { getHoverColor } from "../utils/color";
 
-import type { ToolOption, Tool } from "../models";
+import type { ToolOption, Tool } from "../types/Tool";
 
 type PixelContainerProps = {
   columns: number;

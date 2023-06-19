@@ -7,7 +7,7 @@ import PixelContainer from "./components/PixelContainer";
 import grid_sample from "./fixtures/grid";
 import { INITIAL_TOOL_OPTIONS } from "./constants";
 
-import type { Tool, ToolOption } from "./models";
+import type { Tool, ToolOption } from "./types/Tool";
 
 import Navbar from "./components/Navbar";
 import ToolConatiner from "./components/ToolConatiner";

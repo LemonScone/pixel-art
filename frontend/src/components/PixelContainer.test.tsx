@@ -6,7 +6,7 @@ import MockPointerEvent from "../../__mocks__/MockPointerEvent";
 
 import PixelContainer from "./PixelContainer";
 
-import { Tool } from "../models";
+import { Tool } from "../types/Tool";
 
 import { INITIAL_TOOL_OPTIONS } from "../constants";
 

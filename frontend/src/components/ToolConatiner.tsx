@@ -5,7 +5,7 @@ import EyeDropper from "./EyeDropper";
 import Eraser from "./Eraser";
 import Move from "./Move";
 import Bucket from "./Bucket";
-import { ToolOption } from "../models";
+import { ToolOption } from "../types/Tool";
 
 type ToolContainerProps = {
   selectedTool: keyof ToolOption;
