@@ -3,13 +3,13 @@ import { COLOR_REGEX } from "../constants";
 type ColorSwatchProps = {
   color: string;
   isActiveColor: boolean;
-  onUpdateToolOptionsAndSelectedTool: (color: string) => void;
+  onChangeToolOptionsAndSelectedTool: (color: string) => void;
 };
 
 const ColorSwatch = ({
   color,
   isActiveColor,
-  onUpdateToolOptionsAndSelectedTool,
+  onChangeToolOptionsAndSelectedTool,
 }: ColorSwatchProps) => {
   const handleColorClick = (e: React.MouseEvent<HTMLDivElement>) => {
     const target = e.target as HTMLDivElement;
@@ -22,19 +22,20 @@ const ColorSwatch = ({
 
     if (colorMatches) {
       setTimeout(() => {
-        onUpdateToolOptionsAndSelectedTool(colorMatches[0]);
+        onChangeToolOptionsAndSelectedTool(colorMatches[0]);
       }, 100);
     }
-    target.style.boxShadow = `${color} 0px 0px 0px 4px inset, 0px 0px 2px 1px ${color}`;
+    target.style.boxShadow = `${color} 0px 0px 2px 1px, ${color} 0px 0px 0px 4px inset`;
   };
 
   return (
     <div
-      data-testid="colorswatch"
-      className={`m-2 h-9 w-9 cursor-pointer rounded-full bg-transparent hover:scale-125`}
+      role="button"
+      aria-label="color swatch"
+      className={`m-2 h-9 w-9 cursor-pointer rounded bg-transparent hover:scale-125`}
       style={{
         boxShadow: `${
-          isActiveColor ? `0px 0px 2px 1px ${color},` : ""
+          isActiveColor ? ` ${color} 0px 0px 2px 1px,` : ""
         } ${color} 0px 0px 0px ${isActiveColor ? "4px" : "18px"} inset`,
         transition: "200ms box-shadow ease",
       }}

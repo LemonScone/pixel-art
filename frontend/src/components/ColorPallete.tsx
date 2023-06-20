@@ -7,25 +7,27 @@ import ColorPicker from "./ColorPicker";
 type setStateType = (current: boolean) => boolean;
 
 type ColorAddButtonProps = {
-  onUpdateIsColorPickerActive: (current: setStateType) => void;
+  onChangeIsColorPickerActive: (current: setStateType) => void;
 };
 
 type ColorPalleteProps = {
   toolOptions: ToolOption;
-  onUpdateToolOptions: (toolOptions: ToolOption) => void;
-  onUpdateSelectedTool: (tool: Tool) => void;
+  onChangeToolOptions: (toolOptions: ToolOption) => void;
+  onChangeSelectedTool: (tool: Tool) => void;
 };
 
 const ColorAddButton = ({
-  onUpdateIsColorPickerActive,
+  onChangeIsColorPickerActive,
 }: ColorAddButtonProps) => {
   const handleClick = () => {
-    onUpdateIsColorPickerActive((current: boolean) => !current);
+    onChangeIsColorPickerActive((current: boolean) => !current);
   };
 
   return (
     <div
-      className={`m-2 flex h-9 w-9 cursor-pointer items-center justify-center rounded-full text-[rgb(175,242,133)] shadow-[0_0px_2px_1px_rgba(175,242,133)] hover:scale-125`}
+      role="button"
+      aria-label="add new color"
+      className={`m-2 flex h-9 w-9 cursor-pointer items-center justify-center rounded text-[rgb(175,242,133)] shadow-[0_0px_2px_1px_rgba(175,242,133)] hover:scale-125`}
       onClick={handleClick}
     >
       ✚
@@ -35,8 +37,8 @@ const ColorAddButton = ({
 
 const ColorPallete = ({
   toolOptions,
-  onUpdateToolOptions,
-  onUpdateSelectedTool,
+  onChangeToolOptions,
+  onChangeSelectedTool,
 }: ColorPalleteProps) => {
   const [colorPallete, setColorPallete] = useState(INITIAL_COLOR_PALLETE);
   const [isColorPickerActive, setIsColorPickerActive] =
@@ -55,8 +57,8 @@ const ColorPallete = ({
       ...toolOptions.pen,
       color,
     };
-    onUpdateToolOptions({ ...toolOptions, pen: newPen });
-    onUpdateSelectedTool("pen");
+    onChangeToolOptions({ ...toolOptions, pen: newPen });
+    onChangeSelectedTool("pen");
   };
 
   const handleColorPickerClose = (selectedColor: string) => {
@@ -68,7 +70,7 @@ const ColorPallete = ({
         ...toolOptions.pen,
         color: selectedColor,
       };
-      onUpdateToolOptions({ ...toolOptions, pen: newPen });
+      onChangeToolOptions({ ...toolOptions, pen: newPen });
     }
   };
 
@@ -80,18 +82,18 @@ const ColorPallete = ({
             key={color}
             color={color}
             isActiveColor={color === colorString}
-            onUpdateToolOptionsAndSelectedTool={handleColorSwatchClick}
+            onChangeToolOptionsAndSelectedTool={handleColorSwatchClick}
           />
         );
       })}
       <div className="relative">
-        <ColorAddButton onUpdateIsColorPickerActive={setIsColorPickerActive} />
+        <ColorAddButton onChangeIsColorPickerActive={setIsColorPickerActive} />
         {isColorPickerActive && (
           <ColorPicker
             colIndex={colorPallete.length % 5}
             activeColor={colorObject}
-            onUpdateIsColorPickerActive={setIsColorPickerActive}
-            onUpdateColorPallete={handleColorPickerClose}
+            onChangeIsColorPickerActive={setIsColorPickerActive}
+            onChangeColorPallete={handleColorPickerClose}
           />
         )}
       </div>

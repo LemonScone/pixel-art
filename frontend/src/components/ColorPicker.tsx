@@ -4,14 +4,14 @@ import { ChromePicker, RGBColor, ColorResult } from "react-color";
 type ColorPickerProps = {
   colIndex: number;
   activeColor: RGBColor;
-  onUpdateIsColorPickerActive: (isColorPickerActive: boolean) => void;
-  onUpdateColorPallete: (selectedColor: string) => void;
+  onChangeIsColorPickerActive: (isColorPickerActive: boolean) => void;
+  onChangeColorPallete: (selectedColor: string) => void;
 };
 const ColorPicker = ({
   colIndex,
   activeColor,
-  onUpdateIsColorPickerActive,
-  onUpdateColorPallete,
+  onChangeIsColorPickerActive,
+  onChangeColorPallete,
 }: ColorPickerProps) => {
   const [selectedColor, setSelectedColor] = useState<RGBColor>(activeColor);
   const [previousColor, setPreviousColor] = useState<RGBColor>();
@@ -32,9 +32,9 @@ const ColorPicker = ({
   };
 
   const handleClose = () => {
-    onUpdateIsColorPickerActive(false);
+    onChangeIsColorPickerActive(false);
     if (selectedColor && !compareColors(selectedColor, previousColor)) {
-      onUpdateColorPallete(
+      onChangeColorPallete(
         `rgb(${selectedColor?.r}, ${selectedColor?.g}, ${selectedColor?.b})`
       );
       setPreviousColor(selectedColor);
