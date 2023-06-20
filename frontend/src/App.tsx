@@ -20,6 +20,7 @@ import LoadProject from "./components/LoadProject";
 import SaveProject from "./components/SaveProject";
 import ResetProject from "./components/ResetProject";
 import PreviewHandler from "./components/PreviewHandler";
+import ColorPallete from "./components/ColorPallete";
 
 function App() {
   const [grid, setGrid] = useState(JSON.parse(grid_sample));
@@ -106,7 +107,11 @@ function App() {
                 </div>
               </div>
               <div className="flex justify-center p-4">
-                <h1 className="text-white">Color Pallete</h1>
+                <ColorPallete
+                  toolOptions={toolOptions}
+                  onUpdateToolOptions={setToolOptions}
+                  onUpdateSelectedTool={setSelectedTool}
+                ></ColorPallete>
               </div>
               <div className="p-4">
                 <PublishToggleSwitch />
