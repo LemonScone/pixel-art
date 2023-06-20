@@ -1,7 +1,8 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 
 import Pixel from "./Pixel";
 
+import useOutsidePointerUp from "../hooks/useOutsidePointerUp";
 import { getGridBackgroundHoverColor, getTargetIndexes } from "../utils/grid";
 import { getHoverColor } from "../utils/color";
 
@@ -24,7 +25,7 @@ const PixelContainer = ({
   selectedTool,
   onUpdateGrid,
 }: PixelContainerProps) => {
-  const ref = useRef<HTMLDivElement | null>(null);
+  const ref = useOutsidePointerUp(() => setToolActive(false));
 
   const [toolActive, setToolActive] = useState<boolean>(false);
 
