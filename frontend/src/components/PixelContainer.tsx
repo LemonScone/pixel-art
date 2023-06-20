@@ -1,11 +1,12 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 
 import Pixel from "./Pixel";
 
+import useOutsidePointerUp from "../hooks/useOutsidePointerUp";
 import { getGridBackgroundHoverColor, getTargetIndexes } from "../utils/grid";
 import { getHoverColor } from "../utils/color";
 
-import type { ToolOption, Tool } from "../models";
+import type { ToolOption, Tool } from "../types/Tool";
 
 type PixelContainerProps = {
   columns: number;
@@ -24,25 +25,32 @@ const PixelContainer = ({
   selectedTool,
   onUpdateGrid,
 }: PixelContainerProps) => {
-  const ref = useRef<HTMLDivElement | null>(null);
+  const ref = useOutsidePointerUp(() => setToolActive(false));
 
   const [toolActive, setToolActive] = useState<boolean>(false);
 
   const handlePointerDown = (id: number) => {
-    const color = toolOptions.pen.color;
-    const size = toolOptions.pen.size;
-
     if (selectedTool === "pen") {
+      const color = toolOptions.pen.color;
+      const size = toolOptions.pen.size;
       const newGrid = grid.slice();
       const targetIndexes = getTargetIndexes(id, size, columns, rows);
 
-      targetIndexes.forEach(idx => {
+      targetIndexes.forEach((idx) => {
         newGrid[idx] = color;
       });
 
       onUpdateGrid(newGrid);
     } else if (selectedTool === "eraser") {
-      // TODO: 지우개
+      const size = toolOptions.eraser.size;
+      const newGrid = grid.slice();
+      const targetIndexes = getTargetIndexes(id, size, columns, rows);
+
+      targetIndexes.forEach((idx) => {
+        newGrid[idx] = "";
+      });
+
+      onUpdateGrid(newGrid);
     }
   };
 
@@ -55,7 +63,7 @@ const PixelContainer = ({
         rows
       );
       const pixels = ref.current.querySelectorAll<HTMLDivElement>(".pixel");
-      indexes.forEach(index => {
+      indexes.forEach((index) => {
         const painted = grid[index];
 
         let hoverColor = "";
@@ -79,7 +87,7 @@ const PixelContainer = ({
         rows
       );
       const pixels = ref.current.querySelectorAll<HTMLDivElement>(".pixel");
-      indexes.forEach(index => {
+      indexes.forEach((index) => {
         pixels[index].style.backgroundColor = grid[index];
       });
     }
@@ -91,7 +99,7 @@ const PixelContainer = ({
   return (
     <div
       ref={ref}
-      className="w-full h-full flex flex-col border-t border-l shadow-2xl cursor-cell"
+      className="flex h-full w-full cursor-cell flex-col border-l border-t shadow-2xl"
     >
       {rowPixels.map((row, rowIdx) => {
         return (
