@@ -16,8 +16,8 @@ export default {
   },
   safelist: [
     ...[...Array(121).keys()]
-      .filter(i => i > 4)
-      .flatMap(i => [`w-[calc(100%/${i})]`, `basis-[calc(100%/${i})]`]),
+      .filter((i) => i > 4)
+      .flatMap((i) => [`w-[calc(100%/${i})]`, `pb-[calc(100%/${i})]`]),
   ],
   plugins: [],
 };

@@ -61,7 +61,7 @@ function App() {
                   onChangeTool={({ tool }) => setSelectedTool(tool)}
                 />
                 <div className="flex flex-grow flex-col items-center p-10">
-                  <div className="h-72 w-72 touch-none select-none sm:h-80 sm:w-80 md:h-96 md:w-96 lg:h-[32rem] lg:w-[32rem]  xl:h-[50rem] xl:w-[50rem]">
+                  <div className="h-fit w-72 touch-none select-none sm:w-80 md:w-96 lg:w-[32rem] xl:w-[50rem]">
                     <PixelContainer
                       columns={columns}
                       rows={rows}
@@ -73,7 +73,7 @@ function App() {
                   </div>
                 </div>
               </div>
-              <div className="ml-4 mr-4 mt-4 flex flex-col">
+              <div className="ml-4 mr-4 mt-4 flex flex-col pb-4">
                 <PreviewHandler />
                 <div className="flex divide-x divide-gray-700 rounded bg-neutral-900">
                   <div className="p-4">
@@ -85,7 +85,7 @@ function App() {
                 </div>
               </div>
             </div>
-            <div className="order-1 flex flex-col gap-6 divide-y divide-gray-700 bg-neutral-900 md:order-2">
+            <div className="order-1 flex flex-col gap-6 divide-y divide-gray-700 bg-neutral-900 md:order-2 mb-4 rounded-b">
               <div className="flex flex-col gap-2 p-4">
                 <NewProject />
                 <div className="flex grow justify-center gap-2">
