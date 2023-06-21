@@ -14,17 +14,16 @@ import ToolConatiner from "./components/ToolConatiner";
 import PublishToggleSwitch from "./components/PublishToggleSwitch";
 import Title from "./components/Title";
 import PixelSize from "./components/PixelSize";
-import Dimensions from "./components/Dimensions";
 import NewProject from "./components/NewProject";
 import LoadProject from "./components/LoadProject";
 import SaveProject from "./components/SaveProject";
 import ResetProject from "./components/ResetProject";
 import PreviewHandler from "./components/PreviewHandler";
+import NumberPicker from "./components/NumberPicker";
 import gridReducer from "./reducers/gridReducer";
 import { GridActionKind } from "./constants/actionTypes";
 
 function App() {
-  const [grid, setGrid] = useState(JSON.parse(grid_sample));
   const [toolOptions, setToolOptions] = useState(INITIAL_TOOL_OPTIONS);
   const [selectedTool, setSelectedTool] = useState<Tool>("pen");
 
@@ -105,9 +104,38 @@ function App() {
                 </div>
                 <ResetProject />
               </div>
-              <div className="flex flex-col gap-2 p-4">
+              <div className="flex flex-col gap-4 p-4">
                 <div className="flex items-center">
-                  <Dimensions />
+                  <NumberPicker
+                    name={"Width"}
+                    value={state.columns}
+                    onIncrease={() =>
+                      dispatch({
+                        type: GridActionKind.INCREASE_COLUMN,
+                      })
+                    }
+                    onDecrease={() => {
+                      dispatch({
+                        type: GridActionKind.DECREASE_COLUMN,
+                      });
+                    }}
+                  />
+                </div>
+                <div className="flex items-center">
+                  <NumberPicker
+                    name={"Height"}
+                    value={state.rows}
+                    onIncrease={() => {
+                      dispatch({
+                        type: GridActionKind.INCREASE_ROW,
+                      });
+                    }}
+                    onDecrease={() => {
+                      dispatch({
+                        type: GridActionKind.DECREASE_ROW,
+                      });
+                    }}
+                  />
                 </div>
                 <div className="flex items-center">
                   <PixelSize />
