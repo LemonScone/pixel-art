@@ -11,7 +11,7 @@ const PixelSize = () => {
           id="pixelSize"
           type="text"
           defaultValue="1"
-          className="w-full rounded border border-gray-800 bg-gray-200 p-1 text-center text-sm text-gray-900 focus:border-gray-600 focus:outline-none"
+          className="w-full rounded  bg-input-color p-1 text-center text-sm text-gray-100 focus:ring-2 focus:ring-white"
         ></input>
       </div>
     </>

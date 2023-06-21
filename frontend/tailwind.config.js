@@ -11,6 +11,7 @@ export default {
         "primary-color-400": "#c7f5a9",
         "primary-color-500": "#bff49d",
         "primary-color-600": "#aff285",
+        "input-color": "#2c2c2c",
       },
     },
   },
