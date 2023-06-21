@@ -1,4 +1,4 @@
-import { render } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 
 import Pixel from "./Pixel";
 
@@ -9,25 +9,22 @@ describe("PixelContainer", () => {
     return render(
       <Pixel
         id={id}
+        rowIdx={0}
         columns={columns}
         color={color}
         toolActive={false}
-        onPointerDown={() => {
-          /*empty fn*/
-        }}
-        onToolActive={() => {
-          /*empty fn*/
-        }}
+        onPointerDown={() => {}}
+        onPointerEnter={() => {}}
+        onPointerLeave={() => {}}
+        onToolActive={() => {}}
       />
     );
   };
 
   it("should render by color prop", () => {
-    const { container } = renderPixel();
+    renderPixel();
 
-    expect(container.firstChild).toHaveAttribute(
-      "style",
-      `background-color: ${COLOR_CODE};`
-    );
+    const pixel = screen.getByLabelText(/pixel/);
+    expect(pixel).toHaveAttribute("style", `background-color: ${COLOR_CODE};`);
   });
 });

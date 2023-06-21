@@ -1,6 +1,11 @@
 import React from "react";
 
-const PixelSize = () => {
+type PixelSizeProps = {
+  value: number;
+  onChangePixelSize: (size: number) => void;
+};
+
+const PixelSize = ({ value, onChangePixelSize }: PixelSizeProps) => {
   return (
     <>
       <label htmlFor="pixelSize" className="w-1/3 text-lg text-gray-100">
@@ -9,9 +14,12 @@ const PixelSize = () => {
       <div className="flex w-2/3">
         <input
           id="pixelSize"
-          type="text"
-          defaultValue="1"
-          className="w-full rounded border border-gray-800 bg-gray-200 p-1 text-center text-sm text-gray-900 focus:border-gray-600 focus:outline-none"
+          type="number"
+          value={value}
+          onChange={(e) => {
+            onChangePixelSize(parseInt(e.target.value) || 1);
+          }}
+          className="w-full rounded  bg-input-color p-1 text-center text-sm text-gray-100 focus:ring-2 focus:ring-white"
         ></input>
       </div>
     </>
