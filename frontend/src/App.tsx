@@ -21,14 +21,14 @@ import ResetProject from "./components/ResetProject";
 import PreviewHandler from "./components/PreviewHandler";
 import NumberPicker from "./components/NumberPicker";
 import gridReducer from "./reducers/gridReducer";
-import { GridActionKind } from "./constants/actionTypes";
+import { GridSizeActionKind, UPDATE_GRID } from "./constants/actionTypes";
 import ColorPallete from "./components/ColorPallete";
 
 function App() {
   const [toolOptions, setToolOptions] = useState(INITIAL_TOOL_OPTIONS);
   const [selectedTool, setSelectedTool] = useState<Tool>("pen");
   const [pixelSize, setPixelSize] = useState(1);
-  const [publish, setPublish ] = useState(false)
+  const [publish, setPublish] = useState(false);
 
   const [state, dispatch] = useReducer(gridReducer, {
     grid: JSON.parse(grid_sample),
@@ -76,7 +76,7 @@ function App() {
                       grid={state.grid}
                       onUpdateGrid={(newGrid) => {
                         dispatch({
-                          type: GridActionKind.UPDATE_GRID,
+                          type: UPDATE_GRID,
                           payload: newGrid,
                         });
                       }}
@@ -114,12 +114,12 @@ function App() {
                     value={state.columns}
                     onIncrease={() =>
                       dispatch({
-                        type: GridActionKind.INCREASE_COLUMN,
+                        type: GridSizeActionKind.INCREASE_COLUMN,
                       })
                     }
                     onDecrease={() => {
                       dispatch({
-                        type: GridActionKind.DECREASE_COLUMN,
+                        type: GridSizeActionKind.DECREASE_COLUMN,
                       });
                     }}
                   />
@@ -130,12 +130,12 @@ function App() {
                     value={state.rows}
                     onIncrease={() => {
                       dispatch({
-                        type: GridActionKind.INCREASE_ROW,
+                        type: GridSizeActionKind.INCREASE_ROW,
                       });
                     }}
                     onDecrease={() => {
                       dispatch({
-                        type: GridActionKind.DECREASE_ROW,
+                        type: GridSizeActionKind.DECREASE_ROW,
                       });
                     }}
                   />
@@ -158,7 +158,12 @@ function App() {
                 ></ColorPallete>
               </div>
               <div className="p-4">
-                <PublishToggleSwitch checked={publish} onToggleSwitch={() => setPublish((prevPublish) => !prevPublish) } />
+                <PublishToggleSwitch
+                  checked={publish}
+                  onToggleSwitch={() =>
+                    setPublish((prevPublish) => !prevPublish)
+                  }
+                />
               </div>
             </div>
           </div>

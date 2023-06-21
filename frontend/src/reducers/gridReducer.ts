@@ -1,4 +1,4 @@
-import { GridActionKind } from "../constants/actionTypes";
+import { GridSizeActionKind, UPDATE_GRID } from "../constants/actionTypes";
 import { resizeGrid } from "../utils/grid";
 
 interface GridState {
@@ -7,20 +7,25 @@ interface GridState {
   rows: number;
 }
 
-interface GridAction {
-  type: GridActionKind;
-  payload?: any;
-}
+type GridAction = {
+  type: typeof UPDATE_GRID;
+  payload: string[];
+};
 
-const gridReducer = (state: GridState, action: GridAction) => {
-  const { type, payload } = action;
-  switch (type) {
-    case GridActionKind.UPDATE_GRID:
+type GridSizeAction = {
+  type: GridSizeActionKind;
+};
+
+type Actions = GridAction | GridSizeAction;
+
+const gridReducer = (state: GridState, action: Actions) => {
+  switch (action.type) {
+    case "UPDATE_GRID":
       return {
         ...state,
-        grid: payload,
+        grid: action.payload,
       };
-    case GridActionKind.INCREASE_COLUMN:
+    case GridSizeActionKind.INCREASE_COLUMN:
       return {
         ...state,
         grid: resizeGrid(
@@ -32,7 +37,7 @@ const gridReducer = (state: GridState, action: GridAction) => {
         ),
         columns: state.columns + 1,
       };
-    case GridActionKind.DECREASE_COLUMN:
+    case GridSizeActionKind.DECREASE_COLUMN:
       return {
         ...state,
         grid: resizeGrid(
@@ -44,7 +49,7 @@ const gridReducer = (state: GridState, action: GridAction) => {
         ),
         columns: state.columns - 1,
       };
-    case GridActionKind.INCREASE_ROW:
+    case GridSizeActionKind.INCREASE_ROW:
       return {
         ...state,
         grid: resizeGrid(
@@ -56,7 +61,7 @@ const gridReducer = (state: GridState, action: GridAction) => {
         ),
         rows: state.rows + 1,
       };
-    case GridActionKind.DECREASE_ROW:
+    case GridSizeActionKind.DECREASE_ROW:
       return {
         ...state,
         grid: resizeGrid(

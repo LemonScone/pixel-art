@@ -1,9 +1,10 @@
-enum GridActionKind {
-  UPDATE_GRID = "UPDATE_GRID",
+const UPDATE_GRID = "UPDATE_GRID";
+
+enum GridSizeActionKind {
   INCREASE_COLUMN = "INCREASE_COLUMN",
   DECREASE_COLUMN = "DECREASE_COLUMN",
   INCREASE_ROW = "INCREASE_ROW",
   DECREASE_ROW = "DECREASE_ROW",
 }
 
-export { GridActionKind };
+export { GridSizeActionKind, UPDATE_GRID };
