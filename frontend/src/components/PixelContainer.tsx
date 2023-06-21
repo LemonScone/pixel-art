@@ -3,7 +3,11 @@ import React, { useState } from "react";
 import Pixel from "./Pixel";
 
 import useOutsidePointerUp from "../hooks/useOutsidePointerUp";
-import { getGridBackgroundHoverColor, getTargetIndexes } from "../utils/grid";
+import {
+  getGridBackgroundHoverColor,
+  getBucketFillGridAndIndexes,
+  getTargetIndexes,
+} from "../utils/grid";
 import { getHoverColor } from "../utils/color";
 
 import type { ToolOption, Tool } from "../types/Tool";
@@ -52,39 +56,17 @@ const PixelContainer = ({
 
       onUpdateGrid(newGrid);
     } else if (selectedTool === "bucket") {
-      const cellColor = grid[id];
-      const newGrid = grid.slice();
-      const visited = new Array(columns * rows).fill(false);
-      const queue: number[] = [id];
+      const originColor = grid[id];
+      const newColor = toolOptions.pen.color;
 
-      while (queue.length > 0) {
-        const pixelId: number = queue.shift();
-        if (visited[pixelId]) continue;
-
-        newGrid[pixelId] = toolOptions.pen.color;
-        visited[pixelId] = true;
-
-        const isNotRightmostPixel = (pixelId + 1) % columns !== 0;
-        const isNotLeftmostPixel = pixelId % columns !== 0;
-        const isNotTopRowPixel = pixelId >= columns;
-        const isNotBottomRowPixel = pixelId < rows * columns - columns;
-
-        if (isNotRightmostPixel && newGrid[pixelId + 1] === cellColor) {
-          queue.push(pixelId + 1);
-        }
-
-        if (isNotLeftmostPixel && newGrid[pixelId - 1] === cellColor) {
-          queue.push(pixelId - 1);
-        }
-
-        if (isNotTopRowPixel && newGrid[pixelId - columns] === cellColor) {
-          queue.push(pixelId - columns);
-        }
-
-        if (isNotBottomRowPixel && newGrid[pixelId + columns] === cellColor) {
-          queue.push(pixelId + columns);
-        }
-      }
+      const { grid: newGrid } = getBucketFillGridAndIndexes(
+        grid.slice(),
+        id,
+        originColor,
+        newColor,
+        columns,
+        rows
+      );
 
       onUpdateGrid(newGrid);
     }

@@ -25,7 +25,7 @@ const ColorSwatch = ({
         onChangeToolOptionsAndSelectedTool(colorMatches[0]);
       }, 100);
     }
-    target.style.boxShadow = `${color} 0px 0px 2px 1px, ${color} 0px 0px 0px 4px inset`;
+    target.style.boxShadow = `${color} 0px 0px 0px 4px inset, ${color} 0px 0px 2px 1px`;
   };
 
   return (

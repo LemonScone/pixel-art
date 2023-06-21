@@ -1,7 +1,6 @@
 import React from "react";
 import UndoRedo from "./UndoRedo";
 import Pencil from "./Pencil";
-import EyeDropper from "./EyeDropper";
 import Eraser from "./Eraser";
 import Move from "./Move";
 import Bucket from "./Bucket";
@@ -50,7 +49,6 @@ const ToolConatiner = ({
             onChangeToolSize({ tool: "eraser", size })
           }
         />
-        <EyeDropper />
         <Move />
       </div>
     </div>

@@ -3,7 +3,7 @@ import { render } from "../utils/test-utils";
 import { vi } from "vitest";
 import user from "@testing-library/user-event";
 
-import ToolConatiner from "./ToolConatiner";
+import ToolConatiner from "./ToolContainer";
 import { INITIAL_TOOL_OPTIONS } from "../constants";
 
 const renderComponent = () => {
@@ -42,9 +42,6 @@ describe("ToolContainer", () => {
       const eraserButton = screen.getByRole("button", {
         name: /eraser/i,
       });
-      const eyeDropperButton = screen.getByRole("button", {
-        name: /eye dropper/i,
-      });
       const MoveButton = screen.getByRole("button", {
         name: /move/i,
       });
@@ -54,7 +51,6 @@ describe("ToolContainer", () => {
       expect(bucketButton).toBeInTheDocument();
       expect(pencilButton).toBeInTheDocument();
       expect(eraserButton).toBeInTheDocument();
-      expect(eyeDropperButton).toBeInTheDocument();
       expect(MoveButton).toBeInTheDocument();
     });
   });

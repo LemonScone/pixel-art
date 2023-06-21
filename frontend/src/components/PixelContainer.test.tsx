@@ -230,7 +230,7 @@ describe("PixelContainer", () => {
         selectedTool: "bucket",
       });
 
-      const pixels = screen.getAllByTestId("pixel");
+      const pixels = screen.getAllByLabelText("pixel");
 
       const pixel = pixels[0];
 
