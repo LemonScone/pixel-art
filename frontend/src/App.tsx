@@ -28,6 +28,7 @@ function App() {
   const [toolOptions, setToolOptions] = useState(INITIAL_TOOL_OPTIONS);
   const [selectedTool, setSelectedTool] = useState<Tool>("pen");
   const [pixelSize, setPixelSize] = useState(1);
+  const [publish, setPublish ] = useState(false)
 
   const [state, dispatch] = useReducer(gridReducer, {
     grid: JSON.parse(grid_sample),
@@ -157,7 +158,7 @@ function App() {
                 ></ColorPallete>
               </div>
               <div className="p-4">
-                <PublishToggleSwitch />
+                <PublishToggleSwitch checked={publish} onToggleSwitch={() => setPublish((prevPublish) => !prevPublish) } />
               </div>
             </div>
           </div>
