@@ -3,7 +3,11 @@ import React, { useState } from "react";
 import Pixel from "./Pixel";
 
 import useOutsidePointerUp from "../hooks/useOutsidePointerUp";
-import { getGridBackgroundHoverColor, getTargetIndexes } from "../utils/grid";
+import {
+  getGridBackgroundHoverColor,
+  getBucketFillGridAndIndexes,
+  getTargetIndexes,
+} from "../utils/grid";
 import { getHoverColor } from "../utils/color";
 
 import type { ToolOption, Tool } from "../types/Tool";
@@ -51,45 +55,63 @@ const PixelContainer = ({
       });
 
       onUpdateGrid(newGrid);
+    } else if (selectedTool === "bucket") {
+      const originColor = grid[id];
+      const newColor = toolOptions.pen.color;
+
+      const { grid: newGrid } = getBucketFillGridAndIndexes(
+        grid.slice(),
+        id,
+        originColor,
+        newColor,
+        columns,
+        rows
+      );
+
+      onUpdateGrid(newGrid);
     }
   };
 
   const handlePointerEnter = (id: number) => {
     if (ref.current) {
-      const indexes = getTargetIndexes(
-        id,
-        toolOptions[selectedTool].size,
-        columns,
-        rows
-      );
-      const pixels = ref.current.querySelectorAll<HTMLDivElement>(".pixel");
-      indexes.forEach((index) => {
-        const painted = grid[index];
+      if (selectedTool === "pen" || selectedTool === "eraser") {
+        const indexes = getTargetIndexes(
+          id,
+          toolOptions[selectedTool].size,
+          columns,
+          rows
+        );
+        const pixels = ref.current.querySelectorAll<HTMLDivElement>(".pixel");
+        indexes.forEach((index) => {
+          const painted = grid[index];
 
-        let hoverColor = "";
-        if (painted) {
-          hoverColor = getHoverColor(painted);
-        } else {
-          const gridBgIdx = pixels[index].dataset.gridBgIdx;
-          hoverColor = getGridBackgroundHoverColor(gridBgIdx as string);
-        }
-        pixels[index].style.backgroundColor = hoverColor;
-      });
+          let hoverColor = "";
+          if (painted) {
+            hoverColor = getHoverColor(painted);
+          } else {
+            const gridBgIdx = pixels[index].dataset.gridBgIdx;
+            hoverColor = getGridBackgroundHoverColor(gridBgIdx as string);
+          }
+          pixels[index].style.backgroundColor = hoverColor;
+        });
+      }
     }
   };
 
   const handlePointerLeave = (id: number) => {
     if (ref.current) {
-      const indexes = getTargetIndexes(
-        id,
-        toolOptions[selectedTool].size,
-        columns,
-        rows
-      );
-      const pixels = ref.current.querySelectorAll<HTMLDivElement>(".pixel");
-      indexes.forEach((index) => {
-        pixels[index].style.backgroundColor = grid[index];
-      });
+      if (selectedTool === "pen" || selectedTool === "eraser") {
+        const indexes = getTargetIndexes(
+          id,
+          toolOptions[selectedTool].size,
+          columns,
+          rows
+        );
+        const pixels = ref.current.querySelectorAll<HTMLDivElement>(".pixel");
+        indexes.forEach((index) => {
+          pixels[index].style.backgroundColor = grid[index];
+        });
+      }
     }
   };
 

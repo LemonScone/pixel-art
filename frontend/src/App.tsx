@@ -10,7 +10,7 @@ import { INITIAL_TOOL_OPTIONS } from "./constants";
 import type { Tool, ToolOption } from "./types/Tool";
 
 import Navbar from "./components/Navbar";
-import ToolConatiner from "./components/ToolConatiner";
+import ToolConatiner from "./components/ToolContainer";
 import PublishToggleSwitch from "./components/PublishToggleSwitch";
 import Title from "./components/Title";
 import PixelSize from "./components/PixelSize";
@@ -153,6 +153,7 @@ function App() {
               <div className="flex justify-center p-4">
                 <ColorPallete
                   toolOptions={toolOptions}
+                  selectedTool={selectedTool}
                   onChangeToolOptions={setToolOptions}
                   onChangeSelectedTool={setSelectedTool}
                 ></ColorPallete>

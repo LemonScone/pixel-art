@@ -6,6 +6,7 @@ const INITIAL_TOOL_OPTIONS = {
   eraser: {
     size: 1,
   },
+  bucket: {},
 };
 
 const INITIAL_COLOR_PALLETE = [

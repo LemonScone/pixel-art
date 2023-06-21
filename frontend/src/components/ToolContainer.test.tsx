@@ -3,7 +3,7 @@ import { render } from "../utils/test-utils";
 import { vi } from "vitest";
 import user from "@testing-library/user-event";
 
-import ToolConatiner from "./ToolConatiner";
+import ToolConatiner from "./ToolContainer";
 import { INITIAL_TOOL_OPTIONS } from "../constants";
 
 const renderComponent = () => {
@@ -42,9 +42,6 @@ describe("ToolContainer", () => {
       const eraserButton = screen.getByRole("button", {
         name: /eraser/i,
       });
-      const eyeDropperButton = screen.getByRole("button", {
-        name: /eye dropper/i,
-      });
       const MoveButton = screen.getByRole("button", {
         name: /move/i,
       });
@@ -54,7 +51,6 @@ describe("ToolContainer", () => {
       expect(bucketButton).toBeInTheDocument();
       expect(pencilButton).toBeInTheDocument();
       expect(eraserButton).toBeInTheDocument();
-      expect(eyeDropperButton).toBeInTheDocument();
       expect(MoveButton).toBeInTheDocument();
     });
   });
@@ -80,12 +76,21 @@ describe("ToolContainer", () => {
 
       expect(onChageTool).toHaveBeenCalled();
       expect(onChageTool).toHaveBeenCalledWith({ tool: "eraser" });
+
+      const bucketButton = screen.getByRole("button", {
+        name: /bucket/i,
+      });
+
+      await user.click(bucketButton);
+
+      expect(onChageTool).toHaveBeenCalled();
+      expect(onChageTool).toHaveBeenCalledWith({ tool: "bucket" });
     });
   });
 
   describe("when click the eraser button after pen toolbar visible", () => {
     it("shows eraser toolbar and pen toolbar is not visible", async () => {
-      renderComponent()
+      renderComponent();
 
       const pencilButton = screen.getByRole("button", {
         name: /pencil/i,
@@ -107,8 +112,8 @@ describe("ToolContainer", () => {
         name: /select eraser size/i,
       });
 
-      expect(eraserSizeSelectToolbar).toBeVisible()
-      expect(penSizeSelectToolbar).not.toBeVisible()
-    })
-  })
+      expect(eraserSizeSelectToolbar).toBeVisible();
+      expect(penSizeSelectToolbar).not.toBeVisible();
+    });
+  });
 });
