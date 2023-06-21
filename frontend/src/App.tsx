@@ -109,6 +109,7 @@ function App() {
               <div className="flex justify-center p-4">
                 <ColorPallete
                   toolOptions={toolOptions}
+                  selectedTool={selectedTool}
                   onChangeToolOptions={setToolOptions}
                   onChangeSelectedTool={setSelectedTool}
                 ></ColorPallete>

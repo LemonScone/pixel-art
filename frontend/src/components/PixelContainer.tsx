@@ -51,45 +51,85 @@ const PixelContainer = ({
       });
 
       onUpdateGrid(newGrid);
+    } else if (selectedTool === "bucket") {
+      const cellColor = grid[id];
+      const newGrid = grid.slice();
+      const visited = new Array(columns * rows).fill(false);
+      const queue: number[] = [id];
+
+      while (queue.length > 0) {
+        const pixelId: number = queue.shift();
+        if (visited[pixelId]) continue;
+
+        newGrid[pixelId] = toolOptions.pen.color;
+        visited[pixelId] = true;
+
+        const isNotRightmostPixel = (pixelId + 1) % columns !== 0;
+        const isNotLeftmostPixel = pixelId % columns !== 0;
+        const isNotTopRowPixel = pixelId >= columns;
+        const isNotBottomRowPixel = pixelId < rows * columns - columns;
+
+        if (isNotRightmostPixel && newGrid[pixelId + 1] === cellColor) {
+          queue.push(pixelId + 1);
+        }
+
+        if (isNotLeftmostPixel && newGrid[pixelId - 1] === cellColor) {
+          queue.push(pixelId - 1);
+        }
+
+        if (isNotTopRowPixel && newGrid[pixelId - columns] === cellColor) {
+          queue.push(pixelId - columns);
+        }
+
+        if (isNotBottomRowPixel && newGrid[pixelId + columns] === cellColor) {
+          queue.push(pixelId + columns);
+        }
+      }
+
+      onUpdateGrid(newGrid);
     }
   };
 
   const handlePointerEnter = (id: number) => {
     if (ref.current) {
-      const indexes = getTargetIndexes(
-        id,
-        toolOptions[selectedTool].size,
-        columns,
-        rows
-      );
-      const pixels = ref.current.querySelectorAll<HTMLDivElement>(".pixel");
-      indexes.forEach((index) => {
-        const painted = grid[index];
+      if (selectedTool === "pen" || selectedTool === "eraser") {
+        const indexes = getTargetIndexes(
+          id,
+          toolOptions[selectedTool].size,
+          columns,
+          rows
+        );
+        const pixels = ref.current.querySelectorAll<HTMLDivElement>(".pixel");
+        indexes.forEach((index) => {
+          const painted = grid[index];
 
-        let hoverColor = "";
-        if (painted) {
-          hoverColor = getHoverColor(painted);
-        } else {
-          const gridBgIdx = pixels[index].dataset.gridBgIdx;
-          hoverColor = getGridBackgroundHoverColor(gridBgIdx as string);
-        }
-        pixels[index].style.backgroundColor = hoverColor;
-      });
+          let hoverColor = "";
+          if (painted) {
+            hoverColor = getHoverColor(painted);
+          } else {
+            const gridBgIdx = pixels[index].dataset.gridBgIdx;
+            hoverColor = getGridBackgroundHoverColor(gridBgIdx as string);
+          }
+          pixels[index].style.backgroundColor = hoverColor;
+        });
+      }
     }
   };
 
   const handlePointerLeave = (id: number) => {
     if (ref.current) {
-      const indexes = getTargetIndexes(
-        id,
-        toolOptions[selectedTool].size,
-        columns,
-        rows
-      );
-      const pixels = ref.current.querySelectorAll<HTMLDivElement>(".pixel");
-      indexes.forEach((index) => {
-        pixels[index].style.backgroundColor = grid[index];
-      });
+      if (selectedTool === "pen" || selectedTool === "eraser") {
+        const indexes = getTargetIndexes(
+          id,
+          toolOptions[selectedTool].size,
+          columns,
+          rows
+        );
+        const pixels = ref.current.querySelectorAll<HTMLDivElement>(".pixel");
+        indexes.forEach((index) => {
+          pixels[index].style.backgroundColor = grid[index];
+        });
+      }
     }
   };
 

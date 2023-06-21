@@ -12,6 +12,7 @@ type ColorAddButtonProps = {
 
 type ColorPalleteProps = {
   toolOptions: ToolOption;
+  selectedTool: Tool;
   onChangeToolOptions: (toolOptions: ToolOption) => void;
   onChangeSelectedTool: (tool: Tool) => void;
 };
@@ -37,6 +38,7 @@ const ColorAddButton = ({
 
 const ColorPallete = ({
   toolOptions,
+  selectedTool,
   onChangeToolOptions,
   onChangeSelectedTool,
 }: ColorPalleteProps) => {
@@ -58,7 +60,9 @@ const ColorPallete = ({
       color,
     };
     onChangeToolOptions({ ...toolOptions, pen: newPen });
-    onChangeSelectedTool("pen");
+    if (selectedTool !== "pen" && selectedTool !== "bucket") {
+      onChangeSelectedTool("pen");
+    }
   };
 
   const handleColorPickerClose = (selectedColor: string) => {

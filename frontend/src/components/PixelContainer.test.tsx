@@ -173,4 +173,76 @@ describe("PixelContainer", () => {
       });
     });
   });
+
+  describe("Paint with a bucket", () => {
+    const INIT_COLOR = "rgb(116, 185, 255)";
+    let GRID = [
+      INIT_COLOR,
+      INIT_COLOR,
+      INIT_COLOR,
+      INIT_COLOR,
+      INIT_COLOR,
+      INIT_COLOR,
+      "",
+      "",
+      "",
+      INIT_COLOR,
+      INIT_COLOR,
+      "",
+      "",
+      "",
+      INIT_COLOR,
+      INIT_COLOR,
+      "",
+      "",
+      "",
+      INIT_COLOR,
+      INIT_COLOR,
+      INIT_COLOR,
+      INIT_COLOR,
+      INIT_COLOR,
+      INIT_COLOR,
+    ];
+
+    const onUpdateGrid = (newGrid: string[]) => {
+      GRID = newGrid;
+    };
+
+    const getToolOptionsWithPenSize = (size: number) => {
+      return {
+        ...INITIAL_TOOL_OPTIONS,
+        pen: {
+          color: "rgb(54, 255, 121)",
+          size,
+        },
+      };
+    };
+
+    const toolOptions = getToolOptionsWithPenSize(1);
+
+    it("should update the color INIT_COLOR(rgb(116, 185, 255)) should be changed to pen.color(rgb(54, 255, 121))", () => {
+      renderPixels({
+        columns: 5,
+        rows: 5,
+        grid: GRID,
+        toolOptions,
+        onUpdateGrid,
+        selectedTool: "bucket",
+      });
+
+      const pixels = screen.getAllByTestId("pixel");
+
+      const pixel = pixels[0];
+
+      const paintedCount = GRID.filter((color) => color === INIT_COLOR).length;
+
+      fireEvent.pointerDown(pixel);
+
+      const updatedCount = GRID.filter(
+        (color) => color === toolOptions.pen.color
+      ).length;
+
+      expect(paintedCount).toEqual(updatedCount);
+    });
+  });
 });

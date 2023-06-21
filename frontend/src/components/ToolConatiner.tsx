@@ -30,7 +30,10 @@ const ToolConatiner = ({
     <div className="ml-2 flex flex-col items-center md:ml-4 md:items-start">
       <div className="mt-4 flex h-fit w-fit items-center justify-evenly gap-2 rounded bg-neutral-900 p-2 md:mt-0 md:w-10 md:flex-col md:p-6">
         <UndoRedo />
-        <Bucket />
+        <Bucket
+          selected={selectedTool === "bucket"}
+          onChangeTool={() => onChangeTool({ tool: "bucket" })}
+        />
         <Pencil
           selected={selectedTool === "pen"}
           size={toolOptions.pen.size}
