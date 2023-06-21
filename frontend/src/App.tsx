@@ -27,6 +27,7 @@ import ColorPallete from "./components/ColorPallete";
 function App() {
   const [toolOptions, setToolOptions] = useState(INITIAL_TOOL_OPTIONS);
   const [selectedTool, setSelectedTool] = useState<Tool>("pen");
+  const [pixelSize, setPixelSize] = useState(1);
 
   const [state, dispatch] = useReducer(gridReducer, {
     grid: JSON.parse(grid_sample),
@@ -139,7 +140,10 @@ function App() {
                   />
                 </div>
                 <div className="flex items-center">
-                  <PixelSize />
+                  <PixelSize
+                    value={pixelSize}
+                    onChangePixelSize={setPixelSize}
+                  />
                 </div>
                 <div className="flex items-center">
                   <Title />
