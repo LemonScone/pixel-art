@@ -99,7 +99,7 @@ const PixelContainer = ({
   return (
     <div
       ref={ref}
-      className="flex flex-wrap	 items-start h-full w-full cursor-cell border-l border-t shadow-2xl"
+      className="flex h-full w-full cursor-cell flex-wrap items-start shadow-2xl"
     >
       {rowPixels.map((row, rowIdx) => {
         return colPixels.map((col, colIdx) => {
