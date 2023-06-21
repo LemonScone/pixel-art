@@ -22,6 +22,7 @@ import PreviewHandler from "./components/PreviewHandler";
 import NumberPicker from "./components/NumberPicker";
 import gridReducer from "./reducers/gridReducer";
 import { GridActionKind } from "./constants/actionTypes";
+import ColorPallete from "./components/ColorPallete";
 
 function App() {
   const [toolOptions, setToolOptions] = useState(INITIAL_TOOL_OPTIONS);
@@ -145,7 +146,11 @@ function App() {
                 </div>
               </div>
               <div className="flex justify-center p-4">
-                <h1 className="text-white">Color Pallete</h1>
+                <ColorPallete
+                  toolOptions={toolOptions}
+                  onChangeToolOptions={setToolOptions}
+                  onChangeSelectedTool={setSelectedTool}
+                ></ColorPallete>
               </div>
               <div className="p-4">
                 <PublishToggleSwitch />
