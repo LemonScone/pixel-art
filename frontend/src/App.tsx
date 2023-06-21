@@ -1,6 +1,6 @@
 import "./App.css";
 
-import { useState } from "react";
+import { useReducer, useState } from "react";
 
 import PixelContainer from "./components/PixelContainer";
 
@@ -20,13 +20,19 @@ import LoadProject from "./components/LoadProject";
 import SaveProject from "./components/SaveProject";
 import ResetProject from "./components/ResetProject";
 import PreviewHandler from "./components/PreviewHandler";
+import gridReducer from "./reducers/gridReducer";
+import { GridActionKind } from "./constants/actionTypes";
 
 function App() {
   const [grid, setGrid] = useState(JSON.parse(grid_sample));
   const [toolOptions, setToolOptions] = useState(INITIAL_TOOL_OPTIONS);
   const [selectedTool, setSelectedTool] = useState<Tool>("pen");
-  const [columns, setColumns] = useState(20);
-  const [rows, setRows] = useState(20);
+
+  const [state, dispatch] = useReducer(gridReducer, {
+    grid: JSON.parse(grid_sample),
+    columns: 20,
+    rows: 20,
+  });
 
   const handleChangeToolSize = ({
     tool,
@@ -63,10 +69,15 @@ function App() {
                 <div className="flex flex-grow flex-col items-center p-10">
                   <div className="h-fit w-72 touch-none select-none sm:w-80 md:w-96 lg:w-[32rem] xl:w-[50rem]">
                     <PixelContainer
-                      columns={columns}
-                      rows={rows}
-                      grid={grid}
-                      onUpdateGrid={setGrid}
+                      columns={state.columns}
+                      rows={state.rows}
+                      grid={state.grid}
+                      onUpdateGrid={(newGrid) => {
+                        dispatch({
+                          type: GridActionKind.UPDATE_GRID,
+                          payload: newGrid,
+                        });
+                      }}
                       toolOptions={toolOptions}
                       selectedTool={selectedTool}
                     />
@@ -85,7 +96,7 @@ function App() {
                 </div>
               </div>
             </div>
-            <div className="order-1 flex flex-col gap-6 divide-y divide-gray-700 bg-neutral-900 md:order-2 mb-4 rounded-b">
+            <div className="order-1 mb-4 flex flex-col gap-6 divide-y divide-gray-700 rounded-b bg-neutral-900 md:order-2">
               <div className="flex flex-col gap-2 p-4">
                 <NewProject />
                 <div className="flex grow justify-center gap-2">
