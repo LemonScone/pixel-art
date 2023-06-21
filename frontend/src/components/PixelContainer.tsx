@@ -99,30 +99,26 @@ const PixelContainer = ({
   return (
     <div
       ref={ref}
-      className="flex h-full w-full cursor-cell flex-col border-l border-t shadow-2xl"
+      className="flex h-full w-full cursor-cell flex-wrap items-start shadow-2xl"
     >
       {rowPixels.map((row, rowIdx) => {
-        return (
-          <div className={`flex basis-[calc(100%/${rows})]`} key={rowIdx}>
-            {colPixels.map((col, colIdx) => {
-              const id = rowIdx * colPixels.length + colIdx;
-              return (
-                <Pixel
-                  key={id}
-                  id={id}
-                  rowIdx={rowIdx}
-                  columns={columns}
-                  color={grid[id]}
-                  toolActive={toolActive}
-                  onPointerDown={handlePointerDown}
-                  onPointerEnter={handlePointerEnter}
-                  onPointerLeave={handlePointerLeave}
-                  onToolActive={setToolActive}
-                />
-              );
-            })}
-          </div>
-        );
+        return colPixels.map((col, colIdx) => {
+          const id = rowIdx * colPixels.length + colIdx;
+          return (
+            <Pixel
+              key={id}
+              id={id}
+              rowIdx={rowIdx}
+              columns={columns}
+              color={grid[id]}
+              toolActive={toolActive}
+              onPointerDown={handlePointerDown}
+              onPointerEnter={handlePointerEnter}
+              onPointerLeave={handlePointerLeave}
+              onToolActive={setToolActive}
+            />
+          );
+        });
       })}
     </div>
   );

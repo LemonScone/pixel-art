@@ -44,7 +44,7 @@ describe("PixelContainer", () => {
     const rows = 16;
     renderPixels({ columns, rows });
 
-    const pixels = screen.getAllByTestId("pixel");
+    const pixels = screen.getAllByLabelText("pixel");
     expect(pixels.length).toBe(columns * rows);
   });
 
@@ -75,7 +75,7 @@ describe("PixelContainer", () => {
           onUpdateGrid,
         });
 
-        const pixels = screen.getAllByTestId("pixel");
+        const pixels = screen.getAllByLabelText("pixel");
 
         const pixel = pixels[0];
 
@@ -94,7 +94,7 @@ describe("PixelContainer", () => {
             onUpdateGrid,
           });
 
-          const pixels = screen.getAllByTestId("pixel");
+          const pixels = screen.getAllByLabelText("pixel");
 
           const pixel = pixels[0];
 
@@ -116,7 +116,7 @@ describe("PixelContainer", () => {
             onUpdateGrid,
           });
 
-          const pixels = screen.getAllByTestId("pixel");
+          const pixels = screen.getAllByLabelText("pixel");
 
           const pixel = pixels[0];
 
@@ -138,7 +138,7 @@ describe("PixelContainer", () => {
             onUpdateGrid,
           });
 
-          const pixels = screen.getAllByTestId("pixel");
+          const pixels = screen.getAllByLabelText("pixel");
 
           const pixel = pixels[0];
 
@@ -160,7 +160,7 @@ describe("PixelContainer", () => {
             onUpdateGrid,
           });
 
-          const pixels = screen.getAllByTestId("pixel");
+          const pixels = screen.getAllByLabelText("pixel");
 
           const pixel = pixels[0];
 

@@ -58,9 +58,9 @@ const Pixel = ({
   const gridBgIdx = getGridBackgroundIndex(id, columns, rowIdx);
   return (
     <div
-      data-testid="pixel"
+      aria-label="pixel"
       data-grid-bg-idx={gridBgIdx}
-      className={`pixel w-[calc(100%/${columns})] h-100 border-neutral-500 transition-all ${gridBackgroundColor[gridBgIdx]}`}
+      className={`pixel w-[calc(100%/${columns})] pb-[calc(100%/${columns})] border-neutral-500 ${gridBackgroundColor[gridBgIdx]}`}
       style={{ backgroundColor: color }}
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
