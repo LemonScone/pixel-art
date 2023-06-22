@@ -1,12 +1,11 @@
-import { fireEvent, render } from "@testing-library/react";
-import "@testing-library/jest-dom";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { vi } from "vitest";
 
 import MockPointerEvent from "../../__mocks__/MockPointerEvent";
 
 import PixelContainer from "./PixelContainer";
 
-import { Tool } from "../models";
+import { Tool } from "../types/Tool";
 
 import { INITIAL_TOOL_OPTIONS } from "../constants";
 
@@ -28,7 +27,7 @@ describe("PixelContainer", () => {
     },
     selectedTool = "pen" as Tool,
   }) => {
-    return render(
+    render(
       <PixelContainer
         columns={columns}
         rows={rows}
@@ -43,9 +42,9 @@ describe("PixelContainer", () => {
   it("should render a grid of pixels", () => {
     const columns = 16;
     const rows = 16;
-    const { container } = renderPixels({ columns, rows });
+    renderPixels({ columns, rows });
 
-    const pixels = container.getElementsByClassName("pixel");
+    const pixels = screen.getAllByLabelText("pixel");
     expect(pixels.length).toBe(columns * rows);
   });
 
@@ -71,12 +70,12 @@ describe("PixelContainer", () => {
       const toolOptions = getToolOptionsWithPenSize(size);
 
       it("should update the color of 1 pixel", () => {
-        const { container } = renderPixels({
+        renderPixels({
           toolOptions,
           onUpdateGrid,
         });
 
-        const pixels = container.getElementsByClassName("pixel");
+        const pixels = screen.getAllByLabelText("pixel");
 
         const pixel = pixels[0];
 
@@ -90,19 +89,19 @@ describe("PixelContainer", () => {
         const toolOptions = getToolOptionsWithPenSize(size);
 
         it("should update the color of 4 pixel", () => {
-          const { container } = renderPixels({
+          renderPixels({
             toolOptions,
             onUpdateGrid,
           });
 
-          const pixels = container.getElementsByClassName("pixel");
+          const pixels = screen.getAllByLabelText("pixel");
 
           const pixel = pixels[0];
 
           fireEvent.pointerDown(pixel);
 
           expect(
-            GRID.filter(pixel => pixel === toolOptions.pen.color).length
+            GRID.filter((pixel) => pixel === toolOptions.pen.color).length
           ).toBe(size ** 2);
         });
       });
@@ -112,19 +111,19 @@ describe("PixelContainer", () => {
         const toolOptions = getToolOptionsWithPenSize(size);
 
         it("should update the color of 9 pixel", () => {
-          const { container } = renderPixels({
+          renderPixels({
             toolOptions,
             onUpdateGrid,
           });
 
-          const pixels = container.getElementsByClassName("pixel");
+          const pixels = screen.getAllByLabelText("pixel");
 
           const pixel = pixels[0];
 
           fireEvent.pointerDown(pixel);
 
           expect(
-            GRID.filter(pixel => pixel === toolOptions.pen.color).length
+            GRID.filter((pixel) => pixel === toolOptions.pen.color).length
           ).toBe(size ** 2);
         });
       });
@@ -134,19 +133,19 @@ describe("PixelContainer", () => {
         const toolOptions = getToolOptionsWithPenSize(size);
 
         it("should update the color of 16 pixel", () => {
-          const { container } = renderPixels({
+          renderPixels({
             toolOptions,
             onUpdateGrid,
           });
 
-          const pixels = container.getElementsByClassName("pixel");
+          const pixels = screen.getAllByLabelText("pixel");
 
           const pixel = pixels[0];
 
           fireEvent.pointerDown(pixel);
 
           expect(
-            GRID.filter(pixel => pixel === toolOptions.pen.color).length
+            GRID.filter((pixel) => pixel === toolOptions.pen.color).length
           ).toBe(size ** 2);
         });
       });
@@ -156,22 +155,94 @@ describe("PixelContainer", () => {
         const toolOptions = getToolOptionsWithPenSize(size);
 
         it("should update the color of 25 pixel", () => {
-          const { container } = renderPixels({
+          renderPixels({
             toolOptions,
             onUpdateGrid,
           });
 
-          const pixels = container.getElementsByClassName("pixel");
+          const pixels = screen.getAllByLabelText("pixel");
 
           const pixel = pixels[0];
 
           fireEvent.pointerDown(pixel);
 
           expect(
-            GRID.filter(pixel => pixel === toolOptions.pen.color).length
+            GRID.filter((pixel) => pixel === toolOptions.pen.color).length
           ).toBe(size ** 2);
         });
       });
+    });
+  });
+
+  describe("Paint with a bucket", () => {
+    const INIT_COLOR = "rgb(116, 185, 255)";
+    let GRID = [
+      INIT_COLOR,
+      INIT_COLOR,
+      INIT_COLOR,
+      INIT_COLOR,
+      INIT_COLOR,
+      INIT_COLOR,
+      "",
+      "",
+      "",
+      INIT_COLOR,
+      INIT_COLOR,
+      "",
+      "",
+      "",
+      INIT_COLOR,
+      INIT_COLOR,
+      "",
+      "",
+      "",
+      INIT_COLOR,
+      INIT_COLOR,
+      INIT_COLOR,
+      INIT_COLOR,
+      INIT_COLOR,
+      INIT_COLOR,
+    ];
+
+    const onUpdateGrid = (newGrid: string[]) => {
+      GRID = newGrid;
+    };
+
+    const getToolOptionsWithPenSize = (size: number) => {
+      return {
+        ...INITIAL_TOOL_OPTIONS,
+        pen: {
+          color: "rgb(54, 255, 121)",
+          size,
+        },
+      };
+    };
+
+    const toolOptions = getToolOptionsWithPenSize(1);
+
+    it("should update the color INIT_COLOR(rgb(116, 185, 255)) should be changed to pen.color(rgb(54, 255, 121))", () => {
+      renderPixels({
+        columns: 5,
+        rows: 5,
+        grid: GRID,
+        toolOptions,
+        onUpdateGrid,
+        selectedTool: "bucket",
+      });
+
+      const pixels = screen.getAllByLabelText("pixel");
+
+      const pixel = pixels[0];
+
+      const paintedCount = GRID.filter((color) => color === INIT_COLOR).length;
+
+      fireEvent.pointerDown(pixel);
+
+      const updatedCount = GRID.filter(
+        (color) => color === toolOptions.pen.color
+      ).length;
+
+      expect(paintedCount).toEqual(updatedCount);
     });
   });
 });

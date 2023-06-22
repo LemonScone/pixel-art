@@ -1,20 +1,28 @@
 import React from "react";
+import { getGridBackgroundIndex } from "../utils/grid";
+import { Indexable } from "../types/Indexable";
 
 type PixelProps = {
   id: number;
   color: string;
+  rowIdx: number;
   columns: number;
   toolActive: boolean;
   onPointerDown: (id: number) => void;
+  onPointerEnter: (id: number) => void;
+  onPointerLeave: (id: number) => void;
   onToolActive: (down: boolean) => void;
 };
 
 const Pixel = ({
   id,
   color,
+  rowIdx,
   columns,
   toolActive,
   onPointerDown,
+  onPointerEnter,
+  onPointerLeave,
   onToolActive,
 }: PixelProps) => {
   const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
@@ -34,12 +42,30 @@ const Pixel = ({
     }
   };
 
+  const handlePointerEnter = () => {
+    onPointerEnter(id);
+  };
+
+  const handlePointerLeave = () => {
+    onPointerLeave(id);
+  };
+
+  const gridBackgroundColor: Indexable<string> = {
+    0: "bg-[#d9d9d9]",
+    1: "bg-white",
+  };
+
+  const gridBgIdx = getGridBackgroundIndex(id, columns, rowIdx);
   return (
     <div
-      className={`pixel w-[calc(100%/${columns})] h-100 border-r border-b border-neutral-500 hover:bg-zinc-500 transition-all bg-neutral-600`}
+      aria-label="pixel"
+      data-grid-bg-idx={gridBgIdx}
+      className={`pixel w-[calc(100%/${columns})] pb-[calc(100%/${columns})] border-neutral-500 ${gridBackgroundColor[gridBgIdx]}`}
       style={{ backgroundColor: color }}
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
+      onPointerEnter={handlePointerEnter}
+      onPointerLeave={handlePointerLeave}
       onPointerUp={() => {
         onToolActive(false);
       }}
