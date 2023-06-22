@@ -1,5 +1,14 @@
-import { GridSizeActionKind, UPDATE_GRID } from "../constants/actionTypes";
-import { resizeGrid } from "../utils/grid";
+import {
+  GridSizeActionKind,
+  ToolActionKind,
+} from "../constants/actionTypes";
+import { NestedPartial } from "../types/NestedPartial";
+import { ToolOption } from "../types/Tool";
+import {
+  getBucketFillGridAndIndexes,
+  getTargetIndexes,
+  resizeGrid,
+} from "../utils/grid";
 
 interface GridState {
   grid: string[];
@@ -7,24 +16,89 @@ interface GridState {
   rows: number;
 }
 
-type GridAction = {
-  type: typeof UPDATE_GRID;
-  payload: string[];
+type ToolAction = {
+  type: ToolActionKind;
+  payload: NestedPartial<ToolOption> & { id: number };
 };
 
 type GridSizeAction = {
   type: GridSizeActionKind;
 };
 
-type Actions = GridAction | GridSizeAction;
+type Actions =  GridSizeAction | ToolAction;
 
 const gridReducer = (state: GridState, action: Actions) => {
   switch (action.type) {
-    case "UPDATE_GRID":
+
+    case ToolActionKind.PENCIL: {
+      const newGrid = state.grid.slice();
+
+      if (action.payload && action.payload.pen) {
+        const { pen } = action.payload;
+        const color = pen.color as string;
+        const size = pen.size as number;
+
+        const targetIndexes = getTargetIndexes(
+          action.payload.id,
+          size,
+          state.columns,
+          state.rows
+        );
+
+        targetIndexes.forEach((idx) => {
+          newGrid[idx] = color;
+        });
+      }
       return {
         ...state,
-        grid: action.payload,
+        grid: newGrid,
       };
+    }
+    case ToolActionKind.ERASER: {
+      const newGrid = state.grid.slice();
+
+      if (action.payload && action.payload.eraser) {
+        const size = action.payload.eraser.size as number;
+
+        const targetIndexes = getTargetIndexes(
+          action.payload.id,
+          size,
+          state.columns,
+          state.rows
+        );
+        targetIndexes.forEach((idx) => {
+          newGrid[idx] = "";
+        });
+      }
+
+      return {
+        ...state,
+        grid: newGrid,
+      };
+    }
+    case ToolActionKind.BUCKET: {
+      const newGrid = state.grid.slice();
+      if (action.payload && action.payload.pen) {
+        const originColor = state.grid[action.payload.id] as string;
+        const newColor = action.payload.pen.color as string;
+        const { grid } = getBucketFillGridAndIndexes(
+          newGrid,
+          action.payload.id,
+          originColor,
+          newColor,
+          state.columns,
+          state.rows
+        );
+        return {
+          ...state,
+          grid,
+        };
+      }
+      return {
+        ...state,
+        grid: newGrid,
+      };
+    }
     case GridSizeActionKind.INCREASE_COLUMN:
       return {
         ...state,
@@ -78,4 +152,5 @@ const gridReducer = (state: GridState, action: Actions) => {
   }
 };
 
+export type { ToolAction, Actions };
 export default gridReducer;
