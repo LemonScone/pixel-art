@@ -19,7 +19,6 @@ const Eraser = ({
 }: EraserProps) => {
   const [showToolbar, setShowToolbar] = useState(false);
 
-
   const handleClickOutside = () => setShowToolbar(false);
   const ref = useOutsideClick(handleClickOutside);
 

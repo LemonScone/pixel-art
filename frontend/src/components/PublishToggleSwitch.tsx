@@ -1,11 +1,14 @@
 import React from "react";
 
 type PublishToggleSwitchProps = {
-  checked: boolean,
+  checked: boolean;
   onToggleSwitch: () => void;
 };
 
-const PublishToggleSwitch = ({ checked, onToggleSwitch }: PublishToggleSwitchProps) => {
+const PublishToggleSwitch = ({
+  checked,
+  onToggleSwitch,
+}: PublishToggleSwitchProps) => {
   return (
     <div className="flex items-center justify-between">
       <label htmlFor="publish" className="text-lg text-gray-100">

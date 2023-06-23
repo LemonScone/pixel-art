@@ -11,6 +11,19 @@
     "test": "vitest",
     "tailwind": "npx tailwindcss -i ./src/index.css -o ./tests/index.css"
   },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{ts, tsx}": [
+      "prettier --write",
+      "eslint --fix",
+      "vitest related --run",
+      "git add"
+    ]
+  },
   "dependencies": {
     "@heroicons/react": "^2.0.18",
     "@types/react-color": "^3.0.6",
