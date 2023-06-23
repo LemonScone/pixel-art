@@ -148,8 +148,7 @@ const gridReducer = (state: GridState, action: Actions) => {
           case "UP": {
             newGrid = newGrid
               .slice(columns, rows * columns)
-              .concat(newGrid.slice(0, columns))
-              .concat(newGrid.slice(rows * columns));
+              .concat(newGrid.slice(0, columns));
             break;
           }
           case "DOWN": {
