@@ -9,9 +9,13 @@ import NumberPicker from "./NumberPicker";
 const renderComponent = ({
   name = "width",
   value = 20,
+  minValue = 5,
+  maxValue = 120,
 }: {
   name?: string;
   value?: number;
+  minValue?: number;
+  maxValue?: number;
 }) => {
   const onIncrease = vi.fn();
   const onDecrease = vi.fn();
@@ -20,6 +24,8 @@ const renderComponent = ({
     <NumberPicker
       value={value}
       name={name}
+      minValue={minValue}
+      maxValue={maxValue}
       onIncrease={onIncrease}
       onDecrease={onDecrease}
     />
@@ -73,6 +79,17 @@ describe("NumberPicker", () => {
       await user.click(increseButton);
       expect(onIncrease).toHaveBeenCalled();
     });
+
+    it("should call onIncrease when the value is less than the max value", async () => {
+      const value = 120;
+      const maxValue = 120;
+      const { onIncrease } = renderComponent({ value, maxValue });
+
+      const increseButton = screen.getByRole("button", { name: "+" });
+
+      await user.click(increseButton);
+      expect(onIncrease).not.toHaveBeenCalled();
+    });
   });
 
   describe("when click decrease button", () => {
@@ -83,6 +100,17 @@ describe("NumberPicker", () => {
 
       await user.click(decreseButton);
       expect(onDecrease).toHaveBeenCalled();
+    });
+
+    it("should call onDecrease when the value is more than the min value", async () => {
+      const value = 5;
+      const minValue = 5;
+      const { onDecrease } = renderComponent({ value, minValue });
+
+      const decreseButton = screen.getByRole("button", { name: "-" });
+
+      await user.click(decreseButton);
+      expect(onDecrease).not.toHaveBeenCalled();
     });
   });
 });

@@ -1,4 +1,9 @@
-const UPDATE_GRID = "UPDATE_GRID";
+enum ToolActionKind {
+  PENCIL = "PENCIL",
+  ERASER = "ERASER",
+  BUCKET = "BUCKET",
+  MOVE = "MOVE"
+}
 
 enum GridSizeActionKind {
   INCREASE_COLUMN = "INCREASE_COLUMN",
@@ -7,4 +12,4 @@ enum GridSizeActionKind {
   DECREASE_ROW = "DECREASE_ROW",
 }
 
-export { GridSizeActionKind, UPDATE_GRID };
+export { GridSizeActionKind, ToolActionKind };

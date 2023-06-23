@@ -1,11 +1,15 @@
 import "./App.css";
 
-import { useReducer, useState } from "react";
+import { useMemo, useReducer, useState } from "react";
 
 import PixelContainer from "./components/PixelContainer";
 
 import grid_sample from "./fixtures/grid";
-import { INITIAL_TOOL_OPTIONS } from "./constants";
+import {
+  INITIAL_TOOL_OPTIONS,
+  GRID_SIZE_MIN_VALUE,
+  GRID_SIZE_MAX_VALUE,
+} from "./constants";
 
 import type { Tool, ToolOption } from "./types/Tool";
 
@@ -20,9 +24,11 @@ import SaveProject from "./components/SaveProject";
 import ResetProject from "./components/ResetProject";
 import PreviewHandler from "./components/PreviewHandler";
 import NumberPicker from "./components/NumberPicker";
-import gridReducer from "./reducers/gridReducer";
-import { GridSizeActionKind, UPDATE_GRID } from "./constants/actionTypes";
 import ColorPallete from "./components/ColorPallete";
+
+import gridReducer from "./reducers/gridReducer";
+
+import { GridSizeActionKind } from "./constants/actionTypes";
 
 function App() {
   const [toolOptions, setToolOptions] = useState(INITIAL_TOOL_OPTIONS);
@@ -54,6 +60,10 @@ function App() {
     });
   };
 
+  const memoizedGrid = useMemo(() => {
+    return state.grid;
+  }, [state.grid]);
+
   return (
     <>
       <div className="min-h-screen bg-black">
@@ -73,13 +83,8 @@ function App() {
                     <PixelContainer
                       columns={state.columns}
                       rows={state.rows}
-                      grid={state.grid}
-                      onUpdateGrid={(newGrid) => {
-                        dispatch({
-                          type: UPDATE_GRID,
-                          payload: newGrid,
-                        });
-                      }}
+                      grid={memoizedGrid}
+                      dispatch={dispatch}
                       toolOptions={toolOptions}
                       selectedTool={selectedTool}
                     />
@@ -112,6 +117,8 @@ function App() {
                   <NumberPicker
                     name={"Width"}
                     value={state.columns}
+                    minValue={GRID_SIZE_MIN_VALUE}
+                    maxValue={GRID_SIZE_MAX_VALUE}
                     onIncrease={() =>
                       dispatch({
                         type: GridSizeActionKind.INCREASE_COLUMN,
@@ -128,6 +135,8 @@ function App() {
                   <NumberPicker
                     name={"Height"}
                     value={state.rows}
+                    minValue={GRID_SIZE_MIN_VALUE}
+                    maxValue={GRID_SIZE_MAX_VALUE}
                     onIncrease={() => {
                       dispatch({
                         type: GridSizeActionKind.INCREASE_ROW,

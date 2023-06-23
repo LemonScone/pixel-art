@@ -8,6 +8,7 @@ import PixelContainer from "./PixelContainer";
 import { Tool } from "../types/Tool";
 
 import { INITIAL_TOOL_OPTIONS } from "../constants";
+import { ToolActionKind } from "../constants/actionTypes";
 
 describe("PixelContainer", () => {
   beforeEach(() => {
@@ -22,21 +23,30 @@ describe("PixelContainer", () => {
     rows = 25,
     grid = Array(25).fill(""),
     toolOptions = INITIAL_TOOL_OPTIONS,
-    onUpdateGrid = (newGrid: string[]) => {
-      /* */
-    },
     selectedTool = "pen" as Tool,
   }) => {
+    const dispatch = vi.fn();
     render(
       <PixelContainer
         columns={columns}
         rows={rows}
         grid={grid}
         toolOptions={toolOptions}
-        onUpdateGrid={onUpdateGrid}
+        dispatch={dispatch}
         selectedTool={selectedTool}
       />
     );
+    return { dispatch };
+  };
+
+  const getToolOptionsWithPenSize = (size: number) => {
+    return {
+      ...INITIAL_TOOL_OPTIONS,
+      pen: {
+        color: "rgb(54, 255, 121)",
+        size,
+      },
+    };
   };
 
   it("should render a grid of pixels", () => {
@@ -49,129 +59,92 @@ describe("PixelContainer", () => {
   });
 
   describe("Drawing with a pen", () => {
-    let GRID = Array(25).fill("");
 
-    const onUpdateGrid = (newGrid: string[]) => {
-      GRID = newGrid;
-    };
 
-    const getToolOptionsWithPenSize = (size: number) => {
-      return {
-        ...INITIAL_TOOL_OPTIONS,
-        pen: {
-          color: "rgb(54, 255, 121)",
-          size,
+    it("should call dispatch with toolOptions and id", () => {
+      const id = 0;
+      const toolOptions = getToolOptionsWithPenSize(1);
+      const { dispatch } = renderPixels({
+        toolOptions,
+      });
+
+      const pixels = screen.getAllByLabelText("pixel");
+
+      const pixel = pixels[id];
+
+      fireEvent.pointerDown(pixel);
+
+      expect(dispatch).toHaveBeenCalledWith({
+        type: ToolActionKind.PENCIL,
+        payload: {
+          pen: {
+            color: toolOptions.pen.color,
+            size: toolOptions.pen.size,
+          },
+          id,
         },
-      };
-    };
-
-    describe("When the pen size is 1", () => {
-      const size = 1;
-      const toolOptions = getToolOptionsWithPenSize(size);
-
-      it("should update the color of 1 pixel", () => {
-        renderPixels({
-          toolOptions,
-          onUpdateGrid,
-        });
-
-        const pixels = screen.getAllByLabelText("pixel");
-
-        const pixel = pixels[0];
-
-        fireEvent.pointerDown(pixel);
-
-        expect(GRID[0]).toBe(toolOptions.pen.color);
-      });
-
-      describe("When the pen size is 2", () => {
-        const size = 2;
-        const toolOptions = getToolOptionsWithPenSize(size);
-
-        it("should update the color of 4 pixel", () => {
-          renderPixels({
-            toolOptions,
-            onUpdateGrid,
-          });
-
-          const pixels = screen.getAllByLabelText("pixel");
-
-          const pixel = pixels[0];
-
-          fireEvent.pointerDown(pixel);
-
-          expect(
-            GRID.filter((pixel) => pixel === toolOptions.pen.color).length
-          ).toBe(size ** 2);
-        });
-      });
-
-      describe("When the pen size is 3", () => {
-        const size = 3;
-        const toolOptions = getToolOptionsWithPenSize(size);
-
-        it("should update the color of 9 pixel", () => {
-          renderPixels({
-            toolOptions,
-            onUpdateGrid,
-          });
-
-          const pixels = screen.getAllByLabelText("pixel");
-
-          const pixel = pixels[0];
-
-          fireEvent.pointerDown(pixel);
-
-          expect(
-            GRID.filter((pixel) => pixel === toolOptions.pen.color).length
-          ).toBe(size ** 2);
-        });
-      });
-
-      describe("When the pen size is 4", () => {
-        const size = 4;
-        const toolOptions = getToolOptionsWithPenSize(size);
-
-        it("should update the color of 16 pixel", () => {
-          renderPixels({
-            toolOptions,
-            onUpdateGrid,
-          });
-
-          const pixels = screen.getAllByLabelText("pixel");
-
-          const pixel = pixels[0];
-
-          fireEvent.pointerDown(pixel);
-
-          expect(
-            GRID.filter((pixel) => pixel === toolOptions.pen.color).length
-          ).toBe(size ** 2);
-        });
-      });
-
-      describe("When the pen size is 5", () => {
-        const size = 5;
-        const toolOptions = getToolOptionsWithPenSize(size);
-
-        it("should update the color of 25 pixel", () => {
-          renderPixels({
-            toolOptions,
-            onUpdateGrid,
-          });
-
-          const pixels = screen.getAllByLabelText("pixel");
-
-          const pixel = pixels[0];
-
-          fireEvent.pointerDown(pixel);
-
-          expect(
-            GRID.filter((pixel) => pixel === toolOptions.pen.color).length
-          ).toBe(size ** 2);
-        });
       });
     });
+  });
+
+  describe("Paint with a bucket", () => {
+    const INIT_COLOR = "rgb(116, 185, 255)";
+    const GRID = [
+      INIT_COLOR,
+      INIT_COLOR,
+      INIT_COLOR,
+      INIT_COLOR,
+      INIT_COLOR,
+      INIT_COLOR,
+      "",
+      "",
+      "",
+      INIT_COLOR,
+      INIT_COLOR,
+      "",
+      "",
+      "",
+      INIT_COLOR,
+      INIT_COLOR,
+      "",
+      "",
+      "",
+      INIT_COLOR,
+      INIT_COLOR,
+      INIT_COLOR,
+      INIT_COLOR,
+      INIT_COLOR,
+      INIT_COLOR,
+    ];
+
+    const toolOptions = getToolOptionsWithPenSize(1);
+
+    it("should call dispatch with toolOptions and id", () => {
+      const id = 0
+      const {dispatch} = renderPixels({
+        columns: 5,
+        rows: 5,
+        grid: GRID,
+        toolOptions,
+        selectedTool: "bucket",
+      });
+
+      const pixels = screen.getAllByLabelText("pixel");
+
+      const pixel = pixels[id];
+
+      fireEvent.pointerDown(pixel);
+
+      expect(dispatch).toHaveBeenCalledWith({
+        type: ToolActionKind.BUCKET,
+        payload: {
+          pen: {
+            color: toolOptions.pen.color,
+          },
+          id,
+        },
+      });
+    })
   });
 
   describe("Paint with a bucket", () => {
