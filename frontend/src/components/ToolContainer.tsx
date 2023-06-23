@@ -49,7 +49,10 @@ const ToolConatiner = ({
             onChangeToolSize({ tool: "eraser", size })
           }
         />
-        <Move />
+        <Move
+          selected={selectedTool === "move"}
+          onChangeTool={() => onChangeTool({ tool: "move" })}
+        />
       </div>
     </div>
   );

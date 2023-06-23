@@ -1,4 +1,4 @@
-import React, { Dispatch, useCallback, useState } from "react";
+import React, { Dispatch, useCallback, useRef, useState } from "react";
 
 import Pixel from "./Pixel";
 
@@ -27,25 +27,91 @@ const PixelContainer = ({
   selectedTool,
   dispatch,
 }: PixelContainerProps) => {
-  const ref = useOutsidePointerUp(() => setToolActive(false));
-  const [moveIndex, setMoveIndex] = useState<number | null>(null);
+  const toolActiveRef = useRef(false);
+  const moveCoordinateRef = useRef({
+    clientX: 0,
+    clientY: 0,
+    cellWidth: 0,
+  });
 
-  const [toolActive, setToolActive] = useState(false);
+  const ref = useOutsidePointerUp(() => {
+    toolActiveRef.current = false;
+  });
 
-  const handleDrag = () => {
-    if (!toolActive) {
-      return;
-    }
+  const handlePointerDown = useCallback(
+    (id: number) => {
+      if (selectedTool === "pen") {
+        dispatch({
+          type: ToolActionKind.PENCIL,
+          payload: {
+            pen: {
+              color: toolOptions.pen.color,
+              size: toolOptions.pen.size,
+            },
+            id,
+          },
+        });
+      } else if (selectedTool === "eraser") {
+        dispatch({
+          type: ToolActionKind.ERASER,
+          payload: {
+            eraser: {
+              size: toolOptions.eraser.size,
+            },
+            id,
+          },
+        });
+      } else if (selectedTool === "bucket") {
+        dispatch({
+          type: ToolActionKind.BUCKET,
+          payload: {
+            pen: {
+              color: toolOptions.pen.color,
+            },
+            id,
+          },
+        });
+      }
 
-    if (!moveIndex) {
-      return;
-    }
-    handlePointerDown(moveIndex);
-  };
+      toolActiveRef.current = true;
+    },
+    [dispatch, selectedTool, toolOptions]
+  );
 
-  const handlePointerMove = useCallback((id: number) => {
-    setMoveIndex(id);
-  }, []);
+  const handlePointerMove = useCallback(
+    (e: React.PointerEvent<HTMLDivElement>, id: number) => {
+      if (
+        (selectedTool === "pen" || selectedTool === "eraser") &&
+        toolActiveRef.current
+      ) {
+        //setMoveIndex(id);
+        handlePointerDown(id);
+      }
+
+      if (selectedTool === "move" && toolActiveRef.current) {
+        const xDiff = e.clientX - moveCoordinateRef.current.clientX;
+        const yDiff = e.clientY - moveCoordinateRef.current.clientY;
+
+        dispatch({
+          type: ToolActionKind.MOVE,
+          payload: {
+            xDiff,
+            yDiff,
+            cellWidth: moveCoordinateRef.current.cellWidth,
+          },
+        });
+
+        if (
+          Math.abs(xDiff) > moveCoordinateRef.current.cellWidth ||
+          Math.abs(yDiff) > moveCoordinateRef.current.cellWidth
+        ) {
+          moveCoordinateRef.current.clientX = e.clientX;
+          moveCoordinateRef.current.clientY = e.clientY;
+        }
+      }
+    },
+    [handlePointerDown, dispatch, selectedTool]
+  );
 
   const handlePointerEnter = useCallback(
     (id: number) => {
@@ -97,53 +163,8 @@ const PixelContainer = ({
     [columns, rows, ref, selectedTool, toolOptions]
   );
 
-  const handlePointerDown = useCallback(
-    (id: number) => {
-      if (selectedTool === "pen") {
-        dispatch({
-          type: ToolActionKind.PENCIL,
-          payload: {
-            pen: {
-              color: toolOptions.pen.color,
-              size: toolOptions.pen.size,
-            },
-            id,
-          },
-        });
-      } else if (selectedTool === "eraser") {
-        dispatch({
-          type: ToolActionKind.ERASER,
-          payload: {
-            eraser: {
-              size: toolOptions.eraser.size,
-            },
-            id,
-          },
-        });
-      } else if (selectedTool === "bucket") {
-        dispatch({
-          type: ToolActionKind.BUCKET,
-          payload: {
-            pen: {
-              color: toolOptions.pen.color,
-            },
-            id,
-          },
-        });
-      } else if (selectedTool === "move") {
-        dispatch({
-          type: ToolActionKind.MOVE,
-          payload: {id}
-        }); 
-      }
-
-      setToolActive(true);
-    },
-    [dispatch, selectedTool, toolOptions]
-  );
-
   const handlePointerUp = useCallback(() => {
-    setToolActive(false);
+    toolActiveRef.current = false;
   }, []);
 
   const colPixels = React.useMemo(
@@ -152,11 +173,32 @@ const PixelContainer = ({
   );
   const rowPixels = React.useMemo(() => Array.from({ length: rows }), [rows]);
 
+  const handleMovePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (selectedTool === "move") {
+      const target = e.target as HTMLDivElement;
+
+      if (target?.hasPointerCapture(e.pointerId)) {
+        target?.releasePointerCapture(e.pointerId);
+      }
+
+      moveCoordinateRef.current.clientX = e.clientX;
+      moveCoordinateRef.current.clientY = e.clientY;
+      moveCoordinateRef.current.cellWidth = target.clientWidth;
+
+      toolActiveRef.current = true;
+    }
+  };
+
   return (
     <div
       ref={ref}
-      className="flex h-full w-full cursor-cell flex-wrap items-start shadow-2xl"
-      onPointerMove={handleDrag}
+      onPointerDown={handleMovePointerDown}
+      onPointerUp={() => {
+        toolActiveRef.current = false;
+      }}
+      className={`flex h-full w-full ${
+        selectedTool === "move" ? "cursor-move" : "cursor-cell"
+      } flex-wrap items-start shadow-2xl`}
     >
       {rowPixels.map((row, rowIdx) => {
         return colPixels.map((col, colIdx) => {

@@ -59,8 +59,6 @@ describe("PixelContainer", () => {
   });
 
   describe("Drawing with a pen", () => {
-
-
     it("should call dispatch with toolOptions and id", () => {
       const id = 0;
       const toolOptions = getToolOptionsWithPenSize(1);
@@ -120,8 +118,8 @@ describe("PixelContainer", () => {
     const toolOptions = getToolOptionsWithPenSize(1);
 
     it("should call dispatch with toolOptions and id", () => {
-      const id = 0
-      const {dispatch} = renderPixels({
+      const id = 0;
+      const { dispatch } = renderPixels({
         columns: 5,
         rows: 5,
         grid: GRID,
@@ -144,6 +142,6 @@ describe("PixelContainer", () => {
           id,
         },
       });
-    })
+    });
   });
 });

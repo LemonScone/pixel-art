@@ -10,7 +10,7 @@ type PixelProps = {
   onPointerDown: (id: number) => void;
   onPointerEnter: (id: number) => void;
   onPointerLeave: (id: number) => void;
-  onPointerMove: (id: number) => void;
+  onPointerMove: (e: React.PointerEvent<HTMLDivElement>, id: number) => void;
   onPointerUp: () => void;
 };
 
@@ -26,7 +26,6 @@ const Pixel = React.memo(
     onPointerMove,
     onPointerUp,
   }: PixelProps) => {
-
     const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
       const target = e.target as HTMLDivElement;
 
@@ -36,8 +35,8 @@ const Pixel = React.memo(
       onPointerDown(id);
     };
 
-    const handlePointerMove = () => {
-      onPointerMove(id);
+    const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+      onPointerMove(e, id);
     };
 
     const handlePointerEnter = () => {
