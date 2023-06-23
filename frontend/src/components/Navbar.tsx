@@ -1,9 +1,8 @@
-import React from "react";
-import { UserCircleIcon } from "@heroicons/react/24/outline";
+import { NavLink } from "react-router-dom";
 
 const navigation = [
-  { name: "Editor", href: "#", current: true },
-  { name: "Gallery", href: "#", current: false },
+  { name: "Editor", href: "" },
+  { name: "Gallery", href: "gallery" },
 ];
 
 function classNames(...classes: string[]) {
@@ -19,36 +18,46 @@ const Navbar = () => {
             <div className="flex-shrink-0">
               <img
                 className="h-8 w-8"
-                src="https://tailwindui.com/img/logos/mark.svg?color=green&shade=300"
+                src="https://user-images.githubusercontent.com/6129764/247850132-8348058d-5b71-4cbe-8f76-0dd5acff9129.png"
                 alt="Pixel-art"
               />
             </div>
             <div className="ml-10 flex items-baseline space-x-4">
               {navigation.map((item) => (
-                <a
+                <NavLink
                   key={item.name}
-                  href={item.href}
-                  className={classNames(
-                    item.current
-                      ? "bg-gray-800 text-white"
-                      : "text-gray-300 hover:bg-gray-700 hover:text-white",
-                    "rounded-md px-3 py-2 text-sm font-medium"
-                  )}
-                  aria-current={item.current ? "page" : undefined}
+                  to={item.href}
+                  className={({ isActive }) =>
+                    classNames(
+                      isActive
+                        ? "bg-input-color text-gray-100"
+                        : "text-gray-300 hover:bg-input-color hover:text-gray-100",
+                      "rounded-md px-3 py-2 text-sm font-medium"
+                    )
+                  }
+                  aria-current={item.name ? "page" : undefined}
                 >
                   {item.name}
-                </a>
+                </NavLink>
               ))}
             </div>
           </div>
           <div className="ml-4 flex items-center md:ml-6">
-            <button
+            <NavLink
+              to="login"
               type="button"
-              className="rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+              className={({ isActive }) =>
+                classNames(
+                  isActive
+                    ? "bg-input-color text-gray-100"
+                    : "text-gray-300 hover:bg-input-color hover:text-gray-100",
+                  "inline-flex items-center rounded-md  px-3 py-2 text-sm font-semibold shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-input-color"
+                )
+              }
+              aria-current="page"
             >
-              <span className="sr-only">View notifications</span>
-              <UserCircleIcon className="h-6 w-6" aria-hidden="true" />
-            </button>
+              Sign In
+            </NavLink>
 
             <div className="relative ml-3">
               <button
