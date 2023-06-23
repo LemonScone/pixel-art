@@ -140,3 +140,17 @@ export const getBucketFillGridAndIndexes = (
 
   return { grid, indexes };
 };
+
+export const getMoveIndexes = (id: number, columns: number, size: number) => {
+  let i = 0;
+  const indexes = [];
+  while (i < size) {
+    if (i % columns === id) {
+      indexes.push(i);
+      i += columns;
+    } else {
+      i++;
+    }
+  }
+  return indexes;
+};

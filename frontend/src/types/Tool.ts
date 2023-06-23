@@ -7,6 +7,7 @@ type ToolOption = {
     size: number;
   };
   bucket: {};
+  move: {};
 };
 
 type Tool = keyof ToolOption;

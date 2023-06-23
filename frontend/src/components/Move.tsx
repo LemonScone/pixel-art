@@ -1,10 +1,24 @@
 import React from "react";
 
-const Move = () => {
+const Move = ({
+  selected,
+  onChangeTool,
+}: {
+  selected: boolean;
+  onChangeTool: () => void;
+}) => {
   return (
-    <button
+    <a
       type="button"
-      className="rounded-lg p-1 text-gray-400  hover:bg-primary-color hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-primary-color"
+      role="button"
+      className={
+        selected
+          ? "relative cursor-pointer rounded-lg bg-primary-color-600 p-1 text-gray-900 hover:bg-primary-color focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-primary-color"
+          : "rounded-lg p-1 text-gray-400 hover:bg-primary-color-600 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-primary-color"
+      }
+      onClick={() => {
+        onChangeTool();
+      }}
     >
       <span className="sr-only">Move</span>
       <svg
@@ -25,7 +39,7 @@ const Move = () => {
         <line x1="2" x2="22" y1="12" y2="12" />
         <line x1="12" x2="12" y1="2" y2="22" />
       </svg>
-    </button>
+    </a>
   );
 };
 

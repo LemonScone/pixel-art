@@ -3,11 +3,7 @@ import React, { Dispatch, useCallback, useState } from "react";
 import Pixel from "./Pixel";
 
 import useOutsidePointerUp from "../hooks/useOutsidePointerUp";
-import {
-  getGridBackgroundHoverColor,
-  getBucketFillGridAndIndexes,
-  getTargetIndexes,
-} from "../utils/grid";
+import { getGridBackgroundHoverColor, getTargetIndexes } from "../utils/grid";
 import { getHoverColor } from "../utils/color";
 
 import type { ToolOption, Tool } from "../types/Tool";
@@ -31,10 +27,13 @@ const PixelContainer = ({
   selectedTool,
   dispatch,
 }: PixelContainerProps) => {
-  const ref = useOutsidePointerUp(() => setToolActive(false));
   const [moveIndex, setMoveIndex] = useState<number | null>(null);
-
   const [toolActive, setToolActive] = useState(false);
+  const [moveCoordinate, setMoveCoordinate] = useState({
+    clientX: 0,
+    clientY: 0,
+    cellWidth: 0,
+  });
 
   const handleDrag = () => {
     if (!toolActive) {
@@ -44,12 +43,48 @@ const PixelContainer = ({
     if (!moveIndex) {
       return;
     }
+
     handlePointerDown(moveIndex);
   };
 
-  const handlePointerMove = useCallback((id: number) => {
-    setMoveIndex(id);
-  }, []);
+  const ref = useOutsidePointerUp(() => {
+    setToolActive(false);
+  });
+
+  const handlePointerMove = useCallback(
+    (e: React.PointerEvent<HTMLDivElement>, id: number) => {
+      setMoveIndex(id);
+
+      if (selectedTool === "move" && toolActive) {
+        const xDiff = e.clientX - moveCoordinate.clientX;
+        const yDiff = e.clientY - moveCoordinate.clientY;
+
+        dispatch({
+          type: ToolActionKind.MOVE,
+          payload: { xDiff, yDiff, cellWidth: moveCoordinate.cellWidth },
+        });
+
+        if (
+          Math.abs(xDiff) > moveCoordinate.cellWidth ||
+          Math.abs(yDiff) > moveCoordinate.cellWidth
+        ) {
+          setMoveCoordinate((prev) => ({
+            ...prev,
+            clientX: e.clientX,
+            clientY: e.clientY,
+          }));
+        }
+      }
+    },
+    [
+      dispatch,
+      selectedTool,
+      toolActive,
+      moveCoordinate.clientX,
+      moveCoordinate.clientY,
+      moveCoordinate.cellWidth,
+    ]
+  );
 
   const handlePointerEnter = useCallback(
     (id: number) => {
@@ -134,11 +169,6 @@ const PixelContainer = ({
             id,
           },
         });
-      } else if (selectedTool === "move") {
-        dispatch({
-          type: ToolActionKind.MOVE,
-          payload: { id },
-        });
       }
 
       setToolActive(true);
@@ -156,11 +186,34 @@ const PixelContainer = ({
   );
   const rowPixels = React.useMemo(() => Array.from({ length: rows }), [rows]);
 
+  const handleMovePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (selectedTool === "move") {
+      const target = e.target as HTMLDivElement;
+
+      if (target?.hasPointerCapture(e.pointerId)) {
+        target?.releasePointerCapture(e.pointerId);
+      }
+
+      setMoveCoordinate({
+        clientX: e.clientX,
+        clientY: e.clientY,
+        cellWidth: target.clientWidth,
+      });
+      setToolActive(true);
+    }
+  };
+
   return (
     <div
       ref={ref}
-      className="flex h-full w-full cursor-cell flex-wrap items-start shadow-2xl"
       onPointerMove={handleDrag}
+      onPointerDown={handleMovePointerDown}
+      onPointerUp={() => {
+        setToolActive(false);
+      }}
+      className={`flex h-full w-full ${
+        selectedTool === "move" ? "cursor-move" : "cursor-cell"
+      } flex-wrap items-start shadow-2xl`}
     >
       {rowPixels.map((row, rowIdx) => {
         return colPixels.map((col, colIdx) => {

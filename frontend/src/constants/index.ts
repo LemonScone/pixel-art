@@ -7,6 +7,7 @@ const INITIAL_TOOL_OPTIONS = {
     size: 1,
   },
   bucket: {},
+  move: {},
 };
 
 const INITIAL_COLOR_PALLETE = [
@@ -36,9 +37,9 @@ const GRID_HOVER_COLOR_SECOND = "rgba(225, 225, 225, 0.9)";
 
 const COLOR_REGEX = /rgba?\((\d+),\s*(\d+),\s*(\d+)\)/;
 
-const GRID_SIZE_MIN_VALUE = 5
+const GRID_SIZE_MIN_VALUE = 5;
 
-const GRID_SIZE_MAX_VALUE = 120
+const GRID_SIZE_MAX_VALUE = 120;
 
 export {
   INITIAL_TOOL_OPTIONS,
@@ -47,5 +48,5 @@ export {
   GRID_HOVER_COLOR_SECOND,
   COLOR_REGEX,
   GRID_SIZE_MIN_VALUE,
-  GRID_SIZE_MAX_VALUE
+  GRID_SIZE_MAX_VALUE,
 };
