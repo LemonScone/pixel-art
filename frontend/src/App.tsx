@@ -1,6 +1,6 @@
 import "./App.css";
 
-import { useReducer, useState } from "react";
+import { useMemo, useReducer, useState } from "react";
 
 import PixelContainer from "./components/PixelContainer";
 
@@ -28,7 +28,7 @@ import ColorPallete from "./components/ColorPallete";
 
 import gridReducer from "./reducers/gridReducer";
 
-import { GridSizeActionKind, UPDATE_GRID } from "./constants/actionTypes";
+import { GridSizeActionKind } from "./constants/actionTypes";
 
 function App() {
   const [toolOptions, setToolOptions] = useState(INITIAL_TOOL_OPTIONS);
@@ -60,6 +60,10 @@ function App() {
     });
   };
 
+  const memoizedGrid = useMemo(() => {
+    return state.grid;
+  }, [state.grid]);
+
   return (
     <>
       <div className="min-h-screen bg-black">
@@ -79,13 +83,8 @@ function App() {
                     <PixelContainer
                       columns={state.columns}
                       rows={state.rows}
-                      grid={state.grid}
-                      onUpdateGrid={(newGrid) => {
-                        dispatch({
-                          type: UPDATE_GRID,
-                          payload: newGrid,
-                        });
-                      }}
+                      grid={memoizedGrid}
+                      dispatch={dispatch}
                       toolOptions={toolOptions}
                       selectedTool={selectedTool}
                     />
