@@ -7,70 +7,66 @@ type PixelProps = {
   color: string;
   rowIdx: number;
   columns: number;
-  toolActive: boolean;
   onPointerDown: (id: number) => void;
   onPointerEnter: (id: number) => void;
   onPointerLeave: (id: number) => void;
-  onToolActive: (down: boolean) => void;
+  onPointerMove: (e: React.PointerEvent<HTMLDivElement>, id: number) => void;
+  onPointerUp: () => void;
 };
 
-const Pixel = ({
-  id,
-  color,
-  rowIdx,
-  columns,
-  toolActive,
-  onPointerDown,
-  onPointerEnter,
-  onPointerLeave,
-  onToolActive,
-}: PixelProps) => {
-  const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
-    const target = e.target as HTMLDivElement;
+const Pixel = React.memo(
+  ({
+    id,
+    color,
+    rowIdx,
+    columns,
+    onPointerDown,
+    onPointerEnter,
+    onPointerLeave,
+    onPointerMove,
+    onPointerUp,
+  }: PixelProps) => {
+    const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+      const target = e.target as HTMLDivElement;
 
-    if (target?.hasPointerCapture(e.pointerId)) {
-      target?.releasePointerCapture(e.pointerId);
-    }
-
-    onToolActive(true);
-    onPointerDown(id);
-  };
-
-  const handlePointerMove = () => {
-    if (toolActive) {
+      if (target?.hasPointerCapture(e.pointerId)) {
+        target?.releasePointerCapture(e.pointerId);
+      }
       onPointerDown(id);
-    }
-  };
+    };
 
-  const handlePointerEnter = () => {
-    onPointerEnter(id);
-  };
+    const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+      onPointerMove(e, id);
+    };
 
-  const handlePointerLeave = () => {
-    onPointerLeave(id);
-  };
+    const handlePointerEnter = () => {
+      onPointerEnter(id);
+    };
 
-  const gridBackgroundColor: Indexable<string> = {
-    0: "bg-[#d9d9d9]",
-    1: "bg-white",
-  };
+    const handlePointerLeave = () => {
+      onPointerLeave(id);
+    };
 
-  const gridBgIdx = getGridBackgroundIndex(id, columns, rowIdx);
-  return (
-    <div
-      aria-label="pixel"
-      data-grid-bg-idx={gridBgIdx}
-      className={`pixel w-[calc(100%/${columns})] pb-[calc(100%/${columns})] border-neutral-500 ${gridBackgroundColor[gridBgIdx]}`}
-      style={{ backgroundColor: color }}
-      onPointerDown={handlePointerDown}
-      onPointerMove={handlePointerMove}
-      onPointerEnter={handlePointerEnter}
-      onPointerLeave={handlePointerLeave}
-      onPointerUp={() => {
-        onToolActive(false);
-      }}
-    ></div>
-  );
-};
+    const gridBackgroundColor: Indexable<string> = {
+      0: "bg-[#d9d9d9]",
+      1: "bg-white",
+    };
 
+    const gridBgIdx = getGridBackgroundIndex(id, columns, rowIdx);
+    return (
+      <div
+        aria-label="pixel"
+        data-color={color}
+        data-grid-bg-idx={gridBgIdx}
+        className={`pixel w-[calc(100%/${columns})] pb-[calc(100%/${columns})] border-neutral-500 ${gridBackgroundColor[gridBgIdx]}`}
+        style={{ backgroundColor: color }}
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerEnter={handlePointerEnter}
+        onPointerLeave={handlePointerLeave}
+        onPointerUp={onPointerUp}
+      ></div>
+    );
+  }
+);
 export default Pixel;

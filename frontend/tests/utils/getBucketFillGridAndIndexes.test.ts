@@ -56,7 +56,6 @@ describe("getBucketFillGridAndIndexes", () => {
         rows
       );
 
-      console.log(newGrid, indexes);
       expect(newGrid).toEqual([
         newColor,
         newColor,
