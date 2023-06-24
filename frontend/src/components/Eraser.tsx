@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import useOutsideClick from "../hooks/useOutsideClick";
 import { Indexable } from "../types/Indexable";
 
