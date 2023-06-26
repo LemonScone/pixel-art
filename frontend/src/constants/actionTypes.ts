@@ -2,7 +2,7 @@ enum ToolActionKind {
   PENCIL = "PENCIL",
   ERASER = "ERASER",
   BUCKET = "BUCKET",
-  MOVE = "MOVE"
+  MOVE = "MOVE",
 }
 
 enum GridSizeActionKind {

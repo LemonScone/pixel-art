@@ -1,5 +1,3 @@
-import React from "react";
-
 type PixelSizeProps = {
   value: number;
   onChangePixelSize: (size: number) => void;
