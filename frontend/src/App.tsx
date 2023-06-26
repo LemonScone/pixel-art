@@ -1,33 +1,46 @@
 import "./App.css";
 
-import { useState } from "react";
+import { useMemo, useReducer, useState } from "react";
 
 import PixelContainer from "./components/PixelContainer";
 
 import grid_sample from "./fixtures/grid";
-import { INITIAL_TOOL_OPTIONS } from "./constants";
+import {
+  INITIAL_TOOL_OPTIONS,
+  GRID_SIZE_MIN_VALUE,
+  GRID_SIZE_MAX_VALUE,
+} from "./constants";
 
 import type { Tool, ToolOption } from "./types/Tool";
 
 import Navbar from "./components/Navbar";
-import ToolConatiner from "./components/ToolConatiner";
+import ToolConatiner from "./components/ToolContainer";
 import PublishToggleSwitch from "./components/PublishToggleSwitch";
 import Title from "./components/Title";
 import PixelSize from "./components/PixelSize";
-import Dimensions from "./components/Dimensions";
 import NewProject from "./components/NewProject";
 import LoadProject from "./components/LoadProject";
 import SaveProject from "./components/SaveProject";
 import ResetProject from "./components/ResetProject";
 import PreviewHandler from "./components/PreviewHandler";
+import NumberPicker from "./components/NumberPicker";
 import ColorPallete from "./components/ColorPallete";
 
+import gridReducer from "./reducers/gridReducer";
+
+import { GridSizeActionKind } from "./constants/actionTypes";
+
 function App() {
-  const [grid, setGrid] = useState(JSON.parse(grid_sample));
   const [toolOptions, setToolOptions] = useState(INITIAL_TOOL_OPTIONS);
   const [selectedTool, setSelectedTool] = useState<Tool>("pen");
-  const [columns, setColumns] = useState(20);
-  const [rows, setRows] = useState(20);
+  const [pixelSize, setPixelSize] = useState(1);
+  const [publish, setPublish] = useState(false);
+
+  const [state, dispatch] = useReducer(gridReducer, {
+    grid: JSON.parse(grid_sample),
+    columns: 20,
+    rows: 20,
+  });
 
   const handleChangeToolSize = ({
     tool,
@@ -47,6 +60,10 @@ function App() {
     });
   };
 
+  const memoizedGrid = useMemo(() => {
+    return state.grid;
+  }, [state.grid]);
+
   return (
     <>
       <div className="min-h-screen bg-black">
@@ -62,19 +79,19 @@ function App() {
                   onChangeTool={({ tool }) => setSelectedTool(tool)}
                 />
                 <div className="flex flex-grow flex-col items-center p-10">
-                  <div className="h-72 w-72 touch-none select-none sm:h-80 sm:w-80 md:h-96 md:w-96 lg:h-[32rem] lg:w-[32rem]  xl:h-[50rem] xl:w-[50rem]">
+                  <div className="h-fit w-72 touch-none select-none sm:w-80 md:w-96 lg:w-[32rem] xl:w-[50rem]">
                     <PixelContainer
-                      columns={columns}
-                      rows={rows}
-                      grid={grid}
-                      onUpdateGrid={setGrid}
+                      columns={state.columns}
+                      rows={state.rows}
+                      grid={memoizedGrid}
+                      dispatch={dispatch}
                       toolOptions={toolOptions}
                       selectedTool={selectedTool}
                     />
                   </div>
                 </div>
               </div>
-              <div className="ml-4 mr-4 mt-4 flex flex-col">
+              <div className="ml-4 mr-4 mt-4 flex flex-col pb-4">
                 <PreviewHandler />
                 <div className="flex divide-x divide-gray-700 rounded bg-neutral-900">
                   <div className="p-4">
@@ -86,7 +103,7 @@ function App() {
                 </div>
               </div>
             </div>
-            <div className="order-1 flex flex-col gap-6 divide-y divide-gray-700 bg-neutral-900 md:order-2">
+            <div className="order-1 mb-4 flex flex-col gap-6 divide-y divide-gray-700 rounded-b bg-neutral-900 md:order-2">
               <div className="flex flex-col gap-2 p-4">
                 <NewProject />
                 <div className="flex grow justify-center gap-2">
@@ -95,12 +112,48 @@ function App() {
                 </div>
                 <ResetProject />
               </div>
-              <div className="flex flex-col gap-2 p-4">
+              <div className="flex flex-col gap-4 p-4">
                 <div className="flex items-center">
-                  <Dimensions />
+                  <NumberPicker
+                    name={"Width"}
+                    value={state.columns}
+                    minValue={GRID_SIZE_MIN_VALUE}
+                    maxValue={GRID_SIZE_MAX_VALUE}
+                    onIncrease={() =>
+                      dispatch({
+                        type: GridSizeActionKind.INCREASE_COLUMN,
+                      })
+                    }
+                    onDecrease={() => {
+                      dispatch({
+                        type: GridSizeActionKind.DECREASE_COLUMN,
+                      });
+                    }}
+                  />
                 </div>
                 <div className="flex items-center">
-                  <PixelSize />
+                  <NumberPicker
+                    name={"Height"}
+                    value={state.rows}
+                    minValue={GRID_SIZE_MIN_VALUE}
+                    maxValue={GRID_SIZE_MAX_VALUE}
+                    onIncrease={() => {
+                      dispatch({
+                        type: GridSizeActionKind.INCREASE_ROW,
+                      });
+                    }}
+                    onDecrease={() => {
+                      dispatch({
+                        type: GridSizeActionKind.DECREASE_ROW,
+                      });
+                    }}
+                  />
+                </div>
+                <div className="flex items-center">
+                  <PixelSize
+                    value={pixelSize}
+                    onChangePixelSize={setPixelSize}
+                  />
                 </div>
                 <div className="flex items-center">
                   <Title />
@@ -109,12 +162,18 @@ function App() {
               <div className="flex justify-center p-4">
                 <ColorPallete
                   toolOptions={toolOptions}
+                  selectedTool={selectedTool}
                   onChangeToolOptions={setToolOptions}
                   onChangeSelectedTool={setSelectedTool}
                 ></ColorPallete>
               </div>
               <div className="p-4">
-                <PublishToggleSwitch />
+                <PublishToggleSwitch
+                  checked={publish}
+                  onToggleSwitch={() =>
+                    setPublish((prevPublish) => !prevPublish)
+                  }
+                />
               </div>
             </div>
           </div>

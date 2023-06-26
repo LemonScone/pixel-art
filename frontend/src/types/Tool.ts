@@ -6,6 +6,8 @@ type ToolOption = {
   eraser: {
     size: number;
   };
+  bucket: {};
+  move: {};
 };
 
 type Tool = keyof ToolOption;

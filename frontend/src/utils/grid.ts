@@ -95,3 +95,62 @@ export const getGridBackgroundIndex = (
 export const getGridBackgroundHoverColor = (gridBgIdx: string) => {
   return gridBgIdx === "0" ? GRID_HOVER_COLOR_FIRST : GRID_HOVER_COLOR_SECOND;
 };
+
+export const getBucketFillGridAndIndexes = (
+  grid: string[],
+  start: number,
+  originColor: string,
+  newColor: string,
+  columns: number,
+  rows: number
+) => {
+  const indexes = [];
+  const visited = new Array(columns * rows).fill(false);
+  const queue: number[] = [start];
+
+  while (queue.length > 0) {
+    const pixelId = queue.shift() as number;
+    if (visited[pixelId]) continue;
+
+    grid[pixelId] = newColor;
+    indexes.push(pixelId);
+    visited[pixelId] = true;
+
+    const isNotRightmostPixel = (pixelId + 1) % columns !== 0;
+    const isNotLeftmostPixel = pixelId % columns !== 0;
+    const isNotTopRowPixel = pixelId >= columns;
+    const isNotBottomRowPixel = pixelId < rows * columns - columns;
+
+    if (isNotRightmostPixel && grid[pixelId + 1] === originColor) {
+      queue.push(pixelId + 1);
+    }
+
+    if (isNotLeftmostPixel && grid[pixelId - 1] === originColor) {
+      queue.push(pixelId - 1);
+    }
+
+    if (isNotTopRowPixel && grid[pixelId - columns] === originColor) {
+      queue.push(pixelId - columns);
+    }
+
+    if (isNotBottomRowPixel && grid[pixelId + columns] === originColor) {
+      queue.push(pixelId + columns);
+    }
+  }
+
+  return { grid, indexes };
+};
+
+export const getMoveIndexes = (id: number, columns: number, size: number) => {
+  let i = 0;
+  const indexes = [];
+  while (i < size) {
+    if (i % columns === id) {
+      indexes.push(i);
+      i += columns;
+    } else {
+      i++;
+    }
+  }
+  return indexes;
+};

@@ -1,7 +1,6 @@
 import React from "react";
 import UndoRedo from "./UndoRedo";
 import Pencil from "./Pencil";
-import EyeDropper from "./EyeDropper";
 import Eraser from "./Eraser";
 import Move from "./Move";
 import Bucket from "./Bucket";
@@ -30,7 +29,10 @@ const ToolConatiner = ({
     <div className="ml-2 flex flex-col items-center md:ml-4 md:items-start">
       <div className="mt-4 flex h-fit w-fit items-center justify-evenly gap-2 rounded bg-neutral-900 p-2 md:mt-0 md:w-10 md:flex-col md:p-6">
         <UndoRedo />
-        <Bucket />
+        <Bucket
+          selected={selectedTool === "bucket"}
+          onChangeTool={() => onChangeTool({ tool: "bucket" })}
+        />
         <Pencil
           selected={selectedTool === "pen"}
           size={toolOptions.pen.size}
@@ -47,8 +49,10 @@ const ToolConatiner = ({
             onChangeToolSize({ tool: "eraser", size })
           }
         />
-        <EyeDropper />
-        <Move />
+        <Move
+          selected={selectedTool === "move"}
+          onChangeTool={() => onChangeTool({ tool: "move" })}
+        />
       </div>
     </div>
   );

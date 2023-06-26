@@ -11,13 +11,14 @@ export default {
         "primary-color-400": "#c7f5a9",
         "primary-color-500": "#bff49d",
         "primary-color-600": "#aff285",
+        "input-color": "#2c2c2c",
       },
     },
   },
   safelist: [
     ...[...Array(121).keys()]
-      .filter(i => i > 4)
-      .flatMap(i => [`w-[calc(100%/${i})]`, `basis-[calc(100%/${i})]`]),
+      .filter((i) => i > 4)
+      .flatMap((i) => [`w-[calc(100%/${i})]`, `pb-[calc(100%/${i})]`]),
   ],
   plugins: [],
 };
