@@ -1,4 +1,3 @@
-import React from "react";
 import UndoRedo from "./UndoRedo";
 import Pencil from "./Pencil";
 import Eraser from "./Eraser";

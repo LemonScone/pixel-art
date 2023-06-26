@@ -11,4 +11,4 @@ class MockPointerEvent extends Event {
   }
 }
 
-export default MockPointerEvent
+export default MockPointerEvent;

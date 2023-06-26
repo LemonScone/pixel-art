@@ -1,5 +1,3 @@
-import React from "react";
-
 type NumberPickerProps = {
   name: string;
   value: number;
