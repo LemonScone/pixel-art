@@ -1,4 +1,4 @@
-import React, { Dispatch, useCallback, useRef, useState } from "react";
+import React, { Dispatch, useCallback, useRef } from "react";
 
 import Pixel from "./Pixel";
 
@@ -200,8 +200,8 @@ const PixelContainer = ({
         selectedTool === "move" ? "cursor-move" : "cursor-cell"
       } flex-wrap items-start shadow-2xl`}
     >
-      {rowPixels.map((row, rowIdx) => {
-        return colPixels.map((col, colIdx) => {
+      {rowPixels.map((_, rowIdx) => {
+        return colPixels.map((_, colIdx) => {
           const id = rowIdx * colPixels.length + colIdx;
           const color = grid[id];
           return (

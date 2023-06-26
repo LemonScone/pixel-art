@@ -3,7 +3,7 @@ const getHoverColor = (originColor: string) => {
   const OFFSET_COLOR = 30;
   const OPACITY = 0.9;
 
-  const [r, g, b, a] = (originColor.match(/\d+/g) ?? [0, 0, 0, 0]).map(Number);
+  const [r, g, b] = (originColor.match(/\d+/g) ?? [0, 0, 0, 0]).map(Number);
 
   const hoverColor = `rgba(${
     r + (r > BASE_COLOR ? -OFFSET_COLOR : OFFSET_COLOR)

@@ -4,8 +4,9 @@ import { vi } from "vitest";
 
 import ColorPallete from "./ColorPallete";
 import { INITIAL_COLOR_PALLETE } from "../constants";
+import { ToolOption } from "../types/Tool";
 
-const TOOL_OPTIONS = {
+const TOOL_OPTIONS: ToolOption = {
   pen: {
     color: "rgb(85, 239, 196)",
     size: 3,
@@ -13,6 +14,8 @@ const TOOL_OPTIONS = {
   eraser: {
     size: 1,
   },
+  bucket: {},
+  move: {},
 };
 const renderComponent = () => {
   const onChangeToolOptions = vi.fn();
@@ -20,6 +23,7 @@ const renderComponent = () => {
 
   render(
     <ColorPallete
+      selectedTool="pen"
       toolOptions={TOOL_OPTIONS}
       onChangeToolOptions={onChangeToolOptions}
       onChangeSelectedTool={onChangeSelectedTool}

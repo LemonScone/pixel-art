@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import useOutsideClick from "../hooks/useOutsideClick";
 import { Indexable } from "../types/Indexable";
 
@@ -18,7 +18,6 @@ const Eraser = ({
   onChangeToolSize,
 }: EraserProps) => {
   const [showToolbar, setShowToolbar] = useState(false);
-
 
   const handleClickOutside = () => setShowToolbar(false);
   const ref = useOutsideClick(handleClickOutside);
