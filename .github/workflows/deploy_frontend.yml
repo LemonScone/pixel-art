@@ -3,7 +3,9 @@ name: build frontend application
 on:
   push:
     branches: [main]
-    paths: [frontend/src/*, frontend/public/*]
+    paths:
+      - frontend/src/*
+      - frontend/public/*
 
 jobs:
   test-and-build-and-deploy:
