@@ -4,8 +4,8 @@ on:
   push:
     branches: [main]
     paths:
-      - frontend/src/*
-      - frontend/public/*
+      - "frontend/src/**"
+      - "frontend/public/**"
 
 jobs:
   test-and-build-and-deploy:
