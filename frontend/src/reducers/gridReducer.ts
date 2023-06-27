@@ -30,12 +30,31 @@ type GridSizeAction = {
 
 type Actions = GridSizeAction | ToolAction;
 
+const areArraysEqual = (arr1: string[], arr2: string[]) => {
+  if (arr1.length !== arr2.length) {
+    return false;
+  }
+
+  for (let i = 0; i < arr1.length; i++) {
+    if (arr1[i] !== arr2[i]) {
+      return false;
+    }
+  }
+
+  return true;
+};
+
 const gridReducer = (state: GridState, action: Actions) => {
   switch (action.type) {
     case ToolActionKind.PENCIL: {
       const newGrid = state.grid.slice();
 
-      if (action.payload && action.payload.id && action.payload.pen) {
+      if (
+        action.payload &&
+        action.payload.id !== null &&
+        action.payload.id !== undefined &&
+        action.payload.pen
+      ) {
         const { pen } = action.payload;
         const color = pen.color as string;
         const size = pen.size as number;
@@ -51,15 +70,24 @@ const gridReducer = (state: GridState, action: Actions) => {
           newGrid[idx] = color;
         });
       }
-      return {
-        ...state,
-        grid: newGrid,
-      };
+
+      if (!areArraysEqual(state.grid, newGrid)) {
+        return {
+          ...state,
+          grid: newGrid,
+        };
+      }
+      return state;
     }
     case ToolActionKind.ERASER: {
       const newGrid = state.grid.slice();
 
-      if (action.payload && action.payload.id && action.payload.eraser) {
+      if (
+        action.payload &&
+        action.payload.id !== null &&
+        action.payload.id !== undefined &&
+        action.payload.eraser
+      ) {
         const size = action.payload.eraser.size as number;
 
         const targetIndexes = getTargetIndexes(
@@ -73,33 +101,43 @@ const gridReducer = (state: GridState, action: Actions) => {
         });
       }
 
-      return {
-        ...state,
-        grid: newGrid,
-      };
+      if (!areArraysEqual(state.grid, newGrid)) {
+        return {
+          ...state,
+          grid: newGrid,
+        };
+      }
+      return state;
     }
     case ToolActionKind.BUCKET: {
-      const newGrid = state.grid.slice();
-      if (action.payload && action.payload.id && action.payload.pen) {
+      let newGrid: string[] = [];
+      if (
+        action.payload &&
+        action.payload.id !== null &&
+        action.payload.id !== undefined &&
+        action.payload.pen
+      ) {
         const originColor = state.grid[action.payload.id] as string;
         const newColor = action.payload.pen.color as string;
         const { grid } = getBucketFillGridAndIndexes(
-          newGrid,
+          state.grid.slice(),
           action.payload.id,
           originColor,
           newColor,
           state.columns,
           state.rows
         );
+
+        newGrid = grid;
+      }
+
+      if (newGrid.length > 0 && !areArraysEqual(state.grid, newGrid)) {
         return {
           ...state,
-          grid,
+          grid: newGrid,
         };
       }
-      return {
-        ...state,
-        grid: newGrid,
-      };
+      return state;
     }
 
     case ToolActionKind.MOVE: {
@@ -161,10 +199,14 @@ const gridReducer = (state: GridState, action: Actions) => {
           default:
         }
       }
-      return {
-        ...state,
-        grid: newGrid,
-      };
+
+      if (newGrid.length > 0 && !areArraysEqual(state.grid, newGrid)) {
+        return {
+          ...state,
+          grid: newGrid,
+        };
+      }
+      return state;
     }
 
     case GridSizeActionKind.INCREASE_COLUMN:
