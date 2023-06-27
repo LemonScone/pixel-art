@@ -3,7 +3,8 @@ name: build backend application
 on:
   push:
     branches: [main]
-    paths: [backend/src/*]
+    paths: 
+      - backend/src/*
 
 jobs:
   build-and-deploy:

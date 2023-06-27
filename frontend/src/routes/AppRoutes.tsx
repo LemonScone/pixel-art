@@ -11,7 +11,9 @@ const AppRoutes = () => {
     <BrowserRouter>
       <Suspense
         fallback={
-          <div className="min-h-screen bg-black text-white">Loading...</div>
+          <div className="min-h-screen bg-black text-lg text-primary-color">
+            Loading...
+          </div>
         }
       >
         <Routes>
