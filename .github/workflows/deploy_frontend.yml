@@ -32,8 +32,8 @@ jobs:
           host: ${{ secrets.REMOTE_IP }}
           username: ${{ secrets.REMOTE_USER }}
           key: ${{ secrets.REMOTE_PRIVATE_KEY }}
-          source: build.tar.gz
-          target: ./
+          source: frontend/build.tar.gz
+          target: ${{ secrets.REMOTE_TARGET }}
       - name: execute shell script
         uses: appleboy/ssh-action@master
         with:
