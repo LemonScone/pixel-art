@@ -1,6 +1,6 @@
 const Gallery = () => {
   return (
-    <div className="flex items-center justify-center text-3xl text-rose-500">
+    <div className="flex items-center justify-center text-3xl text-primary-color">
       Gallery
     </div>
   );
