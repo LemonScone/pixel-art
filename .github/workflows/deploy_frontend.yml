@@ -1,0 +1,45 @@
+name: build frontend application
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "frontend/src/**"
+      - "frontend/public/**"
+
+jobs:
+  test-and-build-and-deploy:
+    defaults:
+      run:
+        working-directory: frontend
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: "18.x"
+      - name: Install Dependencies
+        run: npm install
+      - name: Test
+        run: npm test
+      - name: Build
+        run: npm run build
+      - name: Package Application
+        run: tar -czvf build.tar.gz dist
+      - name: copy build files to EC2
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.REMOTE_IP }}
+          username: ${{ secrets.REMOTE_USER }}
+          key: ${{ secrets.REMOTE_PRIVATE_KEY }}
+          source: frontend/build.tar.gz
+          target: ${{ secrets.REMOTE_TARGET }}
+      - name: execute shell script
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.REMOTE_IP }}
+          username: ${{ secrets.REMOTE_USER }}
+          key: ${{ secrets.REMOTE_PRIVATE_KEY }}
+          script: |
+            cd /home/ubuntu/pixel-art/frontend
+            ./deploy-build-file.sh

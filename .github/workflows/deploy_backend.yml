@@ -1,24 +1,15 @@
-name: Deploy
+name: build backend application
 
 on:
   push:
     branches: [main]
+    paths:
+      - "backend/src/**"
 
 jobs:
-  deploy:
-    name: deploy
+  build-and-deploy:
     runs-on: ubuntu-latest
-
     steps:
-      - name: frontend build and test
-        uses: actions/checkout@v3
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18.x'
-        run: cd frontend
-        run: npm install
-        run: npm run build
-        run: npm run test
       - name: executing remote ssh commands
         uses: appleboy/ssh-action@v0.1.10
         with:
@@ -29,10 +20,6 @@ jobs:
             cd /home/ubuntu/pixel-art
             git pull origin main
             cd backend
-            npm i --force
-            npm run build
-            cd ..
-            cd frontend
             npm i --force
             npm run build
             cd ..
