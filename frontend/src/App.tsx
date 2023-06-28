@@ -4,7 +4,7 @@ import { useMemo, useReducer, useState } from "react";
 
 import PixelContainer from "./components/PixelContainer";
 
-import grid_sample from "./fixtures/grid";
+import grid_sample from "./tests/fixtures/grid";
 import {
   INITIAL_TOOL_OPTIONS,
   GRID_SIZE_MIN_VALUE,
