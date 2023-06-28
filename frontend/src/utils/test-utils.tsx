@@ -13,7 +13,7 @@ const customRender = (
   const view = render(ui, { wrapper, ...options });
 
   const style = document.createElement("style");
-  style.innerHTML = fs.readFileSync("tests/index.css", "utf8");
+  style.innerHTML = fs.readFileSync("src/tests/index.css", "utf8");
   document.head.appendChild(style);
 
   return view;
