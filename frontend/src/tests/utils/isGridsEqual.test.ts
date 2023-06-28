@@ -1,4 +1,4 @@
-import { isGridsEqual } from "../../src/utils/grid";
+import { isGridsEqual } from "../../utils/grid";
 
 describe("isGridsEqual", () => {
   describe("When the length of the origin grid and the new grid are the different", () => {

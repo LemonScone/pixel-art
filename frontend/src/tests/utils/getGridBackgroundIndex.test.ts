@@ -1,4 +1,4 @@
-import { getGridBackgroundIndex } from "../../src/utils/grid";
+import { getGridBackgroundIndex } from "../../utils/grid";
 
 describe("getGridBackgroundIndex", () => {
   describe("when column is even", () => {

@@ -1,4 +1,4 @@
-import { getTargetIndexes } from "../../src/utils/grid";
+import { getTargetIndexes } from "../../utils/grid";
 
 describe("getTargetIndexes", () => {
   describe("when start index is 2, size is 3, columns is 5, rows is 5", () => {

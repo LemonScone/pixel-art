@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { getBucketFillGridAndIndexes } from "../../src/utils/grid";
+import { getBucketFillGridAndIndexes } from "../../utils/grid";
 
 describe("getBucketFillGridAndIndexes", () => {
   describe("when start index is 0, origin color is red, new color is blue", () => {
