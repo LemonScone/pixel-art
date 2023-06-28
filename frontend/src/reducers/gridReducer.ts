@@ -2,6 +2,7 @@ import { GridSizeActionKind, ToolActionKind } from "../constants/actionTypes";
 import { NestedPartial } from "../types/NestedPartial";
 import { ToolOption } from "../types/Tool";
 import {
+  isGridsEqual,
   getBucketFillGridAndIndexes,
   getMoveIndexes,
   getTargetIndexes,
@@ -30,20 +31,6 @@ type GridSizeAction = {
 
 type Actions = GridSizeAction | ToolAction;
 
-const areArraysEqual = (arr1: string[], arr2: string[]) => {
-  if (arr1.length !== arr2.length) {
-    return false;
-  }
-
-  for (let i = 0; i < arr1.length; i++) {
-    if (arr1[i] !== arr2[i]) {
-      return false;
-    }
-  }
-
-  return true;
-};
-
 const gridReducer = (state: GridState, action: Actions) => {
   switch (action.type) {
     case ToolActionKind.PENCIL: {
@@ -71,7 +58,7 @@ const gridReducer = (state: GridState, action: Actions) => {
         });
       }
 
-      if (!areArraysEqual(state.grid, newGrid)) {
+      if (!isGridsEqual(state.grid, newGrid)) {
         return {
           ...state,
           grid: newGrid,
@@ -101,7 +88,7 @@ const gridReducer = (state: GridState, action: Actions) => {
         });
       }
 
-      if (!areArraysEqual(state.grid, newGrid)) {
+      if (!isGridsEqual(state.grid, newGrid)) {
         return {
           ...state,
           grid: newGrid,
@@ -131,7 +118,7 @@ const gridReducer = (state: GridState, action: Actions) => {
         newGrid = grid;
       }
 
-      if (newGrid.length > 0 && !areArraysEqual(state.grid, newGrid)) {
+      if (newGrid.length > 0 && !isGridsEqual(state.grid, newGrid)) {
         return {
           ...state,
           grid: newGrid,
@@ -200,7 +187,7 @@ const gridReducer = (state: GridState, action: Actions) => {
         }
       }
 
-      if (newGrid.length > 0 && !areArraysEqual(state.grid, newGrid)) {
+      if (newGrid.length > 0 && !isGridsEqual(state.grid, newGrid)) {
         return {
           ...state,
           grid: newGrid,

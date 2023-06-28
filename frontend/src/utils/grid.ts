@@ -7,6 +7,8 @@ export const resizeGrid = (
   newRows: number,
   newColumns: number
 ) => {
+  //TODO - 배열 계산 최적화
+  // console.time("resizeGrid");
   let newGrid = grid;
   const originCells = originRows * originColumns;
 
@@ -45,6 +47,8 @@ export const resizeGrid = (
       }
     }
   }
+
+  //console.timeEnd("resizeGrid");
 
   return newGrid;
 };
@@ -107,7 +111,7 @@ export const getBucketFillGridAndIndexes = (
   const indexes = [];
   const visited = new Array(columns * rows).fill(false);
   const queue: number[] = [start];
-
+  //TODO LinkedList로 수정해보기
   while (queue.length > 0) {
     const pixelId = queue.shift() as number;
     if (visited[pixelId]) continue;
@@ -153,4 +157,18 @@ export const getMoveIndexes = (id: number, columns: number, size: number) => {
     }
   }
   return indexes;
+};
+
+export const isGridsEqual = (originGrid: string[], newGrid: string[]) => {
+  if (originGrid.length !== newGrid.length) {
+    return false;
+  }
+
+  for (let i = 0; i < originGrid.length; i++) {
+    if (originGrid[i] !== newGrid[i]) {
+      return false;
+    }
+  }
+
+  return true;
 };
