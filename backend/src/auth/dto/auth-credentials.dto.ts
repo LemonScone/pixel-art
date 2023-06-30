@@ -3,7 +3,7 @@ import { IsString, Matches, MaxLength, MinLength } from 'class-validator';
 
 export class AuthCredentialsDto {
   @ApiProperty({
-    example: 'test',
+    example: 'artist',
     description: 'user id',
     required: true,
   })
@@ -13,7 +13,7 @@ export class AuthCredentialsDto {
   userId: string;
 
   @ApiProperty({
-    example: '1234',
+    example: '12345',
     description: 'user password',
     required: true,
   })
