@@ -1,8 +1,9 @@
 import { render, RenderOptions } from "@testing-library/react";
-import React, { FC, ReactElement } from "react";
+import { FC, ReactElement } from "react";
 import fs from "fs";
+import Children from "../types/Children";
 
-const wrapper: FC<{ children: React.ReactNode }> = ({ children }) => {
+const wrapper: FC<Children> = ({ children }) => {
   return <>{children}</>;
 };
 
