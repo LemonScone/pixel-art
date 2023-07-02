@@ -29,20 +29,25 @@ export class JwtRefreshStrategy extends PassportStrategy(
   async validate(req: Request, payload) {
     const refreshToken = req.cookies['refreshToken'];
 
-    const refreshTokenId = await this.usersService.getRefreshTokenId(
-      payload.userId,
-      refreshToken,
-    );
+    try {
+      const refreshTokenId = await this.usersService.getRefreshTokenId(
+        payload.sub,
+        refreshToken,
+      );
 
-    if (!refreshTokenId) {
+      if (!refreshTokenId) {
+        throw new UnauthorizedException();
+      }
+
+      if (payload.exp < Date.now() / 1000) {
+        await this.authService.logout(refreshTokenId);
+        throw new UnauthorizedException('jwt expired');
+      }
+
+      const { sub, ...rest } = payload;
+      return { userId: sub, ...rest, refreshTokenId };
+    } catch (error) {
       throw new UnauthorizedException();
     }
-
-    if (payload.exp < Date.now() / 1000) {
-      await this.authService.logout(refreshTokenId);
-      throw new UnauthorizedException();
-    }
-
-    return { userId: payload.userId, refreshTokenId };
   }
 }

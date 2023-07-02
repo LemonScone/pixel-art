@@ -23,7 +23,7 @@ export class JwtAuthGuard implements CanActivate {
       });
 
       const { sub, nickname, current, provider } = user;
-      request.user = { id: sub, nickname, current, provider };
+      request.user = { userId: sub, nickname, current, provider };
 
       return true;
     } catch (error) {
