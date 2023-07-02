@@ -7,27 +7,32 @@ export const resizeGrid = (
   newRows: number,
   newColumns: number
 ) => {
-  //TODO - 배열 계산 최적화
-  // console.time("resizeGrid");
   let newGrid = grid;
-  const originCells = originRows * originColumns;
 
   if (originColumns !== newColumns) {
     // resize by columns
     const diff = Math.abs(newColumns - originColumns);
     const increment = newColumns - originColumns > 0;
     if (increment) {
-      for (let i = originCells; i > 0; i -= originColumns) {
-        const pixels = Array(diff).fill("");
-        newGrid = [...newGrid.slice(0, i), ...pixels, ...newGrid.slice(i)];
-      }
+      newGrid = Array(grid.length + diff * originRows).fill("");
     } else {
-      for (let i = originCells - 1; i > 0; i -= originColumns) {
-        for (let j = 0; j < diff; j++) {
-          newGrid = [...newGrid.slice(0, i - j), ...newGrid.slice(i + 1 - j)];
-        }
-      }
+      newGrid = grid.slice(0, grid.length - diff * originRows);
     }
+
+    newGrid = newGrid.map((_, index) => {
+      const col = index % newColumns;
+      const row = Math.floor(index / newColumns);
+      const originIndex = col + row * originColumns;
+
+      if (
+        col < (increment ? originColumns : newColumns) &&
+        originIndex < grid.length
+      ) {
+        return grid[originIndex];
+      } else {
+        return "";
+      }
+    });
   }
 
   if (originRows !== newRows) {
@@ -35,20 +40,12 @@ export const resizeGrid = (
     const diff = Math.abs(newRows - originRows);
     const increment = newRows - originRows > 0;
     if (increment) {
-      for (let i = 0; i < newColumns; i++) {
-        const pixels = Array(diff).fill("");
-        newGrid = [...newGrid, ...pixels];
-      }
+      const newPixels = Array(diff * newColumns).fill("");
+      newGrid = [...newGrid, ...newPixels];
     } else {
-      for (let i = 0; i < newColumns; i++) {
-        for (let j = 0; j < diff; j++) {
-          newGrid = newGrid.slice(0, -1);
-        }
-      }
+      newGrid = newGrid.slice(0, newGrid.length - diff * newColumns);
     }
   }
-
-  //console.timeEnd("resizeGrid");
 
   return newGrid;
 };
