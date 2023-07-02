@@ -9,12 +9,12 @@ type PixelProps = {
   columns: number;
 };
 
-const Pixel = React.memo(({ id, color, rowIdx, columns }: PixelProps) => {
-  const gridBackgroundColor: Indexable<string> = {
-    0: "bg-[#d9d9d9]",
-    1: "bg-white",
-  };
+const gridBackgroundColor: Indexable<string> = {
+  0: "bg-[#d9d9d9]",
+  1: "bg-white",
+};
 
+const Pixel = React.memo(({ id, color, rowIdx, columns }: PixelProps) => {
   const gridBgIdx = getGridBackgroundIndex(id, columns, rowIdx);
   return (
     <div
