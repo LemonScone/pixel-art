@@ -1,18 +1,19 @@
-import { render, screen } from "@testing-library/react";
+import { screen } from "@testing-library/react";
 
 import SignInForm from "./SignInForm";
 
 import user from "@testing-library/user-event";
-import AuthProvider from "../../providers/AuthProvider";
 import { MemoryRouter } from "react-router-dom";
+import { renderWithProviders } from "../../utils/test-utils";
 
 const renderComponent = () => {
-  render(
+  renderWithProviders(
     <MemoryRouter>
-      <AuthProvider>
-        <SignInForm />
-      </AuthProvider>
-    </MemoryRouter>
+      <SignInForm />
+    </MemoryRouter>,
+    {
+      preloadedState: {},
+    }
   );
 };
 
