@@ -8,4 +8,10 @@ export class AccessTokenDto {
     required: true,
   })
   accessToken: string;
+
+  @ApiProperty({
+    example: 180000,
+    description: 'jwt expired',
+  })
+  expired: number;
 }

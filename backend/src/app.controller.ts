@@ -16,6 +16,6 @@ export class AppController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('accessToken')
   test(@Req() req) {
-    console.log(req.user);
+    return req.user;
   }
 }

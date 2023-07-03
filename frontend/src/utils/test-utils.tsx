@@ -1,8 +1,9 @@
 import { render, RenderOptions } from "@testing-library/react";
-import React, { FC, ReactElement } from "react";
+import { FC, ReactElement } from "react";
 import fs from "fs";
+import Children from "../types/Children";
 
-const wrapper: FC<{ children: React.ReactNode }> = ({ children }) => {
+const wrapper: FC<Children> = ({ children }) => {
   return <>{children}</>;
 };
 
@@ -13,7 +14,7 @@ const customRender = (
   const view = render(ui, { wrapper, ...options });
 
   const style = document.createElement("style");
-  style.innerHTML = fs.readFileSync("tests/index.css", "utf8");
+  style.innerHTML = fs.readFileSync("src/tests/index.css", "utf8");
   document.head.appendChild(style);
 
   return view;

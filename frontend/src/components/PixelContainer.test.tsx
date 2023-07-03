@@ -1,7 +1,7 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { vi } from "vitest";
 
-import MockPointerEvent from "../../__mocks__/MockPointerEvent";
+import MockPointerEvent from "../tests/mocks/MockPointerEvent";
 
 import PixelContainer from "./PixelContainer";
 

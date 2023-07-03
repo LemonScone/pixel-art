@@ -1,4 +1,4 @@
-import { getMoveIndexes } from "../../src/utils/grid";
+import { getMoveIndexes } from "../../utils/grid";
 
 describe("getMoveIndexes", () => {
   describe("when start index is 0, columns count is 3, cell count is 25", () => {

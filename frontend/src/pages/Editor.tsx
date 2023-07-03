@@ -1,7 +1,7 @@
 import { useMemo, useReducer, useState } from "react";
 
 import gridReducer from "../reducers/gridReducer";
-import grid_sample from "../fixtures/grid";
+import grid_sample from "../tests/fixtures/grid";
 import ToolConatiner from "../components/ToolContainer";
 import PixelContainer from "../components/PixelContainer";
 import PreviewHandler from "../components/PreviewHandler";

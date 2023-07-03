@@ -1,10 +1,10 @@
-import { resizeGrid } from "../../src/utils/grid";
+import { resizeGrid } from "../../utils/grid";
 
 describe("resizeGrid", () => {
   const ORIGIN_ROWS = 3;
   const ORIGIN_COLUMNS = 3;
 
-  let arr;
+  let arr: string[];
   beforeEach(() => {
     arr = ["0", "1", "2", "3", "4", "5", "6", "7", "8"];
     // [0, 1, 2
