@@ -1,24 +1,19 @@
 import { useState } from "react";
 import useOutsideClick from "../hooks/useOutsideClick";
 import { Indexable } from "../types/Indexable";
-import {
-  AppDispatch,
-  RootState,
-  changeEraserSize,
-  changeSelectedTool,
-} from "../store";
-import { useDispatch, useSelector } from "react-redux";
+import { changeEraserSize, changeSelectedTool } from "../store";
+import { useAppDispatch, useAppSelector } from "../hooks/useRedux";
 
 const EraserSizes = [1, 2, 3, 4, 5];
 
 const Eraser = () => {
-  const dispatch: AppDispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const {
     selectedTool,
     options: {
       eraser: { size },
     },
-  } = useSelector((state: RootState) => state.projects);
+  } = useAppSelector((state) => state.projects);
 
   const [showToolbar, setShowToolbar] = useState(false);
 

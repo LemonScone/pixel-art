@@ -2,24 +2,19 @@ import { PencilIcon } from "@heroicons/react/24/outline";
 import { useState } from "react";
 import useOutsideClick from "../hooks/useOutsideClick";
 import { Indexable } from "../types/Indexable";
-import {
-  AppDispatch,
-  RootState,
-  changePenSize,
-  changeSelectedTool,
-} from "../store";
-import { useDispatch, useSelector } from "react-redux";
+import { changePenSize, changeSelectedTool } from "../store";
+import { useAppDispatch, useAppSelector } from "../hooks/useRedux";
 
 const PencilSizes = [1, 2, 3, 4, 5];
 
 const Pencil = () => {
-  const dispatch: AppDispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const {
     selectedTool,
     options: {
       pen: { size },
     },
-  } = useSelector((state: RootState) => state.projects);
+  } = useAppSelector((state) => state.projects);
 
   const [showToolbar, setShowToolbar] = useState(false);
 

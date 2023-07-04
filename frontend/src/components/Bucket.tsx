@@ -1,9 +1,9 @@
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState, changeSelectedTool } from "../store";
+import { useAppDispatch, useAppSelector } from "../hooks/useRedux";
+import { changeSelectedTool } from "../store";
 
 const Bucket = () => {
-  const dispatch: AppDispatch = useDispatch();
-  const { selectedTool } = useSelector((state: RootState) => state.projects);
+  const dispatch = useAppDispatch();
+  const { selectedTool } = useAppSelector((state) => state.projects);
 
   return (
     <a

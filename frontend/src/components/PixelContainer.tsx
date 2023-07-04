@@ -6,20 +6,13 @@ import useOutsidePointerUp from "../hooks/useOutsidePointerUp";
 import { getGridBackgroundHoverColor, getTargetIndexes } from "../utils/grid";
 import { getHoverColor } from "../utils/color";
 
-import { useDispatch, useSelector } from "react-redux";
-import {
-  AppDispatch,
-  RootState,
-  applyBucket,
-  applyEraser,
-  applyMove,
-  applyPencil,
-} from "../store";
+import { applyBucket, applyEraser, applyMove, applyPencil } from "../store";
+import { useAppDispatch, useAppSelector } from "../hooks/useRedux";
 
 const PixelContainer = () => {
-  const dispatch: AppDispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const { data, currentProjectId, currentFrameId, selectedTool, options } =
-    useSelector((state: RootState) => state.projects);
+    useAppSelector((state) => state.projects);
 
   const grid = data[currentProjectId].frames[currentFrameId].grid;
   const columns = data[currentProjectId].gridColumns;

@@ -15,25 +15,16 @@ import PublishToggleSwitch from "../components/PublishToggleSwitch";
 
 import { GRID_SIZE_MAX_VALUE, GRID_SIZE_MIN_VALUE } from "../constants";
 
-import { useDispatch, useSelector } from "react-redux";
-import {
-  AppDispatch,
-  RootState,
-  decreseColumn,
-  decreseRow,
-  increseColumn,
-  increseRow,
-} from "../store";
+import { decreseColumn, decreseRow, increseColumn, increseRow } from "../store";
+import { useAppDispatch, useAppSelector } from "../hooks/useRedux";
 
 const Editor = () => {
-  const dispatch: AppDispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const [pixelSize, setPixelSize] = useState(1);
   const [publish, setPublish] = useState(false);
 
-  const { data, currentProjectId } = useSelector(
-    (state: RootState) => state.projects
-  );
+  const { data, currentProjectId } = useAppSelector((state) => state.projects);
   const columns = data[currentProjectId].gridColumns;
   const rows = data[currentProjectId].gridRows;
 

@@ -1,24 +1,19 @@
-import { useDispatch, useSelector } from "react-redux";
 import { COLOR_REGEX } from "../constants";
-import {
-  AppDispatch,
-  RootState,
-  changePenColor,
-  changeSelectedTool,
-} from "../store";
+import { useAppDispatch, useAppSelector } from "../hooks/useRedux";
+import { changePenColor, changeSelectedTool } from "../store";
 
 type ColorSwatchProps = {
   color: string;
 };
 
 const ColorSwatch = ({ color }: ColorSwatchProps) => {
-  const dispatch: AppDispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const {
     selectedTool,
     options: {
       pen: { color: currentColor },
     },
-  } = useSelector((state: RootState) => state.projects);
+  } = useAppSelector((state) => state.projects);
 
   const handleColorClick = (e: React.MouseEvent<HTMLDivElement>) => {
     const target = e.target as HTMLDivElement;

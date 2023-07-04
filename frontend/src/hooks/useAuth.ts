@@ -1,17 +1,15 @@
 import { useCallback, useDebugValue, useRef } from "react";
 import { SignInCredencials } from "../types/Auth";
-import { AppDispatch, RootState, resetAuth, setAuth } from "../store";
-import { useDispatch, useSelector } from "react-redux";
+import { resetAuth, setAuth } from "../store";
 import { api, setAuthorizationHeader } from "../api";
 import { ONE_MINUTE } from "../constants";
 import { AxiosError } from "axios";
 import { useNavigate } from "react-router-dom";
+import { useAppDispatch, useAppSelector } from "./useRedux";
 
 const useAuth = () => {
-  const dispatch: AppDispatch = useDispatch();
-  const { user, accessToken } = useSelector(
-    (state: RootState) => state.auth.data
-  );
+  const dispatch = useAppDispatch();
+  const { user, accessToken } = useAppSelector((state) => state.auth.data);
 
   const intervalRef = useRef<NodeJS.Timer>();
 

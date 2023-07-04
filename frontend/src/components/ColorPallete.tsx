@@ -2,9 +2,9 @@ import { useState } from "react";
 import { INITIAL_COLOR_PALLETE } from "../constants";
 import ColorSwatch from "./ColorSwatch";
 import ColorPicker from "./ColorPicker";
-import { AppDispatch, RootState, changePenColor } from "../store";
-import { useDispatch, useSelector } from "react-redux";
+import { changePenColor } from "../store";
 import { rgbToObject } from "../utils/color";
+import { useAppDispatch, useAppSelector } from "../hooks/useRedux";
 
 type setStateType = (current: boolean) => boolean;
 
@@ -32,12 +32,12 @@ const ColorAddButton = ({
 };
 
 const ColorPallete = () => {
-  const dispatch: AppDispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const {
     options: {
       pen: { color },
     },
-  } = useSelector((state: RootState) => state.projects);
+  } = useAppSelector((state) => state.projects);
 
   const [colorPallete, setColorPallete] = useState(INITIAL_COLOR_PALLETE);
   const [isColorPickerActive, setIsColorPickerActive] =

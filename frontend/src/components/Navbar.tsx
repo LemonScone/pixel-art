@@ -10,8 +10,8 @@ import { AUTHENTICATED, ONE_MINUTE, UNAUTHENTICATED } from "../constants";
 import classNames from "../utils/classNames";
 import { useEffect, useRef } from "react";
 import { api, setAuthorizationHeader } from "../api";
-import { AppDispatch, resetAuth } from "../store";
-import { useDispatch } from "react-redux";
+import { resetAuth } from "../store";
+import { useAppDispatch } from "../hooks/useRedux";
 
 const navigation = [
   { name: "Editor", href: "" },
@@ -22,7 +22,7 @@ const Navbar = () => {
   const intervalRef = useRef<NodeJS.Timer>();
 
   const { accessToken, requestRefresh, silentRefresh } = useAuth();
-  const dispatch: AppDispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const authStatus = accessToken ? AUTHENTICATED : UNAUTHENTICATED;
 
