@@ -1,20 +1,15 @@
 import { useState } from "react";
-import { COLOR_REGEX, INITIAL_COLOR_PALLETE } from "../constants";
-import type { Tool, ToolOption } from "../types/Tool";
+import { INITIAL_COLOR_PALLETE } from "../constants";
 import ColorSwatch from "./ColorSwatch";
 import ColorPicker from "./ColorPicker";
+import { AppDispatch, RootState, changePenColor } from "../store";
+import { useDispatch, useSelector } from "react-redux";
+import { rgbToObject } from "../utils/color";
 
 type setStateType = (current: boolean) => boolean;
 
 type ColorAddButtonProps = {
   onChangeIsColorPickerActive: (current: setStateType) => void;
-};
-
-type ColorPalleteProps = {
-  toolOptions: ToolOption;
-  selectedTool: Tool;
-  onChangeToolOptions: (toolOptions: ToolOption) => void;
-  onChangeSelectedTool: (tool: Tool) => void;
 };
 
 const ColorAddButton = ({
@@ -36,66 +31,40 @@ const ColorAddButton = ({
   );
 };
 
-const ColorPallete = ({
-  toolOptions,
-  selectedTool,
-  onChangeToolOptions,
-  onChangeSelectedTool,
-}: ColorPalleteProps) => {
+const ColorPallete = () => {
+  const dispatch: AppDispatch = useDispatch();
+  const {
+    options: {
+      pen: { color },
+    },
+  } = useSelector((state: RootState) => state.projects);
+
   const [colorPallete, setColorPallete] = useState(INITIAL_COLOR_PALLETE);
   const [isColorPickerActive, setIsColorPickerActive] =
     useState<boolean>(false);
 
-  const colorString = toolOptions.pen.color;
-  const colorMatches: RegExpMatchArray | null = colorString.match(COLOR_REGEX);
-  const colorObject = {
-    r: colorMatches?.[1] !== undefined ? +colorMatches?.[1] : 0,
-    g: colorMatches?.[2] !== undefined ? +colorMatches?.[2] : 0,
-    b: colorMatches?.[3] !== undefined ? +colorMatches?.[3] : 0,
-  };
-
-  const handleColorSwatchClick = (color: string) => {
-    const newPen = {
-      ...toolOptions.pen,
-      color,
-    };
-    onChangeToolOptions({ ...toolOptions, pen: newPen });
-    if (selectedTool !== "pen" && selectedTool !== "bucket") {
-      onChangeSelectedTool("pen");
-    }
-  };
+  const rgbObject = rgbToObject(color);
 
   const handleColorPickerClose = (selectedColor: string) => {
-    if (selectedColor !== colorString) {
+    if (selectedColor !== color) {
       if (!colorPallete.includes(selectedColor)) {
         setColorPallete((current) => [...current, selectedColor]);
       }
-      const newPen = {
-        ...toolOptions.pen,
-        color: selectedColor,
-      };
-      onChangeToolOptions({ ...toolOptions, pen: newPen });
+      dispatch(changePenColor(selectedColor));
     }
   };
 
   return (
     <div className="flex max-w-[260px] flex-wrap" role="pallete">
       {colorPallete.map((color) => {
-        return (
-          <ColorSwatch
-            key={color}
-            color={color}
-            isActiveColor={color === colorString}
-            onChangeToolOptionsAndSelectedTool={handleColorSwatchClick}
-          />
-        );
+        return <ColorSwatch key={color} color={color} />;
       })}
       <div className="relative">
         <ColorAddButton onChangeIsColorPickerActive={setIsColorPickerActive} />
         {isColorPickerActive && (
           <ColorPicker
             colIndex={colorPallete.length % 5}
-            activeColor={colorObject}
+            activeColor={rgbObject}
             onChangeIsColorPickerActive={setIsColorPickerActive}
             onChangeColorPallete={handleColorPickerClose}
           />

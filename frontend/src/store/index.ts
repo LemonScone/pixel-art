@@ -1,7 +1,20 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import { projectsReducer } from "./slices/projectsSlice";
 import { setAuth, resetAuth, authReducer } from "./slices/authSlice";
-
+import {
+  changeSelectedTool,
+  changePenColor,
+  changePenSize,
+  changeEraserSize,
+  applyPencil,
+  applyEraser,
+  applyBucket,
+  applyMove,
+  increseColumn,
+  decreseColumn,
+  increseRow,
+  decreseRow,
+} from "./slices/projectsSlice";
 import type { PreloadedState } from "@reduxjs/toolkit";
 
 // const store = configureStore({
@@ -26,6 +39,9 @@ export const setupStore = (preloadedState?: PreloadedState<RootState>) => {
 };
 
 export { setAuth, resetAuth };
+export { changeSelectedTool, changePenColor, changePenSize, changeEraserSize };
+export { applyPencil, applyEraser, applyBucket, applyMove };
+export { increseColumn, decreseColumn, increseRow, decreseRow };
 export type RootState = ReturnType<typeof rootReducer>;
 export type AppStore = ReturnType<typeof setupStore>;
 export type AppDispatch = AppStore["dispatch"];

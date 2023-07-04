@@ -1,7 +1,5 @@
-import { useMemo, useReducer, useState } from "react";
+import { useState } from "react";
 
-import gridReducer from "../reducers/gridReducer";
-import grid_sample from "../tests/fixtures/grid";
 import ToolConatiner from "../components/ToolContainer";
 import PixelContainer from "../components/PixelContainer";
 import PreviewHandler from "../components/PreviewHandler";
@@ -15,70 +13,38 @@ import Title from "../components/Title";
 import ColorPallete from "../components/ColorPallete";
 import PublishToggleSwitch from "../components/PublishToggleSwitch";
 
+import { GRID_SIZE_MAX_VALUE, GRID_SIZE_MIN_VALUE } from "../constants";
+
+import { useDispatch, useSelector } from "react-redux";
 import {
-  GRID_SIZE_MAX_VALUE,
-  GRID_SIZE_MIN_VALUE,
-  INITIAL_TOOL_OPTIONS,
-} from "../constants";
-
-import { GridSizeActionKind } from "../constants/actionTypes";
-
-import { Tool, ToolOption } from "../types/Tool";
+  AppDispatch,
+  RootState,
+  decreseColumn,
+  decreseRow,
+  increseColumn,
+  increseRow,
+} from "../store";
 
 const Editor = () => {
-  const [toolOptions, setToolOptions] = useState(INITIAL_TOOL_OPTIONS);
-  const [selectedTool, setSelectedTool] = useState<Tool>("pen");
+  const dispatch: AppDispatch = useDispatch();
+
   const [pixelSize, setPixelSize] = useState(1);
   const [publish, setPublish] = useState(false);
 
-  const [state, dispatch] = useReducer(gridReducer, {
-    grid: JSON.parse(grid_sample),
-    columns: 20,
-    rows: 20,
-  });
-
-  const handleChangeToolSize = ({
-    tool,
-    size,
-  }: {
-    tool: keyof ToolOption;
-    size: number;
-  }) => {
-    setToolOptions((prevOptions) => {
-      return {
-        ...prevOptions,
-        [tool]: {
-          ...prevOptions[tool],
-          size,
-        },
-      };
-    });
-  };
-
-  const memoizedGrid = useMemo(() => {
-    return state.grid;
-  }, [state.grid]);
+  const { data, currentProjectId } = useSelector(
+    (state: RootState) => state.projects
+  );
+  const columns = data[currentProjectId].gridColumns;
+  const rows = data[currentProjectId].gridRows;
 
   return (
     <div className="mx-auto flex max-w-7xl flex-col justify-between md:flex-row">
       <div className="order-2 flex flex-grow flex-col justify-between md:order-1">
         <div className="flex flex-col items-center md:flex-row">
-          <ToolConatiner
-            selectedTool={selectedTool}
-            toolOptions={toolOptions}
-            onChangeToolSize={handleChangeToolSize}
-            onChangeTool={({ tool }) => setSelectedTool(tool)}
-          />
+          <ToolConatiner />
           <div className="flex flex-grow flex-col items-center p-10">
             <div className="h-fit w-72 touch-none select-none sm:w-80 md:w-96 lg:w-[32rem] xl:w-[50rem]">
-              <PixelContainer
-                columns={state.columns}
-                rows={state.rows}
-                grid={memoizedGrid}
-                dispatch={dispatch}
-                toolOptions={toolOptions}
-                selectedTool={selectedTool}
-              />
+              <PixelContainer />
             </div>
           </div>
         </div>
@@ -107,37 +73,21 @@ const Editor = () => {
           <div className="flex items-center">
             <NumberPicker
               name={"Width"}
-              value={state.columns}
+              value={columns}
               minValue={GRID_SIZE_MIN_VALUE}
               maxValue={GRID_SIZE_MAX_VALUE}
-              onIncrease={() =>
-                dispatch({
-                  type: GridSizeActionKind.INCREASE_COLUMN,
-                })
-              }
-              onDecrease={() => {
-                dispatch({
-                  type: GridSizeActionKind.DECREASE_COLUMN,
-                });
-              }}
+              onIncrease={() => dispatch(increseColumn())}
+              onDecrease={() => dispatch(decreseColumn())}
             />
           </div>
           <div className="flex items-center">
             <NumberPicker
               name={"Height"}
-              value={state.rows}
+              value={rows}
               minValue={GRID_SIZE_MIN_VALUE}
               maxValue={GRID_SIZE_MAX_VALUE}
-              onIncrease={() => {
-                dispatch({
-                  type: GridSizeActionKind.INCREASE_ROW,
-                });
-              }}
-              onDecrease={() => {
-                dispatch({
-                  type: GridSizeActionKind.DECREASE_ROW,
-                });
-              }}
+              onIncrease={() => dispatch(increseRow())}
+              onDecrease={() => dispatch(decreseRow())}
             />
           </div>
           <div className="flex items-center">
@@ -148,12 +98,7 @@ const Editor = () => {
           </div>
         </div>
         <div className="flex justify-center p-4">
-          <ColorPallete
-            toolOptions={toolOptions}
-            selectedTool={selectedTool}
-            onChangeToolOptions={setToolOptions}
-            onChangeSelectedTool={setSelectedTool}
-          ></ColorPallete>
+          <ColorPallete />
         </div>
         <div className="p-4">
           <PublishToggleSwitch

@@ -1,24 +1,20 @@
 import { screen, within } from "@testing-library/react";
-import { render } from "../utils/test-utils";
-import { vi } from "vitest";
+import { renderWithProviders } from "../utils/test-utils";
 import user from "@testing-library/user-event";
 
 import Pencil from "./Pencil";
+import projectsStore from "../tests/fixtures/projectsStore";
 
 const renderComponent = () => {
-  const onChangeToolSize = vi.fn();
-  const onChageTool = vi.fn();
-
-  render(
-    <Pencil
-      size={1}
-      selected={true}
-      onChangeToolSize={onChangeToolSize}
-      onChangeTool={onChageTool}
-    />
+  renderWithProviders(
+    <Pencil />,
+    {
+      preloadedState: {
+        projects: { ...projectsStore, selectedTool: "pen" },
+      },
+    },
+    true
   );
-
-  return { onChangeToolSize };
 };
 
 describe("Pencil", () => {
@@ -71,7 +67,7 @@ describe("Pencil", () => {
 
   describe("when click the button in toolbar", () => {
     it("calls onChangeToolSize", async () => {
-      const { onChangeToolSize } = renderComponent();
+      renderComponent();
 
       const pencilButton = screen.getByRole("button", {
         name: /pencil/i,
@@ -88,8 +84,7 @@ describe("Pencil", () => {
 
       await user.click(sizeButton);
 
-      expect(onChangeToolSize).toHaveBeenCalled();
-      expect(onChangeToolSize).toHaveBeenCalledWith({ size: 2 });
+      expect(sizeButton).toHaveClass("bg-gray-200");
     });
   });
 });

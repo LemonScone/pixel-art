@@ -2,20 +2,25 @@ import { PencilIcon } from "@heroicons/react/24/outline";
 import { useState } from "react";
 import useOutsideClick from "../hooks/useOutsideClick";
 import { Indexable } from "../types/Indexable";
+import {
+  AppDispatch,
+  RootState,
+  changePenSize,
+  changeSelectedTool,
+} from "../store";
+import { useDispatch, useSelector } from "react-redux";
 
 const PencilSizes = [1, 2, 3, 4, 5];
 
-const Pencil = ({
-  selected,
-  size,
-  onChangeTool,
-  onChangeToolSize,
-}: {
-  selected: boolean;
-  size: number;
-  onChangeTool: () => void;
-  onChangeToolSize: ({ size }: { size: number }) => void;
-}) => {
+const Pencil = () => {
+  const dispatch: AppDispatch = useDispatch();
+  const {
+    selectedTool,
+    options: {
+      pen: { size },
+    },
+  } = useSelector((state: RootState) => state.projects);
+
   const [showToolbar, setShowToolbar] = useState(false);
 
   const handleClickOutside = () => setShowToolbar(false);
@@ -43,13 +48,13 @@ const Pencil = ({
         role="button"
         ref={ref}
         className={
-          selected
+          selectedTool === "pen"
             ? "relative cursor-pointer rounded-lg bg-primary-color-600 p-1 text-gray-900 hover:bg-primary-color focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-primary-color"
             : "relative cursor-pointer rounded-lg p-1 text-gray-400 hover:bg-primary-color-600 hover:text-gray-900  focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-primary-color"
         }
         onClick={() => {
           setShowToolbar((prevShow) => !prevShow);
-          onChangeTool();
+          dispatch(changeSelectedTool("pen"));
         }}
       >
         <span className="sr-only">Pencil</span>
@@ -106,7 +111,7 @@ const Pencil = ({
                   className={`${
                     pencilSize === size ? selectedClass : ""
                   } flex items-center px-4  py-2 md:flex-col`}
-                  onClick={() => onChangeToolSize({ size: pencilSize })}
+                  onClick={() => dispatch(changePenSize(pencilSize))}
                 >
                   <div className="mr-2 flex h-6 items-center md:mr-0 md:items-end">
                     <svg

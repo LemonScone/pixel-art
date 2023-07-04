@@ -1,4 +1,4 @@
-import React, { Dispatch, useCallback, useRef } from "react";
+import React, { useCallback, useRef } from "react";
 
 import Pixel from "./Pixel";
 
@@ -6,27 +6,25 @@ import useOutsidePointerUp from "../hooks/useOutsidePointerUp";
 import { getGridBackgroundHoverColor, getTargetIndexes } from "../utils/grid";
 import { getHoverColor } from "../utils/color";
 
-import type { ToolOption, Tool } from "../types/Tool";
-import { ToolActionKind } from "../constants/actionTypes";
-import { Actions } from "../reducers/gridReducer";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  AppDispatch,
+  RootState,
+  applyBucket,
+  applyEraser,
+  applyMove,
+  applyPencil,
+} from "../store";
 
-type PixelContainerProps = {
-  columns: number;
-  rows: number;
-  grid: string[];
-  toolOptions: ToolOption;
-  selectedTool: Tool;
-  dispatch: Dispatch<Actions>;
-};
+const PixelContainer = () => {
+  const dispatch: AppDispatch = useDispatch();
+  const { data, currentProjectId, currentFrameId, selectedTool, options } =
+    useSelector((state: RootState) => state.projects);
 
-const PixelContainer = ({
-  columns,
-  rows,
-  grid,
-  toolOptions,
-  selectedTool,
-  dispatch,
-}: PixelContainerProps) => {
+  const grid = data[currentProjectId].frames[currentFrameId].grid;
+  const columns = data[currentProjectId].gridColumns;
+  const rows = data[currentProjectId].gridRows;
+
   const toolActiveRef = useRef(false);
   const moveCoordinateRef = useRef({
     clientX: 0,
@@ -43,39 +41,14 @@ const PixelContainer = ({
   const dispatchGrid = useCallback(
     (id: number) => {
       if (selectedTool === "pen") {
-        dispatch({
-          type: ToolActionKind.PENCIL,
-          payload: {
-            pen: {
-              color: toolOptions.pen.color,
-              size: toolOptions.pen.size,
-            },
-            id,
-          },
-        });
+        dispatch(applyPencil(id));
       } else if (selectedTool === "eraser") {
-        dispatch({
-          type: ToolActionKind.ERASER,
-          payload: {
-            eraser: {
-              size: toolOptions.eraser.size,
-            },
-            id,
-          },
-        });
+        dispatch(applyEraser(id));
       } else if (selectedTool === "bucket") {
-        dispatch({
-          type: ToolActionKind.BUCKET,
-          payload: {
-            pen: {
-              color: toolOptions.pen.color,
-            },
-            id,
-          },
-        });
+        dispatch(applyBucket(id));
       }
     },
-    [dispatch, selectedTool, toolOptions]
+    [dispatch, selectedTool]
   );
 
   const setHoverColorById = useCallback(
@@ -84,7 +57,7 @@ const PixelContainer = ({
         if (selectedTool === "pen" || selectedTool === "eraser") {
           const indexes = getTargetIndexes(
             id,
-            toolOptions[selectedTool].size,
+            options[selectedTool].size,
             columns,
             rows
           );
@@ -104,7 +77,7 @@ const PixelContainer = ({
         }
       }
     },
-    [columns, rows, ref, selectedTool, toolOptions]
+    [columns, rows, ref, selectedTool, options]
   );
 
   const clearHoverColorById = useCallback(
@@ -113,7 +86,7 @@ const PixelContainer = ({
         if (selectedTool === "pen" || selectedTool === "eraser") {
           const indexes = getTargetIndexes(
             id,
-            toolOptions[selectedTool].size,
+            options[selectedTool].size,
             columns,
             rows
           );
@@ -125,7 +98,7 @@ const PixelContainer = ({
         }
       }
     },
-    [columns, rows, ref, selectedTool, toolOptions]
+    [columns, rows, ref, selectedTool, options]
   );
 
   const handlePointerDown = useCallback(
@@ -186,15 +159,7 @@ const PixelContainer = ({
         const { clientX, clientY, cellWidth } = moveCoordinateRef.current;
         const xDiff = e.clientX - clientX;
         const yDiff = e.clientY - clientY;
-
-        dispatch({
-          type: ToolActionKind.MOVE,
-          payload: {
-            xDiff,
-            yDiff,
-            cellWidth,
-          },
-        });
+        dispatch(applyMove({ xDiff, yDiff, cellWidth }));
 
         if (Math.abs(xDiff) > cellWidth || Math.abs(yDiff) > cellWidth) {
           moveCoordinateRef.current.clientX = e.clientX;
