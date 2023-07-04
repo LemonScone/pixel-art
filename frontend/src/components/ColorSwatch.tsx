@@ -1,16 +1,20 @@
 import { COLOR_REGEX } from "../constants";
+import { useAppDispatch, useAppSelector } from "../hooks/useRedux";
+import { changePenColor, changeSelectedTool } from "../store";
 
 type ColorSwatchProps = {
   color: string;
-  isActiveColor: boolean;
-  onChangeToolOptionsAndSelectedTool: (color: string) => void;
 };
 
-const ColorSwatch = ({
-  color,
-  isActiveColor,
-  onChangeToolOptionsAndSelectedTool,
-}: ColorSwatchProps) => {
+const ColorSwatch = ({ color }: ColorSwatchProps) => {
+  const dispatch = useAppDispatch();
+  const {
+    selectedTool,
+    options: {
+      pen: { color: currentColor },
+    },
+  } = useAppSelector((state) => state.projects);
+
   const handleColorClick = (e: React.MouseEvent<HTMLDivElement>) => {
     const target = e.target as HTMLDivElement;
     const boxShadowValue = window
@@ -22,11 +26,16 @@ const ColorSwatch = ({
 
     if (colorMatches) {
       setTimeout(() => {
-        onChangeToolOptionsAndSelectedTool(colorMatches[0]);
+        dispatch(changePenColor(color));
+        if (selectedTool !== "pen" && selectedTool !== "bucket") {
+          dispatch(changeSelectedTool("pen"));
+        }
       }, 100);
     }
     target.style.boxShadow = `${color} 0px 0px 0px 4px inset, ${color} 0px 0px 2px 1px`;
   };
+
+  const isCurrentColor = currentColor === color;
 
   return (
     <div
@@ -35,8 +44,8 @@ const ColorSwatch = ({
       className={`m-2 h-9 w-9 cursor-pointer rounded bg-transparent hover:scale-125`}
       style={{
         boxShadow: `${
-          isActiveColor ? ` ${color} 0px 0px 2px 1px,` : ""
-        } ${color} 0px 0px 0px ${isActiveColor ? "4px" : "18px"} inset`,
+          isCurrentColor ? ` ${color} 0px 0px 2px 1px,` : ""
+        } ${color} 0px 0px 0px ${isCurrentColor ? "4px" : "18px"} inset`,
         transition: "200ms box-shadow ease",
       }}
       onClick={handleColorClick}

@@ -1,6 +1,7 @@
 import React, { Suspense } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Root, ErrorPage } from "../pages";
+import { PublicRoute } from "./PublicRoute";
 
 const Editor = React.lazy(() => import("../pages/Editor"));
 const Gallery = React.lazy(() => import("../pages/Gallery"));
@@ -20,7 +21,14 @@ const AppRoutes = () => {
           <Route path="/" element={<Root />} errorElement={<ErrorPage />}>
             <Route index element={<Editor />} />
             <Route path="gallery" element={<Gallery />} />
-            <Route path="login" element={<SignIn />} />
+            <Route
+              path="login"
+              element={
+                <PublicRoute>
+                  <SignIn />
+                </PublicRoute>
+              }
+            />
           </Route>
         </Routes>
       </Suspense>

@@ -1,15 +1,54 @@
 import { NavLink } from "react-router-dom";
 
+import SwitchCase from "./common/SwitchCase";
+import SignOutButton from "./SignOut/SignOutButton";
+import SignInButton from "./SignIn/SignInButton";
+
+import useAuth from "../hooks/useAuth";
+import { AUTHENTICATED, ONE_MINUTE, UNAUTHENTICATED } from "../constants";
+
+import classNames from "../utils/classNames";
+import { useEffect, useRef } from "react";
+import { api, setAuthorizationHeader } from "../api";
+import { resetAuth } from "../store";
+import { useAppDispatch } from "../hooks/useRedux";
+
 const navigation = [
   { name: "Editor", href: "" },
   { name: "Gallery", href: "gallery" },
 ];
 
-function classNames(...classes: string[]) {
-  return classes.filter(Boolean).join(" ");
-}
-
 const Navbar = () => {
+  const intervalRef = useRef<NodeJS.Timer>();
+
+  const { accessToken, requestRefresh, silentRefresh } = useAuth();
+  const dispatch = useAppDispatch();
+
+  const authStatus = accessToken ? AUTHENTICATED : UNAUTHENTICATED;
+
+  useEffect(() => {
+    const checkSignIn = async () => {
+      try {
+        const expired = await requestRefresh();
+
+        if (!intervalRef.current) {
+          intervalRef.current = setInterval(async () => {
+            console.log("interval");
+            silentRefresh();
+          }, expired - ONE_MINUTE);
+        }
+      } catch (error) {
+        dispatch(resetAuth());
+        clearInterval(intervalRef.current);
+        setAuthorizationHeader(api.defaults, "");
+      }
+    };
+
+    if (!accessToken) {
+      checkSignIn();
+    }
+  }, [accessToken, dispatch, requestRefresh, silentRefresh]);
+
   return (
     <nav className="bg-neutral-900">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -43,22 +82,13 @@ const Navbar = () => {
             </div>
           </div>
           <div className="ml-4 flex items-center md:ml-6">
-            <NavLink
-              to="login"
-              type="button"
-              className={({ isActive }) =>
-                classNames(
-                  isActive
-                    ? "bg-input-color text-gray-100"
-                    : "text-gray-300 hover:bg-input-color hover:text-gray-100",
-                  "inline-flex items-center rounded-md  px-3 py-2 text-sm font-semibold shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-input-color"
-                )
-              }
-              aria-current="page"
-            >
-              Sign In
-            </NavLink>
-
+            <SwitchCase
+              value={authStatus}
+              caseBy={{
+                AUTHENTICATED: <SignOutButton />,
+                UNAUTHENTICATED: <SignInButton />,
+              }}
+            />
             <div className="relative ml-3">
               <button
                 type="button"

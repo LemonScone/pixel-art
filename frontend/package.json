@@ -9,7 +9,7 @@
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "test": "vitest",
-    "tailwind": "npx tailwindcss -i ./src/index.css -o ./tests/index.css",
+    "tailwind": "npx tailwindcss -i ./src/index.css -o ./src/tests/index.css",
     "prepare": "cd .. && husky install frontend/.husky",
     "lint-staged": "lint-staged"
   },
@@ -23,10 +23,14 @@
   },
   "dependencies": {
     "@heroicons/react": "^2.0.18",
+    "@reduxjs/toolkit": "^1.9.5",
     "@types/react-color": "^3.0.6",
+    "axios": "^1.4.0",
+    "msw": "^1.2.2",
     "react": "^18.2.0",
     "react-color": "^2.19.3",
     "react-dom": "^18.2.0",
+    "react-redux": "^8.1.1",
     "react-router-dom": "^6.13.0"
   },
   "devDependencies": {

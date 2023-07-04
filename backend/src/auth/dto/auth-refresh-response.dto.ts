@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { AccessTokenDto } from './access-token.dto';
+import { LoginSuccessResponseDto } from './auth-login-response.dto';
 
-export class RefreshSuccessResponseDto extends AccessTokenDto {}
+export class RefreshSuccessResponseDto extends LoginSuccessResponseDto {}
 
 export class RefreshFailedResponseDto {
   @ApiProperty({

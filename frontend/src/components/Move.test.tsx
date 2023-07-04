@@ -1,11 +1,14 @@
-import { render, screen } from "@testing-library/react";
-import { vi } from "vitest";
+import { screen } from "@testing-library/react";
 import Move from "./Move";
+import { renderWithProviders } from "../utils/test-utils";
+import projectsStore from "../tests/fixtures/projectsStore";
 
 const renderComponent = () => {
-  const onChageTool = vi.fn();
-
-  render(<Move selected={true} onChangeTool={onChageTool} />);
+  renderWithProviders(<Move />, {
+    preloadedState: {
+      projects: { ...projectsStore, selectedTool: "move" },
+    },
+  });
 };
 
 describe("Move", () => {

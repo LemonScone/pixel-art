@@ -17,7 +17,6 @@ import {
   LoginFailedResponseDto,
 } from './dto/auth-login-response.dto';
 import { Response } from 'express';
-import { UsersService } from 'src/users/users.service';
 import { JwtRefreshGuard } from './guards/jwt-refresh.guard';
 import {
   LogoutFailedResponseDto,
@@ -27,13 +26,14 @@ import {
   RefreshFailedResponseDto,
   RefreshSuccessResponseDto,
 } from './dto/auth-refresh-response.dto';
+import { ConfigService } from '@nestjs/config';
 
 @Controller('auth')
 @ApiTags('auth')
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
-    private readonly usersService: UsersService,
+    private readonly configService: ConfigService,
   ) {}
 
   @Post('/login')
@@ -61,12 +61,19 @@ export class AuthController {
       throw new UnauthorizedException('아이디 또는 비밀번호를 확인해주세요.');
     }
 
-    const { accessToken, refreshToken } = loginResults;
+    const { accessToken, refreshToken, nickname, current, provider } =
+      loginResults;
+
     res.cookie('refreshToken', refreshToken, {
+      secure: true,
       httpOnly: true,
+      maxAge: 14 * 24 * 60 * 60 * 1000,
     });
 
-    return { accessToken };
+    const expired = Number(
+      this.configService.get<string>('JWT_EXPIRATION_TIME'),
+    );
+    return { accessToken, nickname, current, provider, expired };
   }
 
   @UseGuards(JwtRefreshGuard)
@@ -113,10 +120,13 @@ export class AuthController {
     description: 'access token 생성 실패',
     status: HttpStatus.BAD_REQUEST,
   })
-  async refresh(@Req() req: any) {
+  async refresh(@Req() req: any): Promise<RefreshSuccessResponseDto> {
     const { userId } = req.user;
-    const newAccessToken = await this.authService.refresh(userId);
+    const response = await this.authService.refresh(userId);
 
-    return newAccessToken;
+    const expired = Number(
+      this.configService.get<string>('JWT_EXPIRATION_TIME'),
+    );
+    return { ...response, expired };
   }
 }

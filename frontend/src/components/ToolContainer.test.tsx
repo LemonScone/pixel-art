@@ -1,25 +1,20 @@
 import { screen } from "@testing-library/react";
-import { render } from "../utils/test-utils";
-import { vi } from "vitest";
+import { renderWithProviders } from "../utils/test-utils";
 import user from "@testing-library/user-event";
 
 import ToolConatiner from "./ToolContainer";
-import { INITIAL_TOOL_OPTIONS } from "../constants";
+import projectsStore from "../tests/fixtures/projectsStore";
 
 const renderComponent = () => {
-  const onChageTool = vi.fn();
-  const onChangeToolSize = vi.fn();
-
-  render(
-    <ToolConatiner
-      selectedTool="pen"
-      toolOptions={INITIAL_TOOL_OPTIONS}
-      onChangeToolSize={onChangeToolSize}
-      onChangeTool={onChageTool}
-    />
+  renderWithProviders(
+    <ToolConatiner />,
+    {
+      preloadedState: {
+        projects: { ...projectsStore, selectedTool: "pen" },
+      },
+    },
+    true
   );
-
-  return { onChageTool, onChangeToolSize };
 };
 
 describe("ToolContainer", () => {
@@ -52,39 +47,6 @@ describe("ToolContainer", () => {
       expect(pencilButton).toBeInTheDocument();
       expect(eraserButton).toBeInTheDocument();
       expect(MoveButton).toBeInTheDocument();
-    });
-  });
-
-  describe("when click tools", () => {
-    it("calls onChangeTool", async () => {
-      const { onChageTool } = renderComponent();
-
-      const pencilButton = screen.getByRole("button", {
-        name: /pencil/i,
-      });
-
-      await user.click(pencilButton);
-
-      expect(onChageTool).toHaveBeenCalled();
-      expect(onChageTool).toHaveBeenCalledWith({ tool: "pen" });
-
-      const eraserButton = screen.getByRole("button", {
-        name: /eraser/i,
-      });
-
-      await user.click(eraserButton);
-
-      expect(onChageTool).toHaveBeenCalled();
-      expect(onChageTool).toHaveBeenCalledWith({ tool: "eraser" });
-
-      const bucketButton = screen.getByRole("button", {
-        name: /bucket/i,
-      });
-
-      await user.click(bucketButton);
-
-      expect(onChageTool).toHaveBeenCalled();
-      expect(onChageTool).toHaveBeenCalledWith({ tool: "bucket" });
     });
   });
 

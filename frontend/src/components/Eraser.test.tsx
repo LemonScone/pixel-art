@@ -1,24 +1,20 @@
 import { screen, within } from "@testing-library/react";
-import { render } from "../utils/test-utils";
-import { vi } from "vitest";
+import { renderWithProviders } from "../utils/test-utils";
 import user from "@testing-library/user-event";
 
 import Eraser from "./Eraser";
+import projectsStore from "../tests/fixtures/projectsStore";
 
 const renderComponent = () => {
-  const onChangeToolSize = vi.fn();
-  const onChageTool = vi.fn();
-
-  render(
-    <Eraser
-      size={1}
-      selected={true}
-      onChangeToolSize={onChangeToolSize}
-      onChangeTool={onChageTool}
-    />
+  renderWithProviders(
+    <Eraser />,
+    {
+      preloadedState: {
+        projects: { ...projectsStore, selectedTool: "eraser" },
+      },
+    },
+    true
   );
-
-  return { onChangeToolSize };
 };
 
 describe("Eraser", () => {
@@ -71,7 +67,7 @@ describe("Eraser", () => {
 
   describe("when click the button in toolbar", () => {
     it("calls onChangeToolSize", async () => {
-      const { onChangeToolSize } = renderComponent();
+      renderComponent();
 
       const eraserButton = screen.getByRole("button", {
         name: /eraser/i,
@@ -87,9 +83,7 @@ describe("Eraser", () => {
       });
 
       await user.click(sizeButton);
-
-      expect(onChangeToolSize).toHaveBeenCalled();
-      expect(onChangeToolSize).toHaveBeenCalledWith({ size: 2 });
+      expect(sizeButton).toHaveClass("bg-gray-200");
     });
   });
 });

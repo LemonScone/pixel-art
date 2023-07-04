@@ -1,22 +1,20 @@
 import { useState } from "react";
 import useOutsideClick from "../hooks/useOutsideClick";
 import { Indexable } from "../types/Indexable";
+import { changeEraserSize, changeSelectedTool } from "../store";
+import { useAppDispatch, useAppSelector } from "../hooks/useRedux";
 
 const EraserSizes = [1, 2, 3, 4, 5];
 
-type EraserProps = {
-  selected: boolean;
-  size: number;
-  onChangeTool: () => void;
-  onChangeToolSize: ({ size }: { size: number }) => void;
-};
+const Eraser = () => {
+  const dispatch = useAppDispatch();
+  const {
+    selectedTool,
+    options: {
+      eraser: { size },
+    },
+  } = useAppSelector((state) => state.projects);
 
-const Eraser = ({
-  selected,
-  size,
-  onChangeTool,
-  onChangeToolSize,
-}: EraserProps) => {
   const [showToolbar, setShowToolbar] = useState(false);
 
   const handleClickOutside = () => setShowToolbar(false);
@@ -44,13 +42,13 @@ const Eraser = ({
         role="button"
         ref={ref}
         className={
-          selected
+          selectedTool === "eraser"
             ? "relative cursor-pointer rounded-lg bg-primary-color-600 p-1 text-gray-900 hover:bg-primary-color focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-primary-color"
             : "relative cursor-pointer rounded-lg p-1 text-gray-400 hover:bg-primary-color-600 hover:text-gray-900  focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-primary-color"
         }
         onClick={() => {
           setShowToolbar((prevShow) => !prevShow);
-          onChangeTool();
+          dispatch(changeSelectedTool("eraser"));
         }}
       >
         <span className="sr-only">Eraser</span>
@@ -121,7 +119,7 @@ const Eraser = ({
                   className={`${
                     eraserSize === size ? selectedClass : ""
                   } flex items-center px-4  py-2 md:flex-col`}
-                  onClick={() => onChangeToolSize({ size: eraserSize })}
+                  onClick={() => dispatch(changeEraserSize(eraserSize))}
                 >
                   <div className="mr-2 flex h-6 items-center md:mr-0 md:items-end">
                     <svg

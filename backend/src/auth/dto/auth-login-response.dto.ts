@@ -1,7 +1,20 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { AccessTokenDto } from './access-token.dto';
 
-export class LoginSuccessResponseDto extends AccessTokenDto {}
+export class LoginSuccessResponseDto extends AccessTokenDto {
+  @ApiProperty({
+    example: 'gogh',
+  })
+  nickname: string;
+  @ApiProperty({
+    example: 0,
+  })
+  current: number;
+  @ApiProperty({
+    example: 'local',
+  })
+  provider: string;
+}
 
 export class LoginFailedResponseDto {
   @ApiProperty({
