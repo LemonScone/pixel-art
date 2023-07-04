@@ -11,6 +11,7 @@ const INITIAL_TOOL_OPTIONS = {
 };
 
 const INITIAL_COLOR_PALLETE = [
+  "rgb(0, 0, 0)",
   "rgb(85, 239, 196)",
   "rgb(129, 236, 236)",
   "rgb(116, 185, 255)",
