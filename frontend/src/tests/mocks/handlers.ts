@@ -24,6 +24,10 @@ const handlers = [
       );
     }
   }),
+
+  rest.post("/api/auth/logout", async (_, res, ctx) => {
+    return res(ctx.status(httpStatus.OK));
+  }),
 ];
 
 export { handlers };

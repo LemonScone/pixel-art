@@ -1,14 +1,16 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, screen } from "@testing-library/react";
 import { vi } from "vitest";
 
 import MockPointerEvent from "../tests/mocks/MockPointerEvent";
 
 import PixelContainer from "./PixelContainer";
 
-import { Tool } from "../types/Tool";
+import { ToolOption } from "../types/Tool";
 
 import { INITIAL_TOOL_OPTIONS } from "../constants";
-import { ToolActionKind } from "../constants/actionTypes";
+import { renderWithProviders } from "../utils/test-utils";
+import projectsStore, { exampleState } from "../tests/fixtures/projectsStore";
+import { Projects } from "../store/slices/projectsSlice";
 
 describe("PixelContainer", () => {
   beforeEach(() => {
@@ -19,40 +21,30 @@ describe("PixelContainer", () => {
   });
 
   const renderPixels = ({
-    columns = 25,
-    rows = 25,
-    grid = Array(25).fill(""),
-    toolOptions = INITIAL_TOOL_OPTIONS,
-    selectedTool = "pen" as Tool,
+    initialState,
+    selectedTool = "pen",
+  }: {
+    initialState?: Projects;
+    selectedTool?: keyof ToolOption;
   }) => {
-    const dispatch = vi.fn();
-    render(
-      <PixelContainer
-        columns={columns}
-        rows={rows}
-        grid={grid}
-        toolOptions={toolOptions}
-        dispatch={dispatch}
-        selectedTool={selectedTool}
-      />
-    );
-    return { dispatch };
-  };
-
-  const getToolOptionsWithPenSize = (size: number) => {
-    return {
-      ...INITIAL_TOOL_OPTIONS,
-      pen: {
-        color: "rgb(54, 255, 121)",
-        size,
+    let preloadedState;
+    if (initialState) {
+      preloadedState = { ...initialState, selectedTool };
+    } else {
+      preloadedState = { ...projectsStore, selectedTool };
+    }
+    renderWithProviders(<PixelContainer />, {
+      preloadedState: {
+        projects: preloadedState,
       },
-    };
+    });
   };
 
   it("should render a grid of pixels", () => {
-    const columns = 16;
-    const rows = 16;
-    renderPixels({ columns, rows });
+    const columns =
+      projectsStore.data[projectsStore.currentProjectId].gridColumns;
+    const rows = projectsStore.data[projectsStore.currentProjectId].gridRows;
+    renderPixels({});
 
     const pixels = screen.getAllByLabelText("pixel");
     expect(pixels.length).toBe(columns * rows);
@@ -61,10 +53,7 @@ describe("PixelContainer", () => {
   describe("Drawing with a pen", () => {
     it("should call dispatch with toolOptions and id", () => {
       const id = 0;
-      const toolOptions = getToolOptionsWithPenSize(1);
-      const { dispatch } = renderPixels({
-        toolOptions,
-      });
+      renderPixels({});
 
       const pixels = screen.getAllByLabelText("pixel");
 
@@ -72,16 +61,9 @@ describe("PixelContainer", () => {
 
       fireEvent.pointerDown(pixel);
 
-      expect(dispatch).toHaveBeenCalledWith({
-        type: ToolActionKind.PENCIL,
-        payload: {
-          pen: {
-            color: toolOptions.pen.color,
-            size: toolOptions.pen.size,
-          },
-          id,
-        },
-      });
+      expect(pixel).toHaveStyle(
+        `background-color: ${INITIAL_TOOL_OPTIONS.pen.color}`
+      );
     });
   });
 
@@ -115,15 +97,10 @@ describe("PixelContainer", () => {
       INIT_COLOR,
     ];
 
-    const toolOptions = getToolOptionsWithPenSize(1);
-
     it("should call dispatch with toolOptions and id", () => {
       const id = 0;
-      const { dispatch } = renderPixels({
-        columns: 5,
-        rows: 5,
-        grid: GRID,
-        toolOptions,
+      renderPixels({
+        initialState: exampleState(GRID, 5, 5),
         selectedTool: "bucket",
       });
 
@@ -133,14 +110,12 @@ describe("PixelContainer", () => {
 
       fireEvent.pointerDown(pixel);
 
-      expect(dispatch).toHaveBeenCalledWith({
-        type: ToolActionKind.BUCKET,
-        payload: {
-          pen: {
-            color: toolOptions.pen.color,
-          },
-          id,
-        },
+      pixels.forEach((pixel, idx) => {
+        if (GRID[idx]) {
+          expect(pixel).toHaveStyle(
+            `background-color: ${INITIAL_TOOL_OPTIONS.pen.color}`
+          );
+        }
       });
     });
   });

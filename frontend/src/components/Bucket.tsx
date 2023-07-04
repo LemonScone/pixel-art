@@ -1,21 +1,21 @@
-const Bucket = ({
-  selected,
-  onChangeTool,
-}: {
-  selected: boolean;
-  onChangeTool: () => void;
-}) => {
+import { useAppDispatch, useAppSelector } from "../hooks/useRedux";
+import { changeSelectedTool } from "../store";
+
+const Bucket = () => {
+  const dispatch = useAppDispatch();
+  const { selectedTool } = useAppSelector((state) => state.projects);
+
   return (
     <a
       type="button"
       role="button"
       className={
-        selected
+        selectedTool === "bucket"
           ? "relative cursor-pointer rounded-lg bg-primary-color-600 p-1 text-gray-900 hover:bg-primary-color focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-primary-color"
           : "rounded-lg p-1 text-gray-400 hover:bg-primary-color-600 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-primary-color"
       }
       onClick={() => {
-        onChangeTool();
+        dispatch(changeSelectedTool("bucket"));
       }}
     >
       <span className="sr-only">Bucket</span>

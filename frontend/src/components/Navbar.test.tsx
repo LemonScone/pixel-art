@@ -1,35 +1,40 @@
-import { render, screen } from "@testing-library/react";
+import { renderWithProviders } from "../utils/test-utils";
+
+import { screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 
 import Navbar from "./Navbar";
-import AuthContext, { AuthContextData } from "../contexts";
 
-import { VALID_USER } from "../tests/fixtures/auth";
-
-import { vi } from "vitest";
+import { VALID_TOKEN, VALID_USER } from "../tests/fixtures/auth";
 
 import user from "@testing-library/user-event";
-import { Auth } from "../contexts/AuthContext";
 
-const renderComponent = ({ auth }: Partial<AuthContextData>) => {
-  const signIn = vi.fn();
-  const signOut = vi.fn();
+import { Auth } from "../types/Auth";
 
-  render(
+const renderComponent = ({ auth }: { auth: Auth }) => {
+  renderWithProviders(
     <MemoryRouter>
-      <AuthContext.Provider value={{ auth: auth as Auth, signIn, signOut }}>
-        <Navbar />
-      </AuthContext.Provider>
-    </MemoryRouter>
+      <Navbar />
+    </MemoryRouter>,
+    {
+      preloadedState: {
+        auth: {
+          data: auth,
+        },
+      },
+    }
   );
-
-  return { signIn, signOut };
 };
 
 describe("Navbar", () => {
   describe("when the user is not authenticated", () => {
     it("should show sign in button", async () => {
-      renderComponent({ auth: {} as Auth });
+      renderComponent({
+        auth: {
+          user: { userId: "", nickname: "", current: 0, provider: "" },
+          accessToken: "",
+        },
+      });
 
       const signInButton = screen.getByText(/sign in/i);
 
@@ -40,11 +45,9 @@ describe("Navbar", () => {
     it("should show sign out button", async () => {
       const auth = {
         user: VALID_USER,
-        accessToken: "example token",
+        accessToken: VALID_TOKEN,
       };
-      const { signOut } = renderComponent({
-        auth,
-      });
+      renderComponent({ auth });
 
       const signOutButton = screen.getByRole("button", {
         name: /sign out/i,
@@ -52,7 +55,9 @@ describe("Navbar", () => {
 
       expect(signOutButton).toBeInTheDocument();
       await user.click(signOutButton);
-      expect(signOut).toHaveBeenCalled();
+
+      const signInButton = screen.getByText(/sign in/i);
+      expect(signInButton).toBeInTheDocument();
     });
   });
 });

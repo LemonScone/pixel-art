@@ -1,11 +1,14 @@
-import { render, screen } from "@testing-library/react";
-import { vi } from "vitest";
+import { screen } from "@testing-library/react";
 import Bucket from "./Bucket";
+import { renderWithProviders } from "../utils/test-utils";
+import projectsStore from "../tests/fixtures/projectsStore";
 
 const renderComponent = () => {
-  const onChageTool = vi.fn();
-
-  render(<Bucket selected={true} onChangeTool={onChageTool} />);
+  renderWithProviders(<Bucket />, {
+    preloadedState: {
+      projects: { ...projectsStore, selectedTool: "bucket" },
+    },
+  });
 };
 
 describe("Bucket", () => {

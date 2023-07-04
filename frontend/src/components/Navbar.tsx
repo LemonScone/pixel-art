@@ -5,9 +5,13 @@ import SignOutButton from "./SignOut/SignOutButton";
 import SignInButton from "./SignIn/SignInButton";
 
 import useAuth from "../hooks/useAuth";
-import { AUTHENTICATED, UNAUTHENTICATED } from "../constants";
+import { AUTHENTICATED, ONE_MINUTE, UNAUTHENTICATED } from "../constants";
 
 import classNames from "../utils/classNames";
+import { useEffect, useRef } from "react";
+import { api, setAuthorizationHeader } from "../api";
+import { resetAuth } from "../store";
+import { useAppDispatch } from "../hooks/useRedux";
 
 const navigation = [
   { name: "Editor", href: "" },
@@ -15,9 +19,35 @@ const navigation = [
 ];
 
 const Navbar = () => {
-  const { auth } = useAuth();
+  const intervalRef = useRef<NodeJS.Timer>();
 
-  const authStatus = auth?.accessToken ? AUTHENTICATED : UNAUTHENTICATED;
+  const { accessToken, requestRefresh, silentRefresh } = useAuth();
+  const dispatch = useAppDispatch();
+
+  const authStatus = accessToken ? AUTHENTICATED : UNAUTHENTICATED;
+
+  useEffect(() => {
+    const checkSignIn = async () => {
+      try {
+        const expired = await requestRefresh();
+
+        if (!intervalRef.current) {
+          intervalRef.current = setInterval(async () => {
+            console.log("interval");
+            silentRefresh();
+          }, expired - ONE_MINUTE);
+        }
+      } catch (error) {
+        dispatch(resetAuth());
+        clearInterval(intervalRef.current);
+        setAuthorizationHeader(api.defaults, "");
+      }
+    };
+
+    if (!accessToken) {
+      checkSignIn();
+    }
+  }, [accessToken, dispatch, requestRefresh, silentRefresh]);
 
   return (
     <nav className="bg-neutral-900">
