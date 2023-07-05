@@ -22,5 +22,4 @@ jobs:
             cd backend
             npm i --force
             npm run build
-            cd ..
             pm2 reload all
