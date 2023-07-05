@@ -4,9 +4,16 @@ import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './utils/httpExceptionFilter';
 import helmet from 'helmet';
 import * as cookieParser from 'cookie-parser';
+import * as fs from 'fs';
+import * as express from 'express';
+import { ExpressAdapter } from '@nestjs/platform-express';
+import * as http from 'http';
+import * as https from 'https';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const server = express();
+
+  const app = await NestFactory.create(AppModule, new ExpressAdapter(server));
 
   app.setGlobalPrefix('api');
 
@@ -16,8 +23,22 @@ async function bootstrap() {
 
   app.useGlobalFilters(new HttpExceptionFilter());
 
-  setupSwagger(app);
+  if (process.env.NODE_ENV !== 'production') {
+    setupSwagger(app);
+  }
 
-  await app.listen(3000);
+  await app.init();
+
+  http.createServer(server).listen(3000);
+
+  if (process.env.NODE_ENV === 'production') {
+    const privateKey = fs.readFileSync(
+      process.env.SSL_PRIVATE_KEY_PATH,
+      'utf8',
+    );
+    const certificate = fs.readFileSync(process.env.SSL_CERT_KEY_PATH, 'utf8');
+    const httpsOptions = { key: privateKey, cert: certificate };
+    https.createServer(httpsOptions, server).listen(443);
+  }
 }
 bootstrap();
