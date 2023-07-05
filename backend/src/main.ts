@@ -38,7 +38,7 @@ async function bootstrap() {
     );
     const certificate = fs.readFileSync(process.env.SSL_CERT_KEY_PATH, 'utf8');
     const httpsOptions = { key: privateKey, cert: certificate };
-    https.createServer(httpsOptions, server).listen(443);
+    https.createServer(httpsOptions, server).listen(8090);
   }
 }
 bootstrap();
