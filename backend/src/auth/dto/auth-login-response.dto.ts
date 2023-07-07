@@ -3,6 +3,10 @@ import { AccessTokenDto } from './access-token.dto';
 
 export class LoginSuccessResponseDto extends AccessTokenDto {
   @ApiProperty({
+    example: 'artist',
+  })
+  userId: string;
+  @ApiProperty({
     example: 'gogh',
   })
   nickname: string;
