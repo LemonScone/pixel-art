@@ -49,7 +49,7 @@ const SignInForm = () => {
       password: form.password,
     });
 
-    if (result?.response?.status === httpStatus.UNAUTHORIZED) {
+    if (result?.status === httpStatus.UNAUTHORIZED) {
       setUnAuthorized(true);
       setForm({
         id: "",

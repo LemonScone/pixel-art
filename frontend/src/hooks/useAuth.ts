@@ -2,12 +2,13 @@ import { useCallback, useDebugValue, useRef } from "react";
 import { SignInCredencials } from "../types/Auth";
 import { resetAuth, setAuth } from "../store";
 import { api, setAuthorizationHeader } from "../api";
-import { ONE_MINUTE } from "../constants";
 import { AxiosError } from "axios";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "./useRedux";
+import { useLoginMutation } from "../store";
 
 const useAuth = () => {
+  const [login] = useLoginMutation();
   const dispatch = useAppDispatch();
   const { user, accessToken } = useAppSelector((state) => state.auth.data);
 
@@ -21,14 +22,7 @@ const useAuth = () => {
     const { userId, password } = params;
 
     try {
-      const response = await api.post("/auth/login", { userId, password });
-      const { accessToken, expired, ...user } = response.data;
-      dispatch(setAuth({ user, accessToken }));
-      setAuthorizationHeader(api.defaults, accessToken);
-
-      intervalRef.current = setInterval(() => {
-        silentRefresh();
-      }, expired - ONE_MINUTE);
+      await login({ userId, password }).unwrap();
     } catch (error) {
       return error as AxiosError;
     }
@@ -53,7 +47,7 @@ const useAuth = () => {
   const requestRefresh = useCallback(async () => {
     const response = await api.post("/auth/refresh");
     const { accessToken, expired, ...user } = response.data;
-    dispatch(setAuth({ user, accessToken }));
+    dispatch(setAuth({ user, accessToken, expired }));
     setAuthorizationHeader(api.defaults, accessToken);
 
     return expired;

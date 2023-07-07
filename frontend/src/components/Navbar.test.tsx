@@ -33,6 +33,7 @@ describe("Navbar", () => {
         auth: {
           user: { userId: "", nickname: "", current: 0, provider: "" },
           accessToken: "",
+          expired: 0,
         },
       });
 
@@ -46,6 +47,7 @@ describe("Navbar", () => {
       const auth = {
         user: VALID_USER,
         accessToken: VALID_TOKEN,
+        expired: 0,
       };
       renderComponent({ auth });
 
