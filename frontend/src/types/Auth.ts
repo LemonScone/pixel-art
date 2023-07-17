@@ -7,6 +7,7 @@ export type User = {
 
 export type Auth = {
   user: User;
+  expired: number;
   accessToken: string;
 };
 

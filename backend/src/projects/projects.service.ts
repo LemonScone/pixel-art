@@ -117,7 +117,6 @@ export class ProjectsService {
     const connectionPool: PoolConnection = await this.pool.getConnection();
     try {
       await connectionPool.beginTransaction();
-
       const query_project = `INSERT INTO PROJECT
                             (
                               userId
@@ -134,7 +133,7 @@ export class ProjectsService {
                             , ${cellSize}
                             , ${gridColumns}
                             , ${gridRows}
-                            , '${pallete}'
+                            , "${pallete}"
                             , false
                             );
       `;

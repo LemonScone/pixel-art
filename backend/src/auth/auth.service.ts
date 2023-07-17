@@ -27,7 +27,7 @@ export class AuthService {
     {
       accessToken: string;
       refreshToken: string;
-    } & Omit<User, 'id' | 'password'>
+    } & Omit<User, 'password'>
   > {
     const connectionPool: PoolConnection = await this.pool.getConnection();
     try {
@@ -50,6 +50,7 @@ export class AuthService {
       );
 
       return {
+        id,
         accessToken,
         refreshToken,
         ...rest,

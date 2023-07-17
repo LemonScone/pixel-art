@@ -11,10 +11,12 @@ const handlers = [
       return res(
         ctx.status(httpStatus.OK),
         ctx.json({
+          userId: VALID_USER.userId,
           accessToken: VALID_TOKEN,
           nickname: VALID_USER.nickname,
           current: VALID_USER.current,
           provider: VALID_USER.provider,
+          expired: 180000,
         })
       );
     } else {
@@ -27,6 +29,20 @@ const handlers = [
 
   rest.post("/api/auth/logout", async (_, res, ctx) => {
     return res(ctx.status(httpStatus.OK));
+  }),
+
+  rest.post("/api/auth/refresh", async (_, res, ctx) => {
+    return res(
+      ctx.status(httpStatus.OK),
+      ctx.json({
+        userId: "",
+        accessToken: "",
+        nickname: "",
+        current: "",
+        provider: "",
+        expired: 180000,
+      })
+    );
   }),
 ];
 
