@@ -6,6 +6,7 @@ import { PublicRoute } from "./PublicRoute";
 const Editor = React.lazy(() => import("../pages/Editor"));
 const Gallery = React.lazy(() => import("../pages/Gallery"));
 const SignIn = React.lazy(() => import("../pages/SignIn"));
+const SignUp = React.lazy(() => import("../pages/SignUp"));
 
 const AppRoutes = () => {
   return (
@@ -26,6 +27,14 @@ const AppRoutes = () => {
               element={
                 <PublicRoute>
                   <SignIn />
+                </PublicRoute>
+              }
+            />
+            <Route
+              path="signup"
+              element={
+                <PublicRoute>
+                  <SignUp />
                 </PublicRoute>
               }
             />
