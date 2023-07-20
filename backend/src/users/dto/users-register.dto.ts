@@ -25,12 +25,12 @@ export class UsersRegisterDto {
 
   @ApiProperty({
     example: 'gogh',
-    description: 'user nickname',
+    description: 'user username',
     required: true,
   })
   @IsString()
   @MinLength(2)
-  nickname: string;
+  username: string;
 
   @ApiProperty({
     example: 'local',

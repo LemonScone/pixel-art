@@ -13,7 +13,7 @@ const handlers = [
         ctx.json({
           userId: VALID_USER.userId,
           accessToken: VALID_TOKEN,
-          nickname: VALID_USER.nickname,
+          username: VALID_USER.username,
           current: VALID_USER.current,
           provider: VALID_USER.provider,
           expired: 180000,
@@ -37,7 +37,7 @@ const handlers = [
       ctx.json({
         userId: "",
         accessToken: "",
-        nickname: "",
+        username: "",
         current: "",
         provider: "",
         expired: 180000,

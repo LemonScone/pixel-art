@@ -61,7 +61,7 @@ export class AuthController {
       throw new UnauthorizedException('아이디 또는 비밀번호를 확인해주세요.');
     }
 
-    const { id, accessToken, refreshToken, nickname, current, provider } =
+    const { id, accessToken, refreshToken, username, current, provider } =
       loginResults;
 
     res.cookie('refreshToken', refreshToken, {
@@ -73,7 +73,7 @@ export class AuthController {
     const expired = Number(
       this.configService.get<string>('JWT_EXPIRATION_TIME'),
     );
-    return { userId: id, accessToken, nickname, current, provider, expired };
+    return { userId: id, accessToken, username, current, provider, expired };
   }
 
   @UseGuards(JwtRefreshGuard)

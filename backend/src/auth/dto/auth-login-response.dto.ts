@@ -9,7 +9,7 @@ export class LoginSuccessResponseDto extends AccessTokenDto {
   @ApiProperty({
     example: 'gogh',
   })
-  nickname: string;
+  username: string;
   @ApiProperty({
     example: 0,
   })

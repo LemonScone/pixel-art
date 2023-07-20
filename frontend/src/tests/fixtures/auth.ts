@@ -1,7 +1,7 @@
 const VALID_USER = {
   userId: "valid",
   password: "1234",
-  nickname: "valid user",
+  username: "valid user",
   provider: "local",
   current: 0,
 };

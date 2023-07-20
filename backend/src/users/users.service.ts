@@ -22,7 +22,7 @@ export class UsersService {
       const [result] = await connectionPool.execute(
         `SELECT id
               , password
-              , nickname
+              , username
               , current
               , provider
           FROM USER 
@@ -53,7 +53,7 @@ export class UsersService {
   }
 
   async registerUser(usersRegisterDto: UsersRegisterDto) {
-    const { userId, password, nickname, provider } = usersRegisterDto;
+    const { userId, password, username, provider } = usersRegisterDto;
 
     const connectionPool: PoolConnection = await this.pool.getConnection();
 
@@ -66,20 +66,20 @@ export class UsersService {
         (
           id
         , password
-        , nickname
+        , username
         , provider
         )
         VALUES (
           '${userId}'
         , '${hashedPassword}'
-        , '${nickname}'
+        , '${username}'
         , '${provider}'
         );`,
       );
 
       return {
         userId,
-        nickname,
+        username,
       };
     } catch (error) {
       throw new HttpException({ message: error.message, error }, error.status);
@@ -116,7 +116,7 @@ export class UsersService {
 
     try {
       const [result] = await connectionPool.execute(
-        `SELECT id, password, nickname, current, provider FROM USER WHERE id = '${userId}'`,
+        `SELECT id, password, username, current, provider FROM USER WHERE id = '${userId}'`,
       );
 
       if (!result[0]) {

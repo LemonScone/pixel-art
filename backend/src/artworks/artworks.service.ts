@@ -15,7 +15,7 @@ export class ArtworksService {
     try {
       const query_project = `SELECT P.id
                                   , P.userId
-                                  , U.nickname
+                                  , U.username
                                   , P.animate
                                   , P.cellSize
                                   , P.gridColumns

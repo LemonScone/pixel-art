@@ -1,7 +1,7 @@
 export interface User {
   id: string;
   password: string;
-  nickname: string;
+  username: string;
   current: number;
   provider: string;
 }

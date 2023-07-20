@@ -9,9 +9,9 @@ export class UserRegisterSuccessResponseDto {
 
   @ApiProperty({
     example: 'gogh',
-    description: '가입된 User Nickname',
+    description: '가입된 User Name',
   })
-  readonly nickname: string;
+  readonly username: string;
 }
 
 export class UserRegisterFailedResponseDto {
