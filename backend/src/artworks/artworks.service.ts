@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Pool, PoolConnection } from 'mysql2/promise';
-import { DB_CONNECTION } from 'src/constants';
-import { Project } from 'src/projects/project.model';
+import { DB_CONNECTION } from '../constants';
+import { Project } from '../projects/project.model';
 
 @Injectable()
 export class ArtworksService {

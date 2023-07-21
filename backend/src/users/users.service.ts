@@ -1,16 +1,17 @@
 import {
+  ConflictException,
   HttpException,
   Inject,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
 import { Pool, PoolConnection } from 'mysql2/promise';
-import { DB_CONNECTION } from 'src/constants';
+import { DB_CONNECTION } from '../constants';
 import { UsersRegisterDto } from './dto/users-register.dto';
 import * as bcrypt from 'bcrypt';
-import { AuthCredentialsDto } from 'src/auth/dto/auth-credentials.dto';
-import { User } from 'src/auth/user.model';
-import { Token } from 'src/auth/token.model';
+import { AuthCredentialsDto } from '../auth/dto/auth-credentials.dto';
+import { User } from '../auth/user.model';
+import { Token } from '../auth/token.model';
 
 @Injectable()
 export class UsersService {
@@ -37,11 +38,11 @@ export class UsersService {
     }
   }
 
-  async existUserId(id: string): Promise<boolean> {
+  async existUserEmail(email: string): Promise<boolean> {
     const connectionPool: PoolConnection = await this.pool.getConnection();
     try {
       const [result] = await connectionPool.execute(
-        `SELECT id FROM USER WHERE id = '${id}'`,
+        `SELECT id FROM USER WHERE email = '${email}'`,
       );
 
       return result[0] ? true : false;
@@ -53,7 +54,18 @@ export class UsersService {
   }
 
   async registerUser(usersRegisterDto: UsersRegisterDto) {
-    const { userId, password, username, provider } = usersRegisterDto;
+    const { email, password, username, provider } = usersRegisterDto;
+
+    let existUserEmail;
+    try {
+      existUserEmail = await this.existUserEmail(email);
+    } catch (error) {
+      throw new Error(error);
+    }
+
+    if (existUserEmail) {
+      throw new ConflictException(`${email}는 이미 가입된 email입니다.`);
+    }
 
     const connectionPool: PoolConnection = await this.pool.getConnection();
 
@@ -64,13 +76,13 @@ export class UsersService {
       await connectionPool.execute(
         `INSERT INTO USER
         (
-          id
+          email
         , password
         , username
         , provider
         )
         VALUES (
-          '${userId}'
+          '${email}'
         , '${hashedPassword}'
         , '${username}'
         , '${provider}'
@@ -78,7 +90,7 @@ export class UsersService {
       );
 
       return {
-        userId,
+        email,
         username,
       };
     } catch (error) {

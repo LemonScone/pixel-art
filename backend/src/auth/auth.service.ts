@@ -5,10 +5,10 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { Pool, PoolConnection } from 'mysql2/promise';
-import { DB_CONNECTION } from 'src/constants';
+import { DB_CONNECTION } from '../constants';
 import { AuthCredentialsDto } from './dto/auth-credentials.dto';
 import { JwtService } from '@nestjs/jwt';
-import { UsersService } from 'src/users/users.service';
+import { UsersService } from '../users/users.service';
 import { ConfigService } from '@nestjs/config';
 import { AccessTokenPayload } from './payload.model';
 import { User } from './user.model';

@@ -1,11 +1,4 @@
-import {
-  Body,
-  ConflictException,
-  Controller,
-  HttpStatus,
-  InternalServerErrorException,
-  Post,
-} from '@nestjs/common';
+import { Body, Controller, HttpStatus, Post } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UsersRegisterDto } from './dto/users-register.dto';
@@ -37,21 +30,6 @@ export class UsersController {
   async register(
     @Body() usersRegisterDto: UsersRegisterDto,
   ): Promise<UserRegisterSuccessResponseDto | UserRegisterFailedResponseDto> {
-    const { userId } = usersRegisterDto;
-
-    let existUserId;
-    try {
-      existUserId = await this.usersService.existUserId(userId);
-    } catch (error) {
-      throw new InternalServerErrorException(
-        'User 생성 중 오류가 발생했습니다.',
-      );
-    }
-
-    if (existUserId) {
-      throw new ConflictException(`${userId}는 이미 가입된 ID입니다.`);
-    }
-
     const newUser = await this.usersService.registerUser(usersRegisterDto);
     return newUser;
   }

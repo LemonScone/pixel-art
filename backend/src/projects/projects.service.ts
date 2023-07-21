@@ -5,7 +5,7 @@ import {
   HttpException,
 } from '@nestjs/common';
 import { Pool, PoolConnection } from 'mysql2/promise';
-import { DB_CONNECTION } from 'src/constants';
+import { DB_CONNECTION } from '../constants';
 import { Project } from './project.model';
 import { CreateProjectDto } from './dto/create-project-dto';
 import { UpdateProjectDto } from './dto/update-project-dto';

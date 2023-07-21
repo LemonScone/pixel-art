@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UsersController } from './users.controller';
-import { dbProvider } from 'src/db/db.provider';
+import { dbProvider } from '../db/db.provider';
 
 @Module({
   providers: [UsersService, dbProvider],
