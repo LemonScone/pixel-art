@@ -4,7 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { AuthService } from './auth.service';
 import { dbProvider } from '../db/db.provider';
-import { UsersService } from 'src/users/users.service';
+import { UsersService } from '../users/users.service';
 
 describe('AuthController', () => {
   let controller: AuthController;
