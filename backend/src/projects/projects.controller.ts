@@ -30,7 +30,7 @@ export class ProjectsController {
   constructor(private readonly projectsService: ProjectsService) {}
 
   @Get()
-  getProjectByUsxerId(@Req() req) {
+  getProjectByUserId(@Req() req) {
     return this.projectsService.getProjectByUserId(req.user.userId);
   }
 
