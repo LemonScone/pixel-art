@@ -1,5 +1,4 @@
-import { createPool, Pool, PoolConnection } from 'mysql2/promise';
-import { DbQueryResult } from '../src/db/types';
+import { createPool, Pool } from 'mysql2/promise';
 
 export async function clearDB() {
   const pool: Pool = createPool({
@@ -11,24 +10,14 @@ export async function clearDB() {
     connectionLimit: 10,
   });
 
-  async function query<T>(
-    sql: string,
-    options?: unknown,
-  ): Promise<DbQueryResult<T[]>> {
-    const [result] = await pool.execute<DbQueryResult<T[]>>(sql, options);
-    return result;
-  }
-
-  const connectionPool: PoolConnection = await pool.getConnection();
   try {
     const tables = ['FRAME', 'PROJECT', 'TOKEN', 'USER'];
-    await query(`SET FOREIGN_KEY_CHECKS=0;`);
+    await pool.execute(`SET FOREIGN_KEY_CHECKS=0;`);
     for (const table of tables) {
-      await query(`TRUNCATE TABLE ${table};`);
+      await pool.execute(`TRUNCATE TABLE ${table};`);
     }
-    await query(`SET FOREIGN_KEY_CHECKS=1;`);
+    await pool.execute(`SET FOREIGN_KEY_CHECKS=1;`);
   } catch (error) {
-  } finally {
-    connectionPool.release();
+    console.log(error);
   }
 }
