@@ -24,7 +24,7 @@ const authApi = createApi({
       login: builder.mutation<LoginResponse, SignInCredencials>({
         query: (credencials) => {
           return {
-            url: "/auth/login",
+            url: "/auth/signin",
             method: "POST",
             body: credencials,
           };
@@ -60,21 +60,25 @@ const authApi = createApi({
         },
         providesTags: ["Refresh"],
         async onQueryStarted(_, { dispatch, queryFulfilled }) {
-          const { data } = await queryFulfilled;
-          const { accessToken, expired, ...user } = data;
-          dispatch(
-            setAuth({
-              user,
-              expired,
-              accessToken,
-            })
-          );
+          try {
+            const { data } = await queryFulfilled;
+            const { accessToken, expired, ...user } = data;
+            dispatch(
+              setAuth({
+                user,
+                expired,
+                accessToken,
+              })
+            );
 
-          const refreshToken = async () => {
-            await dispatch(authApi.util.invalidateTags(["Refresh"]));
-            dispatch(resetAuth());
-          };
-          setTimeout(refreshToken, expired - ONE_MINUTE);
+            const refreshToken = async () => {
+              await dispatch(authApi.util.invalidateTags(["Refresh"]));
+              dispatch(resetAuth());
+            };
+            setTimeout(refreshToken, expired - ONE_MINUTE);
+          } catch (error) {
+            console.log(error);
+          }
         },
       }),
     };

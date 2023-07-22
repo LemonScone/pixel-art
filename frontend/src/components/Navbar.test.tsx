@@ -31,7 +31,7 @@ describe("Navbar", () => {
     it("should show sign in button", async () => {
       renderComponent({
         auth: {
-          user: { userId: "", nickname: "", current: 0, provider: "" },
+          user: { email: "", username: "", current: 0, provider: "" },
           accessToken: "",
           expired: 0,
         },

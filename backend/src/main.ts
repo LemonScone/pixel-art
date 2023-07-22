@@ -2,11 +2,11 @@ import { NestFactory } from '@nestjs/core';
 import { setupSwagger } from './utils/swagger';
 import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './utils/httpExceptionFilter';
+import { ExpressAdapter } from '@nestjs/platform-express';
 import helmet from 'helmet';
-import * as cookieParser from 'cookie-parser';
+
 import * as fs from 'fs';
 import * as express from 'express';
-import { ExpressAdapter } from '@nestjs/platform-express';
 import * as http from 'http';
 import * as https from 'https';
 
@@ -18,8 +18,6 @@ async function bootstrap() {
   app.setGlobalPrefix('api');
 
   app.use(helmet());
-
-  app.use(cookieParser());
 
   app.useGlobalFilters(new HttpExceptionFilter());
 

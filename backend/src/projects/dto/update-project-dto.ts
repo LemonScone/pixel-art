@@ -5,7 +5,7 @@ import {
   IsBoolean,
   IsNumber,
 } from 'class-validator';
-import { FrameDto } from './frame-dto';
+import { Frame } from '../frame.model';
 
 export class UpdateProjectDto {
   @IsNumber()
@@ -42,5 +42,5 @@ export class UpdateProjectDto {
   @IsBoolean()
   isPublished: boolean;
 
-  frames: FrameDto[];
+  frames: Frame[];
 }

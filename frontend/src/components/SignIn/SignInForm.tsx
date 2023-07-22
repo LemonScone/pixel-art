@@ -5,7 +5,7 @@ import httpStatus from "../../constants/httpStatus";
 
 const SignInForm = () => {
   const [form, setForm] = useState({
-    id: "",
+    email: "",
     password: "",
   });
 
@@ -45,16 +45,21 @@ const SignInForm = () => {
     }
 
     const result = await signIn({
-      userId: form.id,
+      email: form.email,
       password: form.password,
     });
 
-    if (result?.status === httpStatus.UNAUTHORIZED) {
-      setUnAuthorized(true);
-      setForm({
-        id: "",
-        password: "",
-      });
+    if (result?.status) {
+      if (
+        result.status === httpStatus.UNAUTHORIZED ||
+        result.status === httpStatus.NOT_FOUND
+      ) {
+        setUnAuthorized(true);
+        setForm({
+          email: "",
+          password: "",
+        });
+      }
     }
   };
 
@@ -66,33 +71,33 @@ const SignInForm = () => {
     >
       {unAuthorized && (
         <div className="mb-4 rounded bg-rose-500 p-2 text-gray-100">
-          Sorry, we can't find an account with this id. Please try again or
+          Sorry, we can't find an account with this email. Please try again or
           create a new account.
         </div>
       )}
       <div className="mb-4">
         <label
           className="mb-2 block text-sm font-bold text-gray-100"
-          htmlFor="id"
+          htmlFor="email"
         >
-          ID
+          Email
         </label>
         <input
           className={
-            errors.id.dirty && errors.id.error
+            errors.email.dirty && errors.email.error
               ? `w-full appearance-none rounded border border-rose-500 bg-input-color px-3 py-2 text-gray-100 shadow focus-visible:outline-primary-color-600`
               : `w-full appearance-none rounded border bg-input-color px-3 py-2 text-gray-100 shadow focus-visible:outline-primary-color-600`
           }
-          id="id"
-          name="id"
-          type="text"
-          placeholder="ID"
-          value={form.id}
+          id="email"
+          name="email"
+          type="email"
+          placeholder="Email"
+          value={form.email}
           onChange={handleChange}
           onBlur={onBlurField}
         />
-        {errors.id.dirty && errors.id.error ? (
-          <p className="pt-2 italic  text-rose-500">{errors.id.message}</p>
+        {errors.email.dirty && errors.email.error ? (
+          <p className="pt-2 italic  text-rose-500">{errors.email.message}</p>
         ) : null}
       </div>
       <div className="mb-6">
