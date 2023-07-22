@@ -1,6 +1,7 @@
 import { IsString, IsNumber, Min, Max, ValidateNested } from 'class-validator';
 import { FrameDto } from './frame-dto';
 import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 
 export class CreateProjectDto {
   @ApiProperty({
@@ -44,5 +45,6 @@ export class CreateProjectDto {
 
   @ApiProperty({ isArray: true, type: FrameDto, required: true })
   @ValidateNested()
+  @Type(() => FrameDto)
   frames: FrameDto[];
 }
