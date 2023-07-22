@@ -39,7 +39,7 @@ export class JwtRefreshStrategy extends PassportStrategy(
       }
 
       if (payload.exp < Date.now() / 1000) {
-        await this.authService.logout(refreshTokenId);
+        await this.authService.signout(refreshTokenId);
         throw new UnauthorizedException('jwt expired');
       }
 

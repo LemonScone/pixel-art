@@ -134,7 +134,7 @@ export class AuthController {
     status: HttpStatus.UNAUTHORIZED,
   })
   async signout(@Req() req, @Res() res: Response) {
-    await this.authService.logout(req.user.refreshTokenId);
+    await this.authService.signout(req.user.refreshTokenId);
     res.clearCookie('refreshToken');
 
     res.status(HttpStatus.OK).send({
@@ -161,7 +161,6 @@ export class AuthController {
   async refresh(@Req() req: any): Promise<RefreshSuccessResponseDto> {
     const { userId } = req.user;
     const response = await this.authService.refresh(userId);
-
     const expired = Number(
       this.configService.get<string>('JWT_EXPIRATION_TIME'),
     );

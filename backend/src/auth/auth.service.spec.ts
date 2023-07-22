@@ -1,6 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from './auth.service';
-import { dbProvider } from '../db/db.provider';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { User } from './user.model';
@@ -12,6 +11,7 @@ import {
 
 import ConfigServiceMock from '../../test/ConfigServiceMock';
 import { CreateUserDto } from './dto/create-user.dto';
+import { DbService } from '../db/db.service';
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -42,8 +42,8 @@ describe('AuthService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ConfigServiceMock,
+        DbService,
         AuthService,
-        dbProvider,
         JwtService,
         {
           provide: UsersService,
