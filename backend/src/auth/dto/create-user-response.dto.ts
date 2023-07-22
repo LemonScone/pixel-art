@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class UserRegisterSuccessResponseDto {
+export class CreateUserSuccessResponseDto {
   @ApiProperty({
     example: 'artist@art.com',
     description: '가입된 User Email',
@@ -14,7 +14,7 @@ export class UserRegisterSuccessResponseDto {
   readonly username: string;
 }
 
-export class UserRegisterFailedResponseDto {
+export class CreateUserFailedResponseDto {
   @ApiProperty({
     example: false,
   })

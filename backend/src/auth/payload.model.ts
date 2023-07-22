@@ -1,6 +1,7 @@
 export interface AccessTokenPayload {
-  sub: string;
-  nickname: string;
+  sub: number;
+  email: string;
+  username: string;
   current: number;
   provider: string;
 }

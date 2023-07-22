@@ -7,7 +7,7 @@ import {
   MinLength,
 } from 'class-validator';
 
-export class UsersRegisterDto {
+export class AuthSignupDto {
   @ApiProperty({
     example: 'artist@art.com',
     description: 'user email',
@@ -35,12 +35,4 @@ export class UsersRegisterDto {
   @IsString()
   @MinLength(2)
   username: string;
-
-  @ApiProperty({
-    example: 'local',
-    description: 'signup provider',
-    required: true,
-  })
-  @IsString()
-  provider: string;
 }
