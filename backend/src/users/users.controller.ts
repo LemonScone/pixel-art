@@ -30,7 +30,7 @@ export class UsersController {
   async register(
     @Body() usersRegisterDto: UsersRegisterDto,
   ): Promise<UserRegisterSuccessResponseDto | UserRegisterFailedResponseDto> {
-    const newUser = await this.usersService.registerUser(usersRegisterDto);
+    const newUser = await this.usersService.create(usersRegisterDto);
     return newUser;
   }
 }

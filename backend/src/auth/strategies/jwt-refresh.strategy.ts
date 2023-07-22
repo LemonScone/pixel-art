@@ -34,7 +34,6 @@ export class JwtRefreshStrategy extends PassportStrategy(
         payload.sub,
         refreshToken,
       );
-
       if (!refreshTokenId) {
         throw new UnauthorizedException();
       }

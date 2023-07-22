@@ -1,5 +1,4 @@
 import {
-  ConflictException,
   HttpException,
   Inject,
   Injectable,
@@ -7,12 +6,12 @@ import {
 } from '@nestjs/common';
 import { Pool, PoolConnection } from 'mysql2/promise';
 import { DB_CONNECTION } from '../constants';
-import { UsersRegisterDto } from './dto/users-register.dto';
-import * as bcrypt from 'bcrypt';
 import { AuthCredentialsDto } from '../auth/dto/auth-credentials.dto';
 import { User } from '../auth/user.model';
 import { Token } from '../auth/token.model';
+import { CreateUserDto } from '../auth/dto/create-user.dto';
 
+import * as bcrypt from 'bcrypt';
 @Injectable()
 export class UsersService {
   constructor(@Inject(DB_CONNECTION) private readonly pool: Pool) {}
@@ -53,24 +52,9 @@ export class UsersService {
     }
   }
 
-  async registerUser(usersRegisterDto: UsersRegisterDto) {
-    const { email, password, username, provider } = usersRegisterDto;
-
-    let existUserEmail;
-    try {
-      existUserEmail = await this.existUserEmail(email);
-    } catch (error) {
-      throw new Error(error);
-    }
-
-    if (existUserEmail) {
-      throw new ConflictException(`${email}는 이미 가입된 email입니다.`);
-    }
-
+  async create(createUserDto: CreateUserDto) {
+    const { email, password, username, provider } = createUserDto;
     const connectionPool: PoolConnection = await this.pool.getConnection();
-
-    const salt = await bcrypt.genSalt();
-    const hashedPassword = await bcrypt.hash(password, salt);
 
     try {
       await connectionPool.execute(
@@ -83,15 +67,22 @@ export class UsersService {
         )
         VALUES (
           '${email}'
-        , '${hashedPassword}'
+        , '${password}'
         , '${username}'
         , '${provider}'
         );`,
       );
 
+      const [lastInsert] = await connectionPool.execute(
+        'SELECT LAST_INSERT_ID() as id',
+      );
+
       return {
+        id: lastInsert[0]['id'],
         email,
+        password,
         username,
+        provider,
       };
     } catch (error) {
       throw new HttpException({ message: error.message, error }, error.status);
@@ -100,7 +91,7 @@ export class UsersService {
     }
   }
 
-  async insertUserRefreshToken(userId: string, refreshToken: string) {
+  async insertUserRefreshToken(userId: number, refreshToken: string) {
     const connectionPool: PoolConnection = await this.pool.getConnection();
 
     try {
@@ -121,14 +112,29 @@ export class UsersService {
     return hashedRefreshToken;
   }
 
+  async find(email: string) {
+    const connectionPool: PoolConnection = await this.pool.getConnection();
+
+    try {
+      const [result] = await connectionPool.execute(
+        `SELECT id, email, password, username, current, provider FROM USER WHERE email = '${email}'`,
+      );
+
+      return result as User[];
+    } catch (error) {
+      throw new HttpException({ message: error.message, error }, error.status);
+    } finally {
+      connectionPool.release();
+    }
+  }
   async login(authCredentialsDto: AuthCredentialsDto): Promise<User> {
-    const { userId, password } = authCredentialsDto;
+    const { email, password } = authCredentialsDto;
 
     const connectionPool: PoolConnection = await this.pool.getConnection();
 
     try {
       const [result] = await connectionPool.execute(
-        `SELECT id, password, username, current, provider FROM USER WHERE id = '${userId}'`,
+        `SELECT id, password, username, current, provider FROM USER WHERE email = '${email}'`,
       );
 
       if (!result[0]) {

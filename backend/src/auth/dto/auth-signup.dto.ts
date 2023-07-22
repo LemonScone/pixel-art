@@ -1,13 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
-  IsEmail,
   IsString,
+  IsEmail,
   Matches,
   MaxLength,
   MinLength,
 } from 'class-validator';
 
-export class AuthCredentialsDto {
+export class AuthSignupDto {
   @ApiProperty({
     example: 'artist@art.com',
     description: 'user email',
@@ -26,4 +26,13 @@ export class AuthCredentialsDto {
   @MaxLength(20)
   @Matches(/^[a-zA-Z0-9]*$/)
   password: string;
+
+  @ApiProperty({
+    example: 'gogh',
+    description: 'user username',
+    required: true,
+  })
+  @IsString()
+  @MinLength(2)
+  username: string;
 }

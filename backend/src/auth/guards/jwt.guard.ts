@@ -22,8 +22,8 @@ export class JwtAuthGuard implements CanActivate {
         secret: process.env.JWT_SECRET,
       });
 
-      const { sub, username, current, provider } = user;
-      request.user = { userId: sub, username, current, provider };
+      const { sub, email, username, current, provider } = user;
+      request.user = { userId: sub, email, username, current, provider };
 
       return true;
     } catch (error) {
