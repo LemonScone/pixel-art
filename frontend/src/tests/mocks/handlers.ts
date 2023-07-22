@@ -4,14 +4,14 @@ import { VALID_USER, VALID_TOKEN } from "../fixtures/auth";
 import httpStatus from "../../constants/httpStatus";
 
 const handlers = [
-  rest.post("/api/auth/login", async (req, res, ctx) => {
-    const { userId, password } = await req.json();
+  rest.post("/api/auth/signin", async (req, res, ctx) => {
+    const { email, password } = await req.json();
 
-    if (userId === VALID_USER.userId && password === VALID_USER.password) {
+    if (email === VALID_USER.email && password === VALID_USER.password) {
       return res(
         ctx.status(httpStatus.OK),
         ctx.json({
-          userId: VALID_USER.userId,
+          email: VALID_USER.email,
           accessToken: VALID_TOKEN,
           username: VALID_USER.username,
           current: VALID_USER.current,
@@ -22,12 +22,14 @@ const handlers = [
     } else {
       return res(
         ctx.status(httpStatus.UNAUTHORIZED),
-        ctx.json({ message: "Please verify your ID or password." })
+        ctx.json({
+          message: "Sorry, we can't find an account with this email.",
+        })
       );
     }
   }),
 
-  rest.post("/api/auth/logout", async (_, res, ctx) => {
+  rest.post("/api/auth/signout", async (_, res, ctx) => {
     return res(ctx.status(httpStatus.OK));
   }),
 
@@ -35,7 +37,7 @@ const handlers = [
     return res(
       ctx.status(httpStatus.OK),
       ctx.json({
-        userId: "",
+        email: "",
         accessToken: "",
         username: "",
         current: "",

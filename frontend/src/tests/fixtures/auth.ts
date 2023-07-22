@@ -1,5 +1,5 @@
 const VALID_USER = {
-  userId: "valid",
+  email: "valid@valid.com",
   password: "1234",
   username: "valid user",
   provider: "local",

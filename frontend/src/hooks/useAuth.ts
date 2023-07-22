@@ -19,10 +19,10 @@ const useAuth = () => {
   useDebugValue(user, (user) => (user ? "Logged In" : "Logged Out"));
 
   const signIn = async (params: SignInCredencials) => {
-    const { userId, password } = params;
+    const { email, password } = params;
 
     try {
-      await login({ userId, password }).unwrap();
+      await login({ email, password }).unwrap();
     } catch (error) {
       return error as AxiosError;
     }
@@ -31,7 +31,7 @@ const useAuth = () => {
   const signOut = useCallback(
     async (pathname = "/") => {
       try {
-        await api.post("/auth/logout");
+        await api.post("/auth/signout");
       } catch (error) {
         return error as AxiosError;
       } finally {

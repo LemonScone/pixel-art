@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { emptyValidator } from "../utils/validators";
+import { emptyValidator, emailValidator } from "../utils/validators";
 
 type FormFieldValidation = {
   dirty: boolean;
@@ -8,7 +8,7 @@ type FormFieldValidation = {
 };
 
 type SignInFormField<T> = {
-  id: T;
+  email: T;
   password: T;
 };
 
@@ -27,7 +27,7 @@ const touchErrors = (errors: SignInFormField<FormFieldValidation>) => {
 
 export const useSignInFormValidator = (form: SignInFormField<string>) => {
   const [errors, setErrors] = useState({
-    id: {
+    email: {
       dirty: false,
       error: false,
       message: "",
@@ -60,12 +60,12 @@ export const useSignInFormValidator = (form: SignInFormField<string>) => {
       nextErrors = touchErrors(errors);
     }
 
-    const { id, password } = form;
+    const { email, password } = form;
 
-    if (nextErrors.id.dirty && (field ? field === "id" : true)) {
-      const message = emptyValidator(id, "ID");
-      nextErrors.id.error = !!message;
-      nextErrors.id.message = message;
+    if (nextErrors.email.dirty && (field ? field === "email" : true)) {
+      const message = emailValidator(email, "Email");
+      nextErrors.email.error = !!message;
+      nextErrors.email.message = message;
       if (message) {
         isValid = false;
       }

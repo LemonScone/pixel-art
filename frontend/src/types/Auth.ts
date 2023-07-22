@@ -1,5 +1,5 @@
 export type User = {
-  userId: string;
+  email: string;
   username: string;
   current: number;
   provider: string;
@@ -12,6 +12,6 @@ export type Auth = {
 };
 
 export type SignInCredencials = {
-  userId: string;
+  email: string;
   password: string;
 };
