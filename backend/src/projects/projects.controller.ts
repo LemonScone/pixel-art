@@ -21,6 +21,7 @@ import {
 } from '@nestjs/swagger';
 import { UpdateProjectDto } from './dto/update-project-dto';
 import { JwtAuthGuard } from '../auth/guards/jwt.guard';
+import { PublishProjectDto } from './dto/publish-project-dto';
 
 @UseGuards(JwtAuthGuard)
 @ApiTags('propjects')
@@ -106,7 +107,7 @@ export class ProjectsController {
     status: HttpStatus.OK,
     description: '성공적으로 게시여부를 수정했습니다.',
   })
-  updatePulishStatus(@Param('id') id: number, @Body('status') status: boolean) {
-    return this.projectsService.updatePulishStatus(id, status);
+  updatePulishStatus(@Param('id') id: number, @Body() body: PublishProjectDto) {
+    return this.projectsService.updatePulishStatus(id, body.status);
   }
 }
