@@ -2,10 +2,13 @@ import { ChangeEvent, FormEvent, useState } from "react";
 import { useSignInFormValidator } from "../../hooks/useSignInFormValidator";
 import useAuth from "../../hooks/useAuth";
 import httpStatus from "../../constants/httpStatus";
+import { NavLink, useLocation } from "react-router-dom";
 
 const SignInForm = () => {
+  const location = useLocation();
+
   const [form, setForm] = useState({
-    email: "",
+    email: location.state?.autofill,
     password: "",
   });
 
@@ -71,8 +74,11 @@ const SignInForm = () => {
     >
       {unAuthorized && (
         <div className="mb-4 rounded bg-rose-500 p-2 text-gray-100">
-          Sorry, we can't find an account with this email. Please try again or
-          create a new account.
+          Sorry, we can't find an account with this email. Please try again
+          or&nbsp;
+          <NavLink to="/signup" className="underline">
+            create a new account.
+          </NavLink>
         </div>
       )}
       <div className="mb-4">

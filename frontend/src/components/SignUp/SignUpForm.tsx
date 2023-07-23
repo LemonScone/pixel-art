@@ -1,16 +1,23 @@
 import { ChangeEvent, FormEvent, useState } from "react";
 import { useSignUpFormValidator } from "../../hooks/useSignUpFormValidator";
+import useAuth from "../../hooks/useAuth";
+import httpStatus from "../../constants/httpStatus";
+import { useNavigate } from "react-router-dom";
 
 const SignUpForm = () => {
   const [form, setForm] = useState({
-    id: "",
+    email: "",
     username: "",
     password: "",
   });
 
+  const { signUp } = useAuth();
+
   const { errors, validateForm, onBlurField } = useSignUpFormValidator(form);
 
   const [showPassword, setShowPassword] = useState(false);
+
+  const navigate = useNavigate();
 
   const handleChange = (e: ChangeEvent) => {
     if (e.target instanceof HTMLInputElement) {
@@ -40,6 +47,18 @@ const SignUpForm = () => {
     if (!isValid) {
       return;
     }
+
+    const result = await signUp({
+      email: form.email,
+      password: form.password,
+      username: form.username,
+    });
+
+    if (result?.status) {
+      if (result.status === httpStatus.CONFLICT) {
+        navigate("/login", { state: { autofill: form.email } });
+      }
+    }
   };
 
   return (
@@ -51,26 +70,26 @@ const SignUpForm = () => {
       <div className="mb-4">
         <label
           className="mb-2 block text-sm font-bold text-gray-100"
-          htmlFor="id"
+          htmlFor="email"
         >
-          ID
+          Email
         </label>
         <input
           className={
-            errors.id.dirty && errors.id.error
+            errors.email.dirty && errors.email.error
               ? `w-full appearance-none rounded border border-rose-500 bg-input-color px-3 py-2 text-gray-100 shadow focus-visible:outline-primary-color-600`
               : `w-full appearance-none rounded border bg-input-color px-3 py-2 text-gray-100 shadow focus-visible:outline-primary-color-600`
           }
-          id="id"
-          name="id"
+          id="email"
+          name="email"
           type="text"
-          placeholder="ID"
-          value={form.id}
+          placeholder="Email"
+          value={form.email}
           onChange={handleChange}
           onBlur={onBlurField}
         />
-        {errors.id.dirty && errors.id.error ? (
-          <p className="pt-2 italic  text-rose-500">{errors.id.message}</p>
+        {errors.email.dirty && errors.email.error ? (
+          <p className="pt-2 italic  text-rose-500">{errors.email.message}</p>
         ) : null}
       </div>
       <div className="mb-4">
