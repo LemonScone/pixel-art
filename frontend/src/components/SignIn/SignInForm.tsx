@@ -3,12 +3,13 @@ import { useSignInFormValidator } from "../../hooks/useSignInFormValidator";
 import useAuth from "../../hooks/useAuth";
 import httpStatus from "../../constants/httpStatus";
 import { NavLink, useLocation } from "react-router-dom";
+import SignInField from "./SignInField";
 
 const SignInForm = () => {
   const location = useLocation();
 
   const [form, setForm] = useState({
-    email: location.state?.autofill,
+    email: location.state?.autofill ? location.state.autofill : "",
     password: "",
   });
 
@@ -21,7 +22,6 @@ const SignInForm = () => {
   const handleChange = (e: ChangeEvent) => {
     if (e.target instanceof HTMLInputElement) {
       const field = e.target.name as keyof typeof errors;
-
       const nextFormState = {
         ...form,
         [field]: e.target.value,
@@ -70,7 +70,7 @@ const SignInForm = () => {
     <form
       onSubmit={handleSubmit}
       aria-label="SignIn Form"
-      className="mb-4 flex flex-col rounded bg-neutral-900 px-8 pb-8 pt-6 shadow-md"
+      className="w-[32rem] rounded bg-neutral-900 p-10 shadow-md"
     >
       {unAuthorized && (
         <div className="mb-4 rounded bg-rose-500 p-2 text-gray-100">
@@ -81,59 +81,23 @@ const SignInForm = () => {
           </NavLink>
         </div>
       )}
-      <div className="mb-4">
-        <label
-          className="mb-2 block text-sm font-bold text-gray-100"
-          htmlFor="email"
-        >
-          Email
-        </label>
-        <input
-          className={
-            errors.email.dirty && errors.email.error
-              ? `w-full appearance-none rounded border border-rose-500 bg-input-color px-3 py-2 text-gray-100 shadow focus-visible:outline-primary-color-600`
-              : `w-full appearance-none rounded border bg-input-color px-3 py-2 text-gray-100 shadow focus-visible:outline-primary-color-600`
-          }
-          id="email"
-          name="email"
-          type="email"
-          placeholder="Email"
-          value={form.email}
-          onChange={handleChange}
-          onBlur={onBlurField}
-        />
-        {errors.email.dirty && errors.email.error ? (
-          <p className="pt-2 italic  text-rose-500">{errors.email.message}</p>
-        ) : null}
-      </div>
-      <div className="mb-6">
-        <label
-          className="mb-2 block text-sm font-bold text-gray-100"
-          htmlFor="password"
-        >
-          Password
-        </label>
-        <input
-          className={
-            errors.password.dirty && errors.password.error
-              ? `w-full appearance-none rounded border border-rose-500 bg-input-color px-3 py-2 text-gray-100 shadow focus-visible:outline-primary-color-600`
-              : `w-full appearance-none rounded border bg-input-color px-3 py-2 text-gray-100 shadow focus-visible:outline-primary-color-600`
-          }
-          id="password"
-          name="password"
-          type="password"
-          placeholder="Password"
-          value={form.password}
-          onChange={handleChange}
-          onBlur={onBlurField}
-        />
-        {errors.password.dirty && errors.password.error ? (
-          <p className="pt-2 italic  text-rose-500">
-            {errors.password.message}
-          </p>
-        ) : null}
-      </div>
-      <div className="">
+      <SignInField
+        type="email"
+        label="email"
+        value={form.email}
+        errors={errors.email}
+        onChange={handleChange}
+        onBlur={onBlurField}
+      />
+      <SignInField
+        type="password"
+        label="password"
+        value={form.password}
+        errors={errors.password}
+        onChange={handleChange}
+        onBlur={onBlurField}
+      />
+      <div className="mt-8">
         <button
           className="w-full rounded bg-primary-color-600 px-4 py-2 font-bold text-black hover:bg-primary-color-500"
           type="submit"

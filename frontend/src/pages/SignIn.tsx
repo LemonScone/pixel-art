@@ -2,7 +2,7 @@ import SignInForm from "../components/SignIn/SignInForm";
 
 const SignIn = () => {
   return (
-    <div className="mx-auto mt-6 max-w-2xl">
+    <div className="flex h-screen flex-col items-center justify-center">
       <SignInForm />
     </div>
   );
