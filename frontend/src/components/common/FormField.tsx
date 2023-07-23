@@ -26,7 +26,7 @@ const FormField = ({
       <input
         className={classNames(
           errors.dirty && errors.error ? "border-rose-500" : "border-white",
-          "peer mb-2 w-full border-b-2 bg-transparent py-2 text-white outline-none"
+          "peer mb-2 w-full border-b-2 bg-transparent py-2 text-gray-100 outline-none"
         )}
         id={label}
         name={label}
@@ -37,7 +37,7 @@ const FormField = ({
         required
       />
       <label
-        className="pointer-events-none absolute left-0 top-0 pb-2 pt-2 text-lg  text-white transition-all duration-500 group-focus-within:-top-6 group-focus-within:left-0 group-focus-within:text-base group-focus-within:text-primary-color peer-valid:-top-6 peer-valid:left-0 peer-valid:text-base peer-valid:text-primary-color"
+        className="pointer-events-none absolute left-0 top-0 pb-2 pt-2 text-lg  text-gray-100 transition-all duration-500 group-focus-within:-top-6 group-focus-within:left-0 group-focus-within:text-base group-focus-within:text-primary-color peer-valid:-top-6 peer-valid:left-0 peer-valid:text-base peer-valid:text-primary-color"
         htmlFor={label}
       >
         {label.charAt(0).toUpperCase() + label.slice(1)}

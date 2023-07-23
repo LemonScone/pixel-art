@@ -3,6 +3,7 @@ import { useSignUpFormValidator } from "../../hooks/useSignUpFormValidator";
 import useAuth from "../../hooks/useAuth";
 import httpStatus from "../../constants/httpStatus";
 import { useNavigate } from "react-router-dom";
+import FormField from "../common/FormField";
 
 const SignUpForm = () => {
   const [form, setForm] = useState({
@@ -62,105 +63,46 @@ const SignUpForm = () => {
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      aria-label="SignUp Form"
-      className="mb-4 flex flex-col rounded bg-neutral-900 px-8 pb-8 pt-6 shadow-md"
-    >
-      <div className="mb-4">
-        <label
-          className="mb-2 block text-sm font-bold text-gray-100"
-          htmlFor="email"
-        >
-          Email
-        </label>
+    <form onSubmit={handleSubmit} aria-label="SignUp Form">
+      <FormField
+        type="text"
+        label="email"
+        value={form.email}
+        errors={errors.email}
+        onBlur={onBlurField}
+        onChange={handleChange}
+      />
+      <FormField
+        type="text"
+        label="username"
+        value={form.username}
+        errors={errors.username}
+        onBlur={onBlurField}
+        onChange={handleChange}
+      />
+      <FormField
+        type={showPassword ? "text" : "password"}
+        label="password"
+        value={form.password}
+        errors={errors.password}
+        onBlur={onBlurField}
+        onChange={handleChange}
+      />
+      <div className="mt-2 flex items-center">
         <input
-          className={
-            errors.email.dirty && errors.email.error
-              ? `w-full appearance-none rounded border border-rose-500 bg-input-color px-3 py-2 text-gray-100 shadow focus-visible:outline-primary-color-600`
-              : `w-full appearance-none rounded border bg-input-color px-3 py-2 text-gray-100 shadow focus-visible:outline-primary-color-600`
-          }
-          id="email"
-          name="email"
-          type="text"
-          placeholder="Email"
-          value={form.email}
-          onChange={handleChange}
-          onBlur={onBlurField}
+          id="showPassword"
+          className="h-5 w-5  accent-primary-color"
+          type="checkbox"
+          name="showPassword"
+          onChange={(e: ChangeEvent<HTMLInputElement>) => {
+            setShowPassword(e.target.checked);
+          }}
         />
-        {errors.email.dirty && errors.email.error ? (
-          <p className="pt-2 italic  text-rose-500">{errors.email.message}</p>
-        ) : null}
-      </div>
-      <div className="mb-4">
-        <label
-          className="mb-2 block text-sm font-bold text-gray-100"
-          htmlFor="username"
-        >
-          Username
+        <label htmlFor="showPassword" className="px-1 text-gray-100 ">
+          <span>Show Password</span>
         </label>
-        <input
-          className={
-            errors.username.dirty && errors.username.error
-              ? `w-full appearance-none rounded border border-rose-500 bg-input-color px-3 py-2 text-gray-100 shadow focus-visible:outline-primary-color-600`
-              : `w-full appearance-none rounded border bg-input-color px-3 py-2 text-gray-100 shadow focus-visible:outline-primary-color-600`
-          }
-          id="username"
-          name="username"
-          type="text"
-          placeholder="Username"
-          value={form.username}
-          onChange={handleChange}
-          onBlur={onBlurField}
-        />
-        {errors.username.dirty && errors.username.error ? (
-          <p className="pt-2 italic  text-rose-500">
-            {errors.username.message}
-          </p>
-        ) : null}
       </div>
-      <div className="mb-6">
-        <label
-          className="mb-2 block text-sm font-bold text-gray-100"
-          htmlFor="password"
-        >
-          Password
-        </label>
-        <input
-          className={
-            errors.password.dirty && errors.password.error
-              ? `w-full appearance-none rounded border border-rose-500 bg-input-color px-3 py-2 text-gray-100 shadow focus-visible:outline-primary-color-600`
-              : `w-full appearance-none rounded border bg-input-color px-3 py-2 text-gray-100 shadow focus-visible:outline-primary-color-600`
-          }
-          id="password"
-          name="password"
-          type={showPassword ? "text" : "password"}
-          placeholder="Password"
-          value={form.password}
-          onChange={handleChange}
-          onBlur={onBlurField}
-        />
-        {errors.password.dirty && errors.password.error ? (
-          <p className="pt-2 italic  text-rose-500">
-            {errors.password.message}
-          </p>
-        ) : null}
-        <div className="mt-2 flex items-center">
-          <input
-            id="showPassword"
-            className="h-5 w-5  accent-primary-color"
-            type="checkbox"
-            name="showPassword"
-            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-              setShowPassword(e.target.checked);
-            }}
-          />
-          <label htmlFor="showPassword" className="px-1 text-gray-100 ">
-            <span>Show Password</span>
-          </label>
-        </div>
-      </div>
-      <div>
+      <div className="mt-8">
         <button
           className="w-full rounded bg-primary-color-600 px-4 py-2 font-bold text-black hover:bg-primary-color-500"
           type="submit"

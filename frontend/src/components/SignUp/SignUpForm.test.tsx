@@ -19,7 +19,7 @@ const renderComponent = () => {
 
 describe("SignUpForm", () => {
   describe("when renderd", () => {
-    it("should have id, username, password fields, show password checkbox, a sign up button", () => {
+    it("should have email, username, password fields, show password checkbox, a sign up button", () => {
       renderComponent();
 
       const emailField = screen.getByRole("textbox", { name: /email/i });
