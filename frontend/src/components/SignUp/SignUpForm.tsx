@@ -1,27 +1,29 @@
 import { ChangeEvent, FormEvent, useState } from "react";
-import { useSignInFormValidator } from "../../hooks/useSignInFormValidator";
+import { useSignUpFormValidator } from "../../hooks/useSignUpFormValidator";
 import useAuth from "../../hooks/useAuth";
 import httpStatus from "../../constants/httpStatus";
-import { NavLink, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import FormField from "../common/FormField";
 
-const SignInForm = () => {
-  const location = useLocation();
-
+const SignUpForm = () => {
   const [form, setForm] = useState({
-    email: location.state?.autofill ? location.state.autofill : "",
+    email: "",
+    username: "",
     password: "",
   });
 
-  const { signIn } = useAuth();
+  const { signUp } = useAuth();
 
-  const [unAuthorized, setUnAuthorized] = useState(false);
+  const { errors, validateForm, onBlurField } = useSignUpFormValidator(form);
 
-  const { errors, validateForm, onBlurField } = useSignInFormValidator(form);
+  const [showPassword, setShowPassword] = useState(false);
+
+  const navigate = useNavigate();
 
   const handleChange = (e: ChangeEvent) => {
     if (e.target instanceof HTMLInputElement) {
       const field = e.target.name as keyof typeof errors;
+
       const nextFormState = {
         ...form,
         [field]: e.target.value,
@@ -47,62 +49,69 @@ const SignInForm = () => {
       return;
     }
 
-    const result = await signIn({
+    const result = await signUp({
       email: form.email,
       password: form.password,
+      username: form.username,
     });
 
     if (result?.status) {
-      if (
-        result.status === httpStatus.UNAUTHORIZED ||
-        result.status === httpStatus.NOT_FOUND
-      ) {
-        setUnAuthorized(true);
-        setForm({
-          email: "",
-          password: "",
-        });
+      if (result.status === httpStatus.CONFLICT) {
+        navigate("/login", { state: { autofill: form.email } });
       }
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} aria-label="SignIn Form">
-      {unAuthorized && (
-        <div className="mb-4 rounded bg-rose-500 p-2 text-gray-100">
-          Sorry, we can't find an account with this email. Please try again
-          or&nbsp;
-          <NavLink to="/signup" className="underline">
-            create a new account.
-          </NavLink>
-        </div>
-      )}
+    <form onSubmit={handleSubmit} aria-label="SignUp Form">
       <FormField
-        type="email"
+        type="text"
         label="email"
         value={form.email}
         errors={errors.email}
-        onChange={handleChange}
         onBlur={onBlurField}
+        onChange={handleChange}
       />
       <FormField
-        type="password"
+        type="text"
+        label="username"
+        value={form.username}
+        errors={errors.username}
+        onBlur={onBlurField}
+        onChange={handleChange}
+      />
+      <FormField
+        type={showPassword ? "text" : "password"}
         label="password"
         value={form.password}
         errors={errors.password}
-        onChange={handleChange}
         onBlur={onBlurField}
+        onChange={handleChange}
       />
+      <div className="mt-2 flex items-center">
+        <input
+          id="showPassword"
+          className="h-5 w-5  accent-primary-color"
+          type="checkbox"
+          name="showPassword"
+          onChange={(e: ChangeEvent<HTMLInputElement>) => {
+            setShowPassword(e.target.checked);
+          }}
+        />
+        <label htmlFor="showPassword" className="px-1 text-gray-100 ">
+          <span>Show Password</span>
+        </label>
+      </div>
       <div className="mt-8">
         <button
           className="w-full rounded bg-primary-color-600 px-4 py-2 font-bold text-black hover:bg-primary-color-500"
           type="submit"
         >
-          Sign In
+          Sign Up
         </button>
       </div>
     </form>
   );
 };
 
-export default SignInForm;
+export default SignUpForm;

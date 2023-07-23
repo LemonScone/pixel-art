@@ -1,14 +1,16 @@
 import { useCallback, useDebugValue, useRef } from "react";
-import { SignInCredencials } from "../types/Auth";
+import { SignInCredentials, SignUpParams } from "../types/Auth";
 import { resetAuth, setAuth } from "../store";
 import { api, setAuthorizationHeader } from "../api";
 import { AxiosError } from "axios";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "./useRedux";
 import { useLoginMutation } from "../store";
+import { useSignupMutation } from "../store/apis/authApi";
 
 const useAuth = () => {
   const [login] = useLoginMutation();
+  const [signup] = useSignupMutation();
   const dispatch = useAppDispatch();
   const { user, accessToken } = useAppSelector((state) => state.auth.data);
 
@@ -18,7 +20,17 @@ const useAuth = () => {
 
   useDebugValue(user, (user) => (user ? "Logged In" : "Logged Out"));
 
-  const signIn = async (params: SignInCredencials) => {
+  const signUp = async (params: SignUpParams) => {
+    const { email, password, username } = params;
+
+    try {
+      await signup({ email, password, username }).unwrap();
+    } catch (error) {
+      return error as AxiosError;
+    }
+  };
+
+  const signIn = async (params: SignInCredentials) => {
     const { email, password } = params;
 
     try {
@@ -66,6 +78,7 @@ const useAuth = () => {
     accessToken,
     signIn,
     signOut,
+    signUp,
     silentRefresh,
     requestRefresh,
   };

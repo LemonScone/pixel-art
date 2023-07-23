@@ -9,6 +9,7 @@ import { AUTHENTICATED, UNAUTHENTICATED } from "../constants";
 
 import classNames from "../utils/classNames";
 import { useRefreshQuery } from "../store";
+import SignUpButton from "./SignUp/SignUpButton";
 
 const navigation = [
   { name: "Editor", href: "" },
@@ -60,7 +61,12 @@ const Navbar = () => {
               value={authStatus}
               caseBy={{
                 AUTHENTICATED: <SignOutButton />,
-                UNAUTHENTICATED: <SignInButton />,
+                UNAUTHENTICATED: (
+                  <>
+                    <SignInButton />
+                    <SignUpButton />
+                  </>
+                ),
               }}
             />
             <div className="relative ml-3">
