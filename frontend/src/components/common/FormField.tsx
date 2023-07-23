@@ -1,7 +1,7 @@
 import { ChangeEvent, FocusEvent } from "react";
 import classNames from "../../utils/classNames";
 
-type SignInFieldProps = {
+type FormFieldProps = {
   type: string;
   label: string;
   value: string;
@@ -13,14 +13,14 @@ type SignInFieldProps = {
   onChange: (e: ChangeEvent) => void;
   onBlur: (e: FocusEvent<HTMLInputElement>) => void;
 };
-const SignInField = ({
+const FormField = ({
   type,
   label,
   value,
   errors,
   onChange,
   onBlur,
-}: SignInFieldProps) => {
+}: FormFieldProps) => {
   return (
     <div className="group relative mt-8">
       <input
@@ -49,4 +49,4 @@ const SignInField = ({
   );
 };
 
-export default SignInField;
+export default FormField;

@@ -3,7 +3,7 @@ import { useSignInFormValidator } from "../../hooks/useSignInFormValidator";
 import useAuth from "../../hooks/useAuth";
 import httpStatus from "../../constants/httpStatus";
 import { NavLink, useLocation } from "react-router-dom";
-import SignInField from "./SignInField";
+import FormField from "../common/FormField";
 
 const SignInForm = () => {
   const location = useLocation();
@@ -81,7 +81,7 @@ const SignInForm = () => {
           </NavLink>
         </div>
       )}
-      <SignInField
+      <FormField
         type="email"
         label="email"
         value={form.email}
@@ -89,7 +89,7 @@ const SignInForm = () => {
         onChange={handleChange}
         onBlur={onBlurField}
       />
-      <SignInField
+      <FormField
         type="password"
         label="password"
         value={form.password}
