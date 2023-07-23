@@ -67,11 +67,7 @@ const SignInForm = () => {
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      aria-label="SignIn Form"
-      className="w-[32rem] rounded bg-neutral-900 p-10 shadow-md"
-    >
+    <form onSubmit={handleSubmit} aria-label="SignIn Form">
       {unAuthorized && (
         <div className="mb-4 rounded bg-rose-500 p-2 text-gray-100">
           Sorry, we can't find an account with this email. Please try again
