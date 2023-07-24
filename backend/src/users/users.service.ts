@@ -1,106 +1,67 @@
-import {
-  HttpException,
-  Inject,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
-import { Pool, PoolConnection } from 'mysql2/promise';
-import { DB_CONNECTION } from 'src/constants';
-import { UsersRegisterDto } from './dto/users-register.dto';
+import { Injectable } from '@nestjs/common';
+import { DbService } from '../db/db.service';
+import { User } from '../auth/user.model';
+import { Token } from '../auth/token.model';
+import { CreateUserDto } from '../auth/dto/create-user.dto';
+
 import * as bcrypt from 'bcrypt';
-import { AuthCredentialsDto } from 'src/auth/dto/auth-credentials.dto';
-import { User } from 'src/auth/user.model';
-import { Token } from 'src/auth/token.model';
 
 @Injectable()
 export class UsersService {
-  constructor(@Inject(DB_CONNECTION) private readonly pool: Pool) {}
+  constructor(private dbService: DbService) {}
 
   async getUserInfo(id: string): Promise<User> {
-    const connectionPool: PoolConnection = await this.pool.getConnection();
-    try {
-      const [result] = await connectionPool.execute(
-        `SELECT id
-              , password
-              , nickname
-              , current
-              , provider
-          FROM USER 
-         WHERE id = '${id}'`,
-      );
+    const [result] = await this.dbService.execute<User>(
+      `SELECT id
+            , email
+            , password
+            , username
+            , current
+            , provider
+         FROM USER 
+        WHERE id = '${id}'`,
+    );
 
-      return result[0];
-    } catch (error) {
-      throw new HttpException({ message: error.message, error }, error.status);
-    } finally {
-      connectionPool.release();
-    }
+    return result;
   }
 
-  async existUserId(id: string): Promise<boolean> {
-    const connectionPool: PoolConnection = await this.pool.getConnection();
-    try {
-      const [result] = await connectionPool.execute(
-        `SELECT id FROM USER WHERE id = '${id}'`,
-      );
+  async create(createUserDto: CreateUserDto) {
+    const { email, password, username, provider } = createUserDto;
 
-      return result[0] ? true : false;
-    } catch (error) {
-      throw new HttpException({ message: error.message, error }, error.status);
-    } finally {
-      connectionPool.release();
-    }
-  }
-
-  async registerUser(usersRegisterDto: UsersRegisterDto) {
-    const { userId, password, nickname, provider } = usersRegisterDto;
-
-    const connectionPool: PoolConnection = await this.pool.getConnection();
-
-    const salt = await bcrypt.genSalt();
-    const hashedPassword = await bcrypt.hash(password, salt);
-
-    try {
-      await connectionPool.execute(
-        `INSERT INTO USER
+    await this.dbService.execute(
+      `INSERT INTO USER
         (
-          id
+          email
         , password
-        , nickname
+        , username
         , provider
         )
         VALUES (
-          '${userId}'
-        , '${hashedPassword}'
-        , '${nickname}'
+          '${email}'
+        , '${password}'
+        , '${username}'
         , '${provider}'
         );`,
-      );
+    );
 
-      return {
-        userId,
-        nickname,
-      };
-    } catch (error) {
-      throw new HttpException({ message: error.message, error }, error.status);
-    } finally {
-      connectionPool.release();
-    }
+    const [lastInsert] = await this.dbService.execute(
+      'SELECT LAST_INSERT_ID() as id',
+    );
+
+    return {
+      id: lastInsert['id'],
+      email,
+      password,
+      username,
+      provider,
+    };
   }
 
-  async insertUserRefreshToken(userId: string, refreshToken: string) {
-    const connectionPool: PoolConnection = await this.pool.getConnection();
-
-    try {
-      const hashedRefreshToken = await this.getHashedRefreshToken(refreshToken);
-      await connectionPool.execute(
-        `INSERT INTO TOKEN (content, userId) VALUES ('${hashedRefreshToken}', '${userId}');`,
-      );
-    } catch (error) {
-      throw new HttpException({ message: error.message, error }, error.status);
-    } finally {
-      connectionPool.release();
-    }
+  async insertUserRefreshToken(userId: number, refreshToken: string) {
+    const hashedRefreshToken = await this.getHashedRefreshToken(refreshToken);
+    await this.dbService.execute(
+      `INSERT INTO TOKEN (content, userId) VALUES ('${hashedRefreshToken}', '${userId}');`,
+    );
   }
 
   async getHashedRefreshToken(refreshToken: string) {
@@ -109,57 +70,31 @@ export class UsersService {
     return hashedRefreshToken;
   }
 
-  async login(authCredentialsDto: AuthCredentialsDto): Promise<User> {
-    const { userId, password } = authCredentialsDto;
+  async find(email: string) {
+    const result = await this.dbService.execute<User>(
+      `SELECT id, email, password, username, current, provider FROM USER WHERE email = '${email}'`,
+    );
 
-    const connectionPool: PoolConnection = await this.pool.getConnection();
-
-    try {
-      const [result] = await connectionPool.execute(
-        `SELECT id, password, nickname, current, provider FROM USER WHERE id = '${userId}'`,
-      );
-
-      if (!result[0]) {
-        return null;
-      }
-
-      const passwordMatch = await bcrypt.compare(password, result[0].password);
-      if (!passwordMatch) {
-        throw new UnauthorizedException('아이디 또는 비밀번호를 확인해주세요.');
-      }
-
-      return result[0];
-    } catch (error) {
-      throw new HttpException({ message: error.message, error }, error.status);
-    } finally {
-      connectionPool.release();
-    }
+    return result as User[];
   }
 
   async getRefreshTokenId(userId: string, refreshToken: string) {
-    const connectionPool: PoolConnection = await this.pool.getConnection();
-    try {
-      const [tokens] = await connectionPool.execute(
-        `SELECT id
-              , content
-           FROM TOKEN 
-          WHERE userId = '${userId}'`,
-      );
+    const tokens = await this.dbService.execute<Token>(
+      `SELECT id
+            , content
+         FROM TOKEN 
+        WHERE userId = '${userId}'`,
+    );
 
-      let refreshTokenId = null;
-      for (const token of tokens as Token[]) {
-        const storedRefreshToken = token.content;
-        if (await bcrypt.compare(refreshToken, storedRefreshToken)) {
-          refreshTokenId = token.id;
-          break;
-        }
+    let refreshTokenId = null;
+    for (const token of tokens) {
+      const storedRefreshToken = token.content;
+      if (await bcrypt.compare(refreshToken, storedRefreshToken)) {
+        refreshTokenId = token.id;
+        break;
       }
-
-      return refreshTokenId;
-    } catch (error) {
-      throw new HttpException({ message: error.message, error }, error.status);
-    } finally {
-      connectionPool.release();
     }
+
+    return refreshTokenId;
   }
 }

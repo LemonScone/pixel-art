@@ -15,10 +15,22 @@ import PublishToggleSwitch from "../components/PublishToggleSwitch";
 
 import { GRID_SIZE_MAX_VALUE, GRID_SIZE_MIN_VALUE } from "../constants";
 
-import { decreseColumn, decreseRow, increseColumn, increseRow } from "../store";
+import {
+  decreseColumn,
+  decreseRow,
+  increseColumn,
+  increseRow,
+  useFetchProjectsQuery,
+} from "../store";
 import { useAppDispatch, useAppSelector } from "../hooks/useRedux";
+import useAuth from "../hooks/useAuth";
 
 const Editor = () => {
+  const { accessToken } = useAuth();
+  useFetchProjectsQuery(undefined, {
+    skip: !accessToken,
+  });
+
   const dispatch = useAppDispatch();
 
   const [pixelSize, setPixelSize] = useState(1);

@@ -2,16 +2,16 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class UserRegisterSuccessResponseDto {
   @ApiProperty({
-    example: 'artist',
-    description: '가입된 User Id',
+    example: 'artist@art.com',
+    description: '가입된 User Email',
   })
-  readonly userId: string;
+  readonly email: string;
 
   @ApiProperty({
     example: 'gogh',
-    description: '가입된 User Nickname',
+    description: '가입된 User Name',
   })
-  readonly nickname: string;
+  readonly username: string;
 }
 
 export class UserRegisterFailedResponseDto {

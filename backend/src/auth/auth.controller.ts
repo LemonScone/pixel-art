@@ -1,17 +1,21 @@
 import {
   Body,
   Controller,
+  Get,
   HttpStatus,
   Post,
   Req,
   Res,
-  UnauthorizedException,
   UseGuards,
-  ValidationPipe,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthCredentialsDto } from './dto/auth-credentials.dto';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import {
   LoginSuccessResponseDto,
   LoginFailedResponseDto,
@@ -27,6 +31,12 @@ import {
   RefreshSuccessResponseDto,
 } from './dto/auth-refresh-response.dto';
 import { ConfigService } from '@nestjs/config';
+import { AuthSignupDto } from './dto/auth-signup.dto';
+import { JwtAuthGuard } from './guards/jwt.guard';
+import {
+  CreateUserFailedResponseDto,
+  CreateUserSuccessResponseDto,
+} from './dto/create-user-response.dto';
 
 @Controller('auth')
 @ApiTags('auth')
@@ -36,7 +46,34 @@ export class AuthController {
     private readonly configService: ConfigService,
   ) {}
 
-  @Post('/login')
+  @Get('/whoami')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('accessToken')
+  whoAmI(@Req() req) {
+    return req.user;
+  }
+
+  @Post('/signup')
+  @ApiOperation({
+    summary: '유저 생성',
+    description: '유저를 생성합니다.',
+  })
+  @ApiResponse({
+    type: CreateUserSuccessResponseDto,
+    description: '회원가입된 user 정보',
+    status: HttpStatus.OK,
+  })
+  @ApiResponse({
+    type: CreateUserFailedResponseDto,
+    description: '회원가입 오류',
+    status: HttpStatus.CONFLICT,
+  })
+  async signup(@Body() body: AuthSignupDto) {
+    const user = await this.authService.signup({ ...body, provider: 'local' });
+    return user;
+  }
+
+  @Post('/signin')
   @ApiOperation({
     summary: '로그인',
     description: '로그인 합니다.',
@@ -51,18 +88,21 @@ export class AuthController {
     description: '로그인 실패',
     status: HttpStatus.UNAUTHORIZED,
   })
-  async login(
-    @Body(ValidationPipe) authCredentialsDto: AuthCredentialsDto,
+  async signin(
+    @Body() body: AuthCredentialsDto,
     @Res({ passthrough: true }) res: Response,
   ): Promise<LoginSuccessResponseDto> {
-    const loginResults = await this.authService.login(authCredentialsDto);
+    const user = await this.authService.signin(body);
 
-    if (!loginResults) {
-      throw new UnauthorizedException('아이디 또는 비밀번호를 확인해주세요.');
-    }
-
-    const { accessToken, refreshToken, nickname, current, provider } =
-      loginResults;
+    const {
+      id,
+      email,
+      username,
+      current,
+      provider,
+      accessToken,
+      refreshToken,
+    } = user;
 
     res.cookie('refreshToken', refreshToken, {
       secure: true,
@@ -73,11 +113,12 @@ export class AuthController {
     const expired = Number(
       this.configService.get<string>('JWT_EXPIRATION_TIME'),
     );
-    return { accessToken, nickname, current, provider, expired };
+
+    return { id, email, accessToken, username, current, provider, expired };
   }
 
   @UseGuards(JwtRefreshGuard)
-  @Post('/logout')
+  @Post('/signout')
   @ApiOperation({
     summary: '로그아웃',
     description: '로그아웃 합니다.',
@@ -92,16 +133,13 @@ export class AuthController {
     description: '로그아웃 실패',
     status: HttpStatus.UNAUTHORIZED,
   })
-  async logout(
-    @Req() req,
-    @Res({ passthrough: true }) res: Response,
-  ): Promise<LogoutSuccessResponseDto | LogoutFailedResponseDto> {
-    await this.authService.logout(req.user.refreshTokenId);
+  async signout(@Req() req, @Res() res: Response) {
+    await this.authService.signout(req.user.refreshTokenId);
     res.clearCookie('refreshToken');
 
-    return {
+    res.status(HttpStatus.OK).send({
       message: '로그아웃 되었습니다.',
-    };
+    });
   }
 
   @UseGuards(JwtRefreshGuard)
@@ -123,10 +161,9 @@ export class AuthController {
   async refresh(@Req() req: any): Promise<RefreshSuccessResponseDto> {
     const { userId } = req.user;
     const response = await this.authService.refresh(userId);
-
     const expired = Number(
       this.configService.get<string>('JWT_EXPIRATION_TIME'),
     );
-    return { ...response, expired };
+    return { ...response, expired, id: userId };
   }
 }

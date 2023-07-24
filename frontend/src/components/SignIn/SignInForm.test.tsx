@@ -1,10 +1,14 @@
 import { screen } from "@testing-library/react";
 
+import { renderWithProviders } from "../../utils/test-utils";
+
+import { MemoryRouter } from "react-router-dom";
+
+import { VALID_USER } from "../../tests/fixtures/auth";
+
 import SignInForm from "./SignInForm";
 
 import user from "@testing-library/user-event";
-import { MemoryRouter } from "react-router-dom";
-import { renderWithProviders } from "../../utils/test-utils";
 
 const renderComponent = () => {
   renderWithProviders(
@@ -19,153 +23,88 @@ const renderComponent = () => {
 
 describe("SignInForm", () => {
   describe("when renderd", () => {
-    it("should have id, password input fields, a sign in button", () => {
+    it("should have email, password input fields, a sign in button", () => {
       renderComponent();
 
-      const idField = screen.getByRole("textbox", { name: /id/i });
+      const emailField = screen.getByRole("textbox", { name: /email/i });
       const passwordField = screen.getByLabelText(/password/i);
       const signInButton = screen.getByRole("button", { name: /Sign In/i });
 
-      expect(idField).toBeInTheDocument();
+      expect(emailField).toBeInTheDocument();
       expect(passwordField).toBeInTheDocument();
       expect(signInButton).toBeInTheDocument();
     });
   });
 
   describe("the form is submitted", () => {
-    describe("the id and password are not entered", () => {
-      it("should show ID, Password validation message", async () => {
+    describe("the email is invalid", () => {
+      it("should show Email validation message", async () => {
         renderComponent();
 
         const signInButton = screen.getByRole("button", { name: /Sign In/i });
 
-        await user.click(signInButton);
-
-        const idInvalidMessage = screen.getByText(/ID is required./i);
-        const passwordInvalidMessage = screen.getByText(
-          /Password is required./i
-        );
-        expect(idInvalidMessage).toBeInTheDocument();
-        expect(passwordInvalidMessage).toBeInTheDocument();
-      });
-    });
-
-    describe("the ID is not entered.", () => {
-      it("should show ID validation message", async () => {
-        renderComponent();
+        const emailField = screen.getByRole("textbox", { name: /email/i });
+        await user.click(emailField);
+        await user.keyboard("invalid");
 
         const passwordField = screen.getByLabelText(/password/i);
-
         await user.click(passwordField);
-        await user.keyboard("password");
-
-        const signInButton = screen.getByRole("button", { name: /Sign In/i });
+        await user.keyboard("mypassword");
 
         await user.click(signInButton);
 
-        const idInvalidMessage = screen.getByText(/ID is required./i);
-        expect(idInvalidMessage).toBeInTheDocument();
-      });
-
-      it("should not show Password validation message", async () => {
-        renderComponent();
-
-        const passwordField = screen.getByLabelText(/password/i);
-
-        await user.click(passwordField);
-        await user.keyboard("password");
-
-        const signInButton = screen.getByRole("button", { name: /Sign In/i });
-
-        await user.click(signInButton);
-
-        const passwordInvalidMessage = screen.queryByText(
-          /Password is required./i
+        const emailInvalidMessage = screen.getByText(
+          /Please enter a valid email./i
         );
-        expect(passwordInvalidMessage).not.toBeInTheDocument();
+        expect(emailInvalidMessage).toBeInTheDocument();
       });
     });
 
-    describe("the password is not entered.", () => {
-      it("should show Password validation message", async () => {
-        renderComponent();
-
-        const idField = screen.getByRole("textbox", { name: /id/i });
-        await user.click(idField);
-        await user.keyboard("id");
-
-        const signInButton = screen.getByRole("button", { name: /Sign In/i });
-
-        await user.click(signInButton);
-
-        const passwordInvalidMessage = screen.getByText(
-          /Password is required./i
-        );
-        expect(passwordInvalidMessage).toBeInTheDocument();
-      });
-
-      it("should not show ID validation message", async () => {
-        renderComponent();
-
-        const idField = screen.getByRole("textbox", { name: /id/i });
-
-        await user.click(idField);
-        await user.keyboard("id");
-
-        const signInButton = screen.getByRole("button", { name: /Sign In/i });
-
-        await user.click(signInButton);
-
-        const idInvalidMessage = screen.queryByText(/ID is required./i);
-        expect(idInvalidMessage).not.toBeInTheDocument();
-      });
-    });
-
-    describe("invalid ID or Password are entered", () => {
+    describe("invalid Email or Password are entered", () => {
       it("should show validation message", async () => {
         renderComponent();
 
         const signInButton = screen.getByRole("button", { name: /Sign In/i });
 
-        const idField = screen.getByRole("textbox", { name: /id/i });
+        const emailField = screen.getByRole("textbox", { name: /email/i });
         const passwordField = screen.getByLabelText(/password/i);
 
-        await user.click(idField);
-        await user.keyboard("invalid");
+        await user.click(emailField);
+        await user.keyboard("invalid@invalid.com");
         await user.click(passwordField);
         await user.keyboard("1234");
         await user.click(signInButton);
 
-        const inValidMesage = screen.getByText(
-          /Sorry, we can't find an account with this id./i
+        const emailValidMesage = screen.getByText(
+          /Sorry, we can't find an account with this email./i
         );
-        expect(inValidMesage).toBeInTheDocument();
+        expect(emailValidMesage).toBeInTheDocument();
       });
     });
   });
 
-  describe("If the ID is not entered and the password is entered.", () => {
-    it("should show ID validation message", async () => {
+  describe("If the Email is not entered and the password is entered.", () => {
+    it("should show Email validation message", async () => {
       renderComponent();
 
-      const idField = screen.getByRole("textbox", { name: /id/i });
+      const emailField = screen.getByRole("textbox", { name: /email/i });
       const passwordField = screen.getByLabelText(/password/i);
 
-      await user.click(idField);
+      await user.click(emailField);
       await user.click(passwordField);
       await user.keyboard("1234");
 
-      const idInvalidMessage = screen.getByText(/ID is required./i);
-      expect(idInvalidMessage).toBeInTheDocument();
+      const emailInvalidMessage = screen.getByText(/Email is required./i);
+      expect(emailInvalidMessage).toBeInTheDocument();
     });
 
     it("should not show Password validation message", async () => {
       renderComponent();
 
-      const idField = screen.getByRole("textbox", { name: /id/i });
+      const emailField = screen.getByRole("textbox", { name: /email/i });
       const passwordField = screen.getByLabelText(/password/i);
 
-      await user.click(idField);
+      await user.click(emailField);
       await user.click(passwordField);
       await user.keyboard("1234");
 
@@ -176,33 +115,51 @@ describe("SignInForm", () => {
     });
   });
 
-  describe("If the Password is not entered and the ID is entered.", () => {
+  describe("If the Password is not entered and the Email is entered.", () => {
     it("should show Password validation message", async () => {
       renderComponent();
 
-      const idField = screen.getByRole("textbox", { name: /id/i });
+      const emailField = screen.getByRole("textbox", { name: /email/i });
       const passwordField = screen.getByLabelText(/password/i);
 
       await user.click(passwordField);
-      await user.click(idField);
-      await user.keyboard("test");
+      await user.click(emailField);
+      await user.keyboard(VALID_USER.email);
 
       const passwordInvalidMessage = screen.getByText(/Password is required./i);
       expect(passwordInvalidMessage).toBeInTheDocument();
     });
 
-    it("should not show ID validation message", async () => {
+    it("should not show Email validation message", async () => {
       renderComponent();
 
-      const idField = screen.getByRole("textbox", { name: /id/i });
+      const emailField = screen.getByRole("textbox", { name: /email/i });
       const passwordField = screen.getByLabelText(/password/i);
 
       await user.click(passwordField);
-      await user.click(idField);
-      await user.keyboard("test");
+      await user.click(emailField);
+      await user.keyboard(VALID_USER.email);
 
-      const idInvalidMessage = screen.queryByText(/ID is required./i);
-      expect(idInvalidMessage).not.toBeInTheDocument();
+      const emailInvalidMessage = screen.queryByText(/Email is required./i);
+      expect(emailInvalidMessage).not.toBeInTheDocument();
+    });
+  });
+
+  describe("If the Email is invalid and the Password is entered", () => {
+    it("should show Email validation message", async () => {
+      renderComponent();
+
+      const emailField = screen.getByRole("textbox", { name: /email/i });
+      const passwordField = screen.getByLabelText(/password/i);
+
+      await user.click(emailField);
+      await user.keyboard("invalid@");
+      await user.click(passwordField);
+
+      const emailInvalidMessage = screen.getByText(
+        /Please enter a valid email./i
+      );
+      expect(emailInvalidMessage).toBeInTheDocument();
     });
   });
 });

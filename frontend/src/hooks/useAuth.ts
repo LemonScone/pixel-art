@@ -1,13 +1,16 @@
 import { useCallback, useDebugValue, useRef } from "react";
-import { SignInCredencials } from "../types/Auth";
+import { SignInCredentials, SignUpParams } from "../types/Auth";
 import { resetAuth, setAuth } from "../store";
 import { api, setAuthorizationHeader } from "../api";
-import { ONE_MINUTE } from "../constants";
 import { AxiosError } from "axios";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "./useRedux";
+import { useLoginMutation } from "../store";
+import { useSignupMutation } from "../store/apis/authApi";
 
 const useAuth = () => {
+  const [login] = useLoginMutation();
+  const [signup] = useSignupMutation();
   const dispatch = useAppDispatch();
   const { user, accessToken } = useAppSelector((state) => state.auth.data);
 
@@ -17,18 +20,21 @@ const useAuth = () => {
 
   useDebugValue(user, (user) => (user ? "Logged In" : "Logged Out"));
 
-  const signIn = async (params: SignInCredencials) => {
-    const { userId, password } = params;
+  const signUp = async (params: SignUpParams) => {
+    const { email, password, username } = params;
 
     try {
-      const response = await api.post("/auth/login", { userId, password });
-      const { accessToken, expired, ...user } = response.data;
-      dispatch(setAuth({ user, accessToken }));
-      setAuthorizationHeader(api.defaults, accessToken);
+      await signup({ email, password, username }).unwrap();
+    } catch (error) {
+      return error as AxiosError;
+    }
+  };
 
-      intervalRef.current = setInterval(() => {
-        silentRefresh();
-      }, expired - ONE_MINUTE);
+  const signIn = async (params: SignInCredentials) => {
+    const { email, password } = params;
+
+    try {
+      await login({ email, password }).unwrap();
     } catch (error) {
       return error as AxiosError;
     }
@@ -37,7 +43,7 @@ const useAuth = () => {
   const signOut = useCallback(
     async (pathname = "/") => {
       try {
-        await api.post("/auth/logout");
+        await api.post("/auth/signout");
       } catch (error) {
         return error as AxiosError;
       } finally {
@@ -53,7 +59,7 @@ const useAuth = () => {
   const requestRefresh = useCallback(async () => {
     const response = await api.post("/auth/refresh");
     const { accessToken, expired, ...user } = response.data;
-    dispatch(setAuth({ user, accessToken }));
+    dispatch(setAuth({ user, accessToken, expired }));
     setAuthorizationHeader(api.defaults, accessToken);
 
     return expired;
@@ -72,6 +78,7 @@ const useAuth = () => {
     accessToken,
     signIn,
     signOut,
+    signUp,
     silentRefresh,
     requestRefresh,
   };

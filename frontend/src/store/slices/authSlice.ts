@@ -7,6 +7,7 @@ type AuthData = {
 const initialState: AuthData = {
   data: {
     user: {} as User,
+    expired: 0,
     accessToken: "",
   },
 };
@@ -21,6 +22,7 @@ const authSlice = createSlice({
     resetAuth(state) {
       state.data = {
         user: {} as User,
+        expired: 0,
         accessToken: "",
       };
     },

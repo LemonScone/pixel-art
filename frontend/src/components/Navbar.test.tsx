@@ -28,17 +28,20 @@ const renderComponent = ({ auth }: { auth: Auth }) => {
 
 describe("Navbar", () => {
   describe("when the user is not authenticated", () => {
-    it("should show sign in button", async () => {
+    it("should show sign in, sign up button", async () => {
       renderComponent({
         auth: {
-          user: { userId: "", nickname: "", current: 0, provider: "" },
+          user: { email: "", username: "", current: 0, provider: "" },
           accessToken: "",
+          expired: 0,
         },
       });
 
       const signInButton = screen.getByText(/sign in/i);
+      const signUpButton = screen.getByText(/sign up/i);
 
       expect(signInButton).toBeInTheDocument();
+      expect(signUpButton).toBeInTheDocument();
     });
   });
   describe("when the user is authenticated", () => {
@@ -46,6 +49,7 @@ describe("Navbar", () => {
       const auth = {
         user: VALID_USER,
         accessToken: VALID_TOKEN,
+        expired: 0,
       };
       renderComponent({ auth });
 
@@ -58,6 +62,25 @@ describe("Navbar", () => {
 
       const signInButton = screen.getByText(/sign in/i);
       expect(signInButton).toBeInTheDocument();
+    });
+
+    it("should not show sign up button", async () => {
+      const auth = {
+        user: VALID_USER,
+        accessToken: VALID_TOKEN,
+        expired: 0,
+      };
+      renderComponent({ auth });
+
+      const signOutButton = screen.getByRole("button", {
+        name: /sign out/i,
+      });
+
+      expect(signOutButton).toBeInTheDocument();
+      await user.click(signOutButton);
+
+      const signUpButton = screen.getByText(/sign up/i);
+      expect(signUpButton).toBeInTheDocument();
     });
   });
 });
