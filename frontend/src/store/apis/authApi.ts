@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { RootState, resetAuth, setAuth } from "..";
-import { Auth, SignInCredencials, User } from "../../types/Auth";
+import { Auth, SignInCredentials, SignUpParams, User } from "../../types/Auth";
 import { ONE_MINUTE } from "../../constants";
 
 type LoginResponse = Omit<Auth, "user"> & User;
@@ -21,7 +21,7 @@ const authApi = createApi({
   tagTypes: ["Refresh"],
   endpoints(builder) {
     return {
-      login: builder.mutation<LoginResponse, SignInCredencials>({
+      login: builder.mutation<LoginResponse, SignInCredentials>({
         query: (credencials) => {
           return {
             url: "/auth/signin",
@@ -81,9 +81,18 @@ const authApi = createApi({
           }
         },
       }),
+      signup: builder.mutation<void, SignUpParams>({
+        query: (params) => {
+          return {
+            url: "auth/signup",
+            method: "POST",
+            body: params,
+          };
+        },
+      }),
     };
   },
 });
 
-export const { useLoginMutation, useRefreshQuery } = authApi;
+export const { useLoginMutation, useSignupMutation, useRefreshQuery } = authApi;
 export { authApi };

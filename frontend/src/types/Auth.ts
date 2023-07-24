@@ -11,7 +11,9 @@ export type Auth = {
   accessToken: string;
 };
 
-export type SignInCredencials = {
+export type SignInCredentials = {
   email: string;
   password: string;
 };
+
+export type SignUpParams = SignInCredentials & { username: string };

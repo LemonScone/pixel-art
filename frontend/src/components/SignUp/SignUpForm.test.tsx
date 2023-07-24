@@ -19,10 +19,10 @@ const renderComponent = () => {
 
 describe("SignUpForm", () => {
   describe("when renderd", () => {
-    it("should have id, username, password fields, show password checkbox, a sign up button", () => {
+    it("should have email, username, password fields, show password checkbox, a sign up button", () => {
       renderComponent();
 
-      const idField = screen.getByRole("textbox", { name: /id/i });
+      const emailField = screen.getByRole("textbox", { name: /email/i });
       const usernameField = screen.getByRole("textbox", { name: /username/i });
       const passwordField = screen.getByLabelText(/^Password$/);
       const showPassword = screen.getByRole("checkbox", {
@@ -31,7 +31,7 @@ describe("SignUpForm", () => {
 
       const signUpButton = screen.getByRole("button", { name: /Sign Up/i });
 
-      expect(idField).toBeInTheDocument();
+      expect(emailField).toBeInTheDocument();
       expect(usernameField).toBeInTheDocument();
       expect(passwordField).toBeInTheDocument();
       expect(showPassword).toBeInTheDocument();
