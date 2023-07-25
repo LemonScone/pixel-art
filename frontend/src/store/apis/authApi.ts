@@ -47,7 +47,7 @@ const authApi = createApi({
             };
             setTimeout(refreshToken, expired - ONE_MINUTE);
           } catch (error) {
-            console.log(error);
+            // error catch
           }
         },
       }),
@@ -77,7 +77,7 @@ const authApi = createApi({
             };
             setTimeout(refreshToken, expired - ONE_MINUTE);
           } catch (error) {
-            console.log(error);
+            // error catch
           }
         },
       }),
