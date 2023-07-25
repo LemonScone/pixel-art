@@ -116,7 +116,7 @@ const Frame = ({
 
 const Head = ({ children }: { children: ReactNode }) => (
   <div className="block bg-neutral-900 p-4">
-    <h1 className="text-lg">{children}</h1>
+    <h1 className="text-lg font-bold">{children}</h1>
   </div>
 );
 
