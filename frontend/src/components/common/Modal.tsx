@@ -10,6 +10,7 @@ type FrameProps = {
   closeOnEsc?: boolean;
   closeOnClickOutside?: boolean;
   onClose: () => void;
+  size?: string;
   children: ReactNode;
 };
 
@@ -18,6 +19,7 @@ const Frame = ({
   closeOnEsc = true,
   closeOnClickOutside = true,
   onClose,
+  size = "sm",
   children,
 }: FrameProps) => {
   const portal = usePortal();
@@ -50,14 +52,19 @@ const Frame = ({
     document
       .getElementById("root")
       ?.setAttribute("aria-hidden", open.toString());
+
     portal.current?.setAttribute("aria-hidden", (!open).toString());
 
     if (open) {
       previousFocus.current = (document.activeElement as HTMLElement) ?? null;
       nextFocus(getFocusableElements(container.current));
+
+      document.body.classList.add("overflow-y-hidden");
     } else {
       previousFocus.current?.focus?.();
       previousFocus.current = null;
+
+      document.body.classList.remove("overflow-y-hidden");
     }
   }, [open, portal]);
 
@@ -68,15 +75,31 @@ const Frame = ({
     }
   };
 
+  const containerSize: { [key: string]: string } = {
+    sm: "max-w-sm",
+    md: "max-w-md",
+    lg: "max-w-lg",
+    xl: "max-w-xl",
+    "2xl": "max-w-2xl",
+    "3xl": "max-w-3xl",
+    "4xl": "max-w-4xl",
+    "5xl": "max-w-5xl",
+    "6xl": "max-w-6xl",
+    "7xl": "max-w-7xl",
+  };
+
   return createPortal(
     <div
       className={classNames(
-        "fixed inset-0 z-10 bg-gray-600/90 p-8 text-gray-100",
+        "fixed inset-0 z-10 h-screen bg-gray-600/90 p-8 text-gray-100",
         `${open ? "block" : "hidden"}`
       )}
       onClick={closeOnClickOutside ? handleOverlayClick : undefined}
     >
-      <div className="relative mx-auto mt-8 w-full max-w-sm" ref={container}>
+      <div
+        className={`relative mx-auto mt-8 w-full ${containerSize[size]}`}
+        ref={container}
+      >
         <button
           className="absolute -right-2 -top-2 flex h-8 w-8 cursor-pointer justify-center rounded-full bg-primary-color text-gray-800 shadow-xl"
           onClick={() => onClose()}
@@ -84,9 +107,7 @@ const Frame = ({
         >
           <span className="select-none text-2xl leading-7">&times;</span>
         </button>
-        <div className="overflow-hidden rounded bg-gray-600 shadow-xl">
-          {children}
-        </div>
+        <div className="rounded bg-input-color shadow-xl">{children}</div>
       </div>
     </div>,
     portal.current
@@ -100,7 +121,7 @@ const Head = ({ children }: { children: ReactNode }) => (
 );
 
 const Body = ({ children }: { children: ReactNode }) => (
-  <div className="p-4">{children}</div>
+  <div className="max-h-screen overflow-y-auto p-4">{children}</div>
 );
 
 export const Modal = { Frame, Head, Body };
