@@ -107,7 +107,7 @@ const Frame = ({
         >
           <span className="select-none text-2xl leading-7">&times;</span>
         </button>
-        <div className="rounded bg-input-color shadow-xl">{children}</div>
+        <div className="rounded-xl bg-input-color shadow-xl">{children}</div>
       </div>
     </div>,
     portal.current
@@ -115,7 +115,7 @@ const Frame = ({
 };
 
 const Head = ({ children }: { children: ReactNode }) => (
-  <div className="block bg-neutral-900 p-4">
+  <div className="block rounded-t-xl bg-neutral-900 p-4">
     <h1 className="text-lg font-bold">{children}</h1>
   </div>
 );
