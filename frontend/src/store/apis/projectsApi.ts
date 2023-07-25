@@ -1,26 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { RootState } from "..";
+import type { Project } from "../../types/Project";
 
-type Frame = {
-  id: number;
-  projectId: number;
-  grid: string[];
-  animateInterval: number;
-};
-
-type Project = {
-  id: number;
-  animate: boolean;
-  cellSize: number;
-  gridColumns: number;
-  gridRows: number;
-  pallete: string[];
-  title: string;
-  description: string;
-  isPublished: boolean;
-
-  frames: Frame[];
-};
 const projectsApi = createApi({
   reducerPath: "projectsApi",
   baseQuery: fetchBaseQuery({
@@ -48,5 +29,5 @@ const projectsApi = createApi({
   },
 });
 
-export const { useFetchProjectsQuery } = projectsApi;
+export const { useLazyFetchProjectsQuery } = projectsApi;
 export { projectsApi };
