@@ -1,10 +1,11 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { createApi } from "@reduxjs/toolkit/query/react";
 import { RootState } from "..";
 import type { Project } from "../../types/Project";
+import { baseQueryWithLocalStorage } from "../baseQueryWithLocalStorage";
 
 const projectsApi = createApi({
   reducerPath: "projectsApi",
-  baseQuery: fetchBaseQuery({
+  baseQuery: baseQueryWithLocalStorage({
     baseUrl: "/api",
     prepareHeaders: (headers, { getState }) => {
       const { accessToken } = (getState() as RootState).auth.data;
@@ -25,9 +26,20 @@ const projectsApi = createApi({
           };
         },
       }),
+      addProject: builder.mutation<Project, Project>({
+        query: (project) => {
+          return {
+            url: "/projects",
+            method: "POST",
+            body: {
+              ...project,
+            },
+          };
+        },
+      }),
     };
   },
 });
 
-export const { useLazyFetchProjectsQuery } = projectsApi;
+export const { useLazyFetchProjectsQuery, useAddProjectMutation } = projectsApi;
 export { projectsApi };
