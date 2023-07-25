@@ -11,7 +11,18 @@ const getDataFromStorage = () => {
 
 const saveDataToStorage = <T>(data: T) => {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    let dataStored = getDataFromStorage();
+    if (dataStored) {
+      dataStored.stored.push(data);
+      dataStored.currentProjectId = dataStored.stored.length - 1;
+    } else {
+      dataStored = {
+        stored: [data],
+        currentProjectId: 0,
+      };
+    }
+
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(dataStored));
     return true;
   } catch (e) {
     return false;
