@@ -108,7 +108,7 @@ export class ProjectsService {
                             , ${cellSize}
                             , ${gridColumns}
                             , ${gridRows}
-                            , "${pallete}"
+                            , '${JSON.stringify(pallete)}'
                             , false
                             );
       `;
@@ -129,7 +129,11 @@ export class ProjectsService {
                             `;
 
         const values_frame = [
-          frames.map((obj) => [projectId, obj.grid, obj.animateInterval]),
+          frames.map((obj) => [
+            projectId,
+            JSON.stringify(obj.grid),
+            obj.animateInterval,
+          ]),
         ];
 
         await conn.query(query_frame, values_frame);
