@@ -57,7 +57,7 @@ export { setAuth, resetAuth };
 export { changeSelectedTool, changePenColor, changePenSize, changeEraserSize };
 export { applyPencil, applyEraser, applyBucket, applyMove };
 export { increseColumn, decreseColumn, increseRow, decreseRow };
-export { useFetchProjectsQuery } from "./apis/projectsApi";
+export { useLazyFetchProjectsQuery } from "./apis/projectsApi";
 export { useLoginMutation, useRefreshQuery } from "./apis/authApi";
 export type RootState = ReturnType<typeof rootReducer>;
 export type AppStore = ReturnType<typeof setupStore>;
