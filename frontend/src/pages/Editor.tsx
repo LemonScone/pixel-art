@@ -25,8 +25,9 @@ const Editor = () => {
   const [publish, setPublish] = useState(false);
 
   const { data, currentProjectId } = useAppSelector((state) => state.projects);
-  const columns = data[currentProjectId].gridColumns;
-  const rows = data[currentProjectId].gridRows;
+  const currentProject = data[currentProjectId];
+  const columns = currentProject.gridColumns;
+  const rows = currentProject.gridRows;
 
   return (
     <div className="mx-auto flex max-w-7xl flex-col justify-between md:flex-row">
@@ -56,7 +57,7 @@ const Editor = () => {
           <NewProject />
           <div className="flex grow justify-center gap-2">
             <LoadProject />
-            <SaveProject />
+            <SaveProject project={currentProject} />
           </div>
           <ResetProject />
         </div>
