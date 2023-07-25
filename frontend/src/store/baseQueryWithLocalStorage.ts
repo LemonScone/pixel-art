@@ -8,6 +8,7 @@ import { getDataFromStorage, saveDataToStorage } from "../utils/storage";
 import httpMethod from "../constants/httpMethod";
 
 import { pause } from "../utils/pause";
+import { randomStr } from "../utils/random";
 
 import { RootState } from ".";
 
@@ -47,7 +48,8 @@ const baseQueryWithLocalStorage = ({
           return { data: localStorageData.stored || [] };
         }
         case httpMethod.POST: {
-          saveDataToStorage(body);
+          const { id, ...rest } = body;
+          saveDataToStorage({ id: randomStr(), ...rest });
           await pause();
           return { data: body };
         }
