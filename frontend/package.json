@@ -17,7 +17,7 @@
     "*.{ts,tsx}": [
       "prettier --write",
       "eslint --fix",
-      "tsc-files --noEmit",
+      "tsc-files --noEmit src/desc.d.ts",
       "vitest related --run"
     ]
   },
