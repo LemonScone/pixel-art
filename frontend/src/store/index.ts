@@ -19,6 +19,13 @@ import {
   increseRow,
   decreseRow,
 } from "./slices/projectsSlice";
+import {
+  notificationsReducer,
+  sendNotification,
+  dismissNotification,
+  toast,
+} from "./slices/notificationSlice";
+
 import type { Middleware, PreloadedState } from "@reduxjs/toolkit";
 import { projectsApi } from "./apis/projectsApi";
 import { authApi } from "./apis/authApi";
@@ -26,6 +33,7 @@ import { authApi } from "./apis/authApi";
 const rootReducer = combineReducers({
   auth: authReducer,
   projects: projectsReducer,
+  notifications: notificationsReducer,
   [projectsApi.reducerPath]: projectsApi.reducer,
   [authApi.reducerPath]: authApi.reducer,
 });
@@ -55,6 +63,7 @@ export const setupStore = (preloadedState?: PreloadedState<RootState>) => {
 
 export { setAuth, resetAuth };
 export { changeSelectedTool, changePenColor, changePenSize, changeEraserSize };
+export { sendNotification, dismissNotification, toast };
 export { applyPencil, applyEraser, applyBucket, applyMove };
 export { increseColumn, decreseColumn, increseRow, decreseRow };
 export {
