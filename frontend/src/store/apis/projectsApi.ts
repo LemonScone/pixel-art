@@ -1,7 +1,8 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
-import { RootState } from "..";
-import type { Project } from "../../types/Project";
+import { RootState, dismissNotification, sendNotification } from "..";
 import { baseQueryWithLocalStorage } from "../baseQueryWithLocalStorage";
+
+import type { Project } from "../../types/Project";
 
 const projectsApi = createApi({
   reducerPath: "projectsApi",
@@ -35,6 +36,21 @@ const projectsApi = createApi({
               ...project,
             },
           };
+        },
+        async onQueryStarted(_, { dispatch, queryFulfilled }) {
+          await queryFulfilled;
+          const id = Date.now();
+          dispatch(
+            sendNotification({
+              id,
+              type: "success",
+              message: "Drawing saved",
+            })
+          );
+
+          setTimeout(() => {
+            dispatch(dismissNotification(id));
+          }, 5000);
         },
       }),
     };
