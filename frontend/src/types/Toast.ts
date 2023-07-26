@@ -19,21 +19,10 @@ type ToastColor = {
   [key in ToastType]: string;
 };
 
-type ToastIcon = {
-  [key in ToastType]: React.ReactElement;
-};
-
 type Toast = {
   id: number;
   type: ToastType;
   message: string;
 };
 
-export type {
-  Toast,
-  ToastPosition,
-  ToastType,
-  ToastAnimation,
-  ToastColor,
-  ToastIcon,
-};
+export type { Toast, ToastPosition, ToastType, ToastAnimation, ToastColor };
