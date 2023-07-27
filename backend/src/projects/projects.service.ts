@@ -87,7 +87,7 @@ export class ProjectsService {
     userId: string,
     createProjectDto: CreateProjectDto,
   ): Promise<Project> {
-    const { cellSize, gridColumns, gridRows, pallete, frames } =
+    const { cellSize, gridColumns, gridRows, title, pallete, frames } =
       createProjectDto;
 
     const conn = await this.dbService.beginTransaction();
@@ -99,6 +99,7 @@ export class ProjectsService {
                             ,  cellSize
                             ,  gridColumns
                             ,  gridRows
+                            ,  title
                             ,  pallete
                             ,  isPublished
                             )
@@ -108,6 +109,7 @@ export class ProjectsService {
                             , ${cellSize}
                             , ${gridColumns}
                             , ${gridRows}
+                            , '${title}'
                             , '${JSON.stringify(pallete)}'
                             , false
                             );
