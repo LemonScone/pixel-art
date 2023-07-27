@@ -104,5 +104,7 @@ export class UsersService {
               current = ${current}
         WHERE id = ${userId}`,
     );
+
+    return current;
   }
 }
