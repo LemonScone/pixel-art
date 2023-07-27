@@ -17,8 +17,8 @@ export class ProjectsService {
                         , gridColumns
                         , gridRows
                         , pallete
-                        , title
-                        , description
+                        , COALESCE(title, '') as title
+                        , COALESCE(description, '') as description
                         , isPublished 
                     FROM PROJECT 
                     WHERE userId = '${userId}';
@@ -59,8 +59,8 @@ export class ProjectsService {
                                 , gridColumns
                                 , gridRows
                                 , pallete
-                                , title
-                                , description
+                                , COALESCE(title, '') as title
+                                , COALESCE(description, '') as description
                                 , isPublished 
                             FROM PROJECT 
                             WHERE id = ${id};`;
