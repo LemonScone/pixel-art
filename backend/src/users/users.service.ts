@@ -97,4 +97,12 @@ export class UsersService {
 
     return refreshTokenId;
   }
+
+  async updateCurrent(userId: string, current: number) {
+    await this.dbService.execute<Token>(
+      `UPDATE USER SET 
+              current = ${current}
+        WHERE id = ${userId}`,
+    );
+  }
 }
