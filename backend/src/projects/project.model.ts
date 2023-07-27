@@ -7,7 +7,7 @@ export interface Project {
   cellSize: number;
   gridColumns: number;
   gridRows: number;
-  pallete: string;
+  pallete: string[];
   title: string;
   description: string;
   isPublished: boolean;
