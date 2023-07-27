@@ -9,7 +9,7 @@ import { Frame } from './frame.model';
 export class ProjectsService {
   constructor(private dbService: DbService) {}
 
-  async getProjectByUserId(userId: string): Promise<Project[]> {
+  async getProjectByUserId(userId: string) {
     const query = `SELECT id
                         , userId
                         , animate
@@ -45,7 +45,7 @@ export class ProjectsService {
           grid,
           animateInterval,
         }));
-      return { ...project, frames };
+      return { ...project, isPublished: Boolean(project.isPublished), frames };
     });
 
     return combinedResult;
@@ -175,7 +175,7 @@ export class ProjectsService {
                                   , cellSize = ${cellSize}
                                   , gridColumns = ${gridColumns}
                                   , gridRows = ${gridRows}
-                                  , pallete = '${pallete}'
+                                  , pallete = '${JSON.stringify(pallete)}'
                                   , title = '${title}'
                                   , description = '${description}'
                                   , isPublished = ${isPublished}
@@ -193,7 +193,7 @@ export class ProjectsService {
         END
         WHERE id IN (${frames.map((obj) => obj.id).join(', ')})
       `;
-      const gridValue = frames.map((f) => f.grid);
+      const gridValue = frames.map((f) => JSON.stringify(f.grid));
       const animateIntervalValue = frames.map((f) => f.animateInterval);
       const values_frame = [...gridValue, ...animateIntervalValue];
 
