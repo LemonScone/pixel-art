@@ -1,7 +1,9 @@
-const SpinIcon = () => {
+import classNames from "../../../utils/classNames";
+
+const SpinIcon = ({ className = "text-white" }: { className?: string }) => {
   return (
     <svg
-      className="h-5 w-5 animate-spin text-white"
+      className={classNames(className, "h-5 w-5 animate-spin")}
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
       viewBox="0 0 24 24"
