@@ -1,4 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
+import { GRID_SIZE_MAX_VALUE, GRID_SIZE_MIN_VALUE } from "../constants";
 
 import ToolConatiner from "../components/ToolContainer";
 import PixelContainer from "../components/PixelContainer";
@@ -12,22 +14,41 @@ import PixelSize from "../components/PixelSize";
 import Title from "../components/Title";
 import ColorPallete from "../components/ColorPallete";
 import PublishToggleSwitch from "../components/PublishToggleSwitch";
+import Loading from "../components/common/Loading";
 
-import { GRID_SIZE_MAX_VALUE, GRID_SIZE_MIN_VALUE } from "../constants";
-
-import { decreseColumn, decreseRow, increseColumn, increseRow } from "../store";
+import {
+  decreseColumn,
+  decreseRow,
+  increseColumn,
+  increseRow,
+  selectProject,
+} from "../store";
 import { useAppDispatch, useAppSelector } from "../hooks/useRedux";
+import { useFetchProjectsQuery } from "../store";
+
+import useAuth from "../hooks/useAuth";
 
 const Editor = () => {
   const dispatch = useAppDispatch();
+  const project = useAppSelector(selectProject);
+
+  const { user } = useAuth();
+
+  const { refetch, isLoading } = useFetchProjectsQuery();
 
   const [pixelSize, setPixelSize] = useState(1);
   const [publish, setPublish] = useState(false);
 
-  const { data, currentProjectId } = useAppSelector((state) => state.projects);
-  const currentProject = data[currentProjectId];
-  const columns = currentProject.gridColumns;
-  const rows = currentProject.gridRows;
+  useEffect(() => {
+    refetch();
+  }, [user, refetch]);
+
+  if (isLoading) {
+    return <Loading />;
+  }
+
+  const columns = project.gridColumns;
+  const rows = project.gridRows;
 
   return (
     <div className="mx-auto flex max-w-7xl flex-col justify-between md:flex-row">
@@ -57,7 +78,7 @@ const Editor = () => {
           <NewProject />
           <div className="flex grow justify-center gap-2">
             <LoadProject />
-            <SaveProject project={currentProject} />
+            <SaveProject project={project} />
           </div>
           <ResetProject />
         </div>
