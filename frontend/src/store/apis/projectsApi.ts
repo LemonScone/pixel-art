@@ -1,12 +1,12 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { RootState, dismissNotification, sendNotification } from "..";
-import { baseQueryWithLocalStorage } from "../baseQueryWithLocalStorage";
+import { projectsQuery } from "../projectsQuery";
 
 import type { Project } from "../../types/Project";
 
 const projectsApi = createApi({
   reducerPath: "projectsApi",
-  baseQuery: baseQueryWithLocalStorage({
+  baseQuery: projectsQuery({
     baseUrl: "/api",
     prepareHeaders: (headers, { getState }) => {
       const { accessToken } = (getState() as RootState).auth.data;
@@ -19,6 +19,14 @@ const projectsApi = createApi({
   }),
   endpoints(builder) {
     return {
+      fetchProject: builder.query<Project, number>({
+        query: (projectId) => {
+          return {
+            url: `/projects/${projectId}`,
+            method: "GET",
+          };
+        },
+      }),
       fetchProjects: builder.query<Project[], void>({
         query: () => {
           return {
@@ -53,9 +61,26 @@ const projectsApi = createApi({
           }, 5000);
         },
       }),
+      updateProject: builder.mutation<Project, Project>({
+        query: (project) => {
+          return {
+            url: `/projects/${project.id}`,
+            method: "PATCH",
+            body: {
+              ...project,
+            },
+          };
+        },
+      }),
     };
   },
 });
 
-export const { useLazyFetchProjectsQuery, useAddProjectMutation } = projectsApi;
+export const {
+  useFetchProjectsQuery,
+  useFetchProjectQuery,
+  useLazyFetchProjectsQuery,
+  useAddProjectMutation,
+  useUpdateProjectMutation,
+} = projectsApi;
 export { projectsApi };
