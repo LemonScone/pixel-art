@@ -1,5 +1,5 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
-import { RootState, dismissNotification, sendNotification } from "..";
+import { RootState, toast } from "..";
 import { projectsQuery } from "../projectsQuery";
 
 import type { Project } from "../../types/Project";
@@ -17,17 +17,20 @@ const projectsApi = createApi({
       return headers;
     },
   }),
+  tagTypes: ["Projects", "Project"],
   endpoints(builder) {
     return {
-      fetchProject: builder.query<Project, number>({
-        query: (projectId) => {
-          return {
-            url: `/projects/${projectId}`,
-            method: "GET",
-          };
-        },
-      }),
       fetchProjects: builder.query<Project[], void>({
+        providesTags: (result, _error, _projects) =>
+          result
+            ? [
+                ...result.map((project) => ({
+                  type: "Project" as const,
+                  id: project.id,
+                })),
+                "Projects",
+              ]
+            : ["Projects"],
         query: () => {
           return {
             url: "/projects",
@@ -45,20 +48,15 @@ const projectsApi = createApi({
             },
           };
         },
+        invalidatesTags: ["Projects"],
         async onQueryStarted(_, { dispatch, queryFulfilled }) {
           await queryFulfilled;
-          const id = Date.now();
           dispatch(
-            sendNotification({
-              id,
+            toast({
               type: "success",
               message: "Drawing saved",
             })
           );
-
-          setTimeout(() => {
-            dispatch(dismissNotification(id));
-          }, 5000);
         },
       }),
       updateProject: builder.mutation<Project, Project>({
@@ -72,15 +70,35 @@ const projectsApi = createApi({
           };
         },
       }),
+      removeProject: builder.mutation<Project, Project>({
+        query: (project) => {
+          return {
+            url: `/projects/${project.id}`,
+            method: "DELETE",
+          };
+        },
+        invalidatesTags: (_result, _error, project) => {
+          return [{ type: "Project", id: project.id }];
+        },
+        async onQueryStarted(_, { dispatch, queryFulfilled }) {
+          await queryFulfilled;
+          dispatch(
+            toast({
+              type: "success",
+              message: "Drawing deleted",
+            })
+          );
+        },
+      }),
     };
   },
 });
 
 export const {
   useFetchProjectsQuery,
-  useFetchProjectQuery,
   useLazyFetchProjectsQuery,
   useAddProjectMutation,
   useUpdateProjectMutation,
+  useRemoveProjectMutation,
 } = projectsApi;
 export { projectsApi };

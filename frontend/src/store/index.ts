@@ -76,6 +76,7 @@ export {
   useLazyFetchProjectsQuery,
   useAddProjectMutation,
   useUpdateProjectMutation,
+  useRemoveProjectMutation,
 } from "./apis/projectsApi";
 export { useLoginMutation, useRefreshQuery } from "./apis/authApi";
 export { useUpdateCurrentMutation } from "./apis/usersApi";

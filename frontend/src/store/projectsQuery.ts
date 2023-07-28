@@ -5,7 +5,8 @@ import {
 } from "@reduxjs/toolkit/dist/query/fetchBaseQuery";
 import {
   getDataFromStorage,
-  saveDataToStorage,
+  removeProjectFromStorage,
+  saveProjectToStorage,
   updateProjectFromStorage,
 } from "../utils/storage";
 
@@ -29,7 +30,7 @@ const projectsQuery = ({ baseUrl, prepareHeaders }: FetchBaseQueryArgs) => {
   };
 };
 
-const getDataFromLocalStorage = async ({ method, body }: FetchArgs) => {
+const getDataFromLocalStorage = async ({ method, body, url }: FetchArgs) => {
   switch (method) {
     case httpMethod.GET: {
       const localStorageData = getDataFromStorage();
@@ -41,14 +42,22 @@ const getDataFromLocalStorage = async ({ method, body }: FetchArgs) => {
     }
     case httpMethod.POST: {
       const { id, ...rest } = body;
-      saveDataToStorage({ id: randomStr(), ...rest });
-      await pause();
+      saveProjectToStorage({ id: randomStr(), ...rest });
+      await pause(500);
       return { data: body };
     }
     case httpMethod.PATCH: {
       const newProjects = updateProjectFromStorage(body);
       await pause(500);
       return { data: newProjects };
+    }
+    case httpMethod.DELETE: {
+      const regexPattern = /\/projects\/(.+)/;
+      const match = url.match(regexPattern);
+      if (match && match[1]) {
+        removeProjectFromStorage(match[1]);
+      }
+      return { data: "" };
     }
     default:
       return { data: "" };
