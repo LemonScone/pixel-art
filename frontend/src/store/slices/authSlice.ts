@@ -1,9 +1,11 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Auth, User } from "../../types/Auth";
+import { usersApi } from "../apis/usersApi";
 
 type AuthData = {
   data: Auth;
 };
+
 const initialState: AuthData = {
   data: {
     user: {} as User,
@@ -26,6 +28,14 @@ const authSlice = createSlice({
         accessToken: "",
       };
     },
+  },
+  extraReducers(builder) {
+    builder.addMatcher(
+      usersApi.endpoints.updateCurrent.matchFulfilled,
+      (state, { payload }) => {
+        state.data.user.current = payload;
+      }
+    );
   },
 });
 

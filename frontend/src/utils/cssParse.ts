@@ -41,7 +41,6 @@ const generateKeyframes = (obj: BoxShadow) => {
         /[A-Z]/g,
         (match) => `-${match.toLowerCase()}`
       );
-      console.log(property);
       propertiesStr += `${capitalizedProperty}: ${
         properties[property as keyof typeof properties]
       }; `;

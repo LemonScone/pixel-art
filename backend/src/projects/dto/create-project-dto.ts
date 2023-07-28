@@ -1,4 +1,11 @@
-import { IsNumber, Min, Max, ValidateNested, IsArray } from 'class-validator';
+import {
+  IsNumber,
+  Min,
+  Max,
+  ValidateNested,
+  IsArray,
+  IsString,
+} from 'class-validator';
 import { FrameDto } from './frame-dto';
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
@@ -33,6 +40,14 @@ export class CreateProjectDto {
   @Min(5)
   @Max(120)
   gridRows: number;
+
+  @ApiProperty({
+    example: 'Untitled',
+    description: 'title',
+    required: true,
+  })
+  @IsString()
+  title: string;
 
   @ApiProperty({
     example: [

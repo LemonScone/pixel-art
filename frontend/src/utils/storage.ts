@@ -1,4 +1,5 @@
 import { STORAGE_KEY } from "../constants";
+import { Project } from "../types/Project";
 
 const getDataFromStorage = () => {
   try {
@@ -9,13 +10,57 @@ const getDataFromStorage = () => {
   }
 };
 
+const updateCurrentProjectIdFromStorage = (currentProjectId: number) => {
+  try {
+    const dataStored = getDataFromStorage();
+    if (dataStored) {
+      dataStored.currentProjectId = currentProjectId;
+    }
+  } catch (e) {
+    return false;
+  }
+};
+
+const updateProjectFromStorage = (data: Project) => {
+  try {
+    const dataStored = getDataFromStorage();
+    if (dataStored) {
+      const stored = dataStored.stored as Project[];
+      const rest = stored.filter(({ id }) => id !== data.id);
+      const updatedProject = { ...data };
+      const newProjects = [...rest, updatedProject];
+
+      dataStored.stored = newProjects;
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(dataStored));
+      return updatedProject;
+    }
+  } catch (e) {
+    return false;
+  }
+};
 const saveDataToStorage = <T>(data: T) => {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    let dataStored = getDataFromStorage();
+    if (dataStored) {
+      dataStored.stored.push(data);
+      dataStored.currentProjectId = dataStored.stored.length;
+    } else {
+      dataStored = {
+        stored: [data],
+        currentProjectId: 0,
+      };
+    }
+
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(dataStored));
     return true;
   } catch (e) {
     return false;
   }
 };
 
-export { getDataFromStorage, saveDataToStorage };
+export {
+  getDataFromStorage,
+  saveDataToStorage,
+  updateProjectFromStorage,
+  updateCurrentProjectIdFromStorage,
+};

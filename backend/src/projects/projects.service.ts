@@ -9,7 +9,7 @@ import { Frame } from './frame.model';
 export class ProjectsService {
   constructor(private dbService: DbService) {}
 
-  async getProjectByUserId(userId: string): Promise<Project[]> {
+  async getProjectByUserId(userId: string) {
     const query = `SELECT id
                         , userId
                         , animate
@@ -17,8 +17,8 @@ export class ProjectsService {
                         , gridColumns
                         , gridRows
                         , pallete
-                        , title
-                        , description
+                        , COALESCE(title, '') as title
+                        , COALESCE(description, '') as description
                         , isPublished 
                     FROM PROJECT 
                     WHERE userId = '${userId}';
@@ -45,7 +45,7 @@ export class ProjectsService {
           grid,
           animateInterval,
         }));
-      return { ...project, frames };
+      return { ...project, isPublished: Boolean(project.isPublished), frames };
     });
 
     return combinedResult;
@@ -59,12 +59,13 @@ export class ProjectsService {
                                 , gridColumns
                                 , gridRows
                                 , pallete
-                                , title
-                                , description
+                                , COALESCE(title, '') as title
+                                , COALESCE(description, '') as description
                                 , isPublished 
                             FROM PROJECT 
                             WHERE id = ${id};`;
     const [result] = await this.dbService.execute<Project>(query_project);
+    result.isPublished = Boolean(result.isPublished);
 
     const query_frame = `SELECT id
                               , projectid
@@ -87,7 +88,7 @@ export class ProjectsService {
     userId: string,
     createProjectDto: CreateProjectDto,
   ): Promise<Project> {
-    const { cellSize, gridColumns, gridRows, pallete, frames } =
+    const { cellSize, gridColumns, gridRows, title, pallete, frames } =
       createProjectDto;
 
     const conn = await this.dbService.beginTransaction();
@@ -99,6 +100,7 @@ export class ProjectsService {
                             ,  cellSize
                             ,  gridColumns
                             ,  gridRows
+                            ,  title
                             ,  pallete
                             ,  isPublished
                             )
@@ -108,6 +110,7 @@ export class ProjectsService {
                             , ${cellSize}
                             , ${gridColumns}
                             , ${gridRows}
+                            , '${title}'
                             , '${JSON.stringify(pallete)}'
                             , false
                             );
@@ -150,7 +153,7 @@ export class ProjectsService {
   async updateProject(
     id: number,
     updateProjectDto: UpdateProjectDto,
-  ): Promise<void> {
+  ): Promise<Project> {
     const {
       cellSize,
       gridColumns,
@@ -175,7 +178,7 @@ export class ProjectsService {
                                   , cellSize = ${cellSize}
                                   , gridColumns = ${gridColumns}
                                   , gridRows = ${gridRows}
-                                  , pallete = '${pallete}'
+                                  , pallete = '${JSON.stringify(pallete)}'
                                   , title = '${title}'
                                   , description = '${description}'
                                   , isPublished = ${isPublished}
@@ -193,13 +196,15 @@ export class ProjectsService {
         END
         WHERE id IN (${frames.map((obj) => obj.id).join(', ')})
       `;
-      const gridValue = frames.map((f) => f.grid);
+      const gridValue = frames.map((f) => JSON.stringify(f.grid));
       const animateIntervalValue = frames.map((f) => f.animateInterval);
       const values_frame = [...gridValue, ...animateIntervalValue];
 
       await conn.query(query_frame, values_frame);
 
       await this.dbService.commit(conn);
+
+      return await this.getProjectById(id);
     } catch (error) {
       await this.dbService.rollback(conn);
       throw new HttpException({ message: error.message, error }, error.status);

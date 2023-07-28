@@ -8,6 +8,12 @@ import {
   isGridsEqual,
   resizeGrid,
 } from "../../utils/grid";
+import projectsStore from "../../tests/fixtures/projectsStore";
+
+import { setAuth } from "./authSlice";
+import { projectsApi } from "../apis/projectsApi";
+import { usersApi } from "../apis/usersApi";
+import { RootState } from "..";
 
 type Frame = {
   id: number;
@@ -339,7 +345,43 @@ const projectsSlice = createSlice({
       }
     },
   },
+  extraReducers(builder) {
+    builder.addCase(setAuth, (state, { payload }) => {
+      state.currentProjectId = payload.user.current;
+    });
+    builder.addMatcher(
+      projectsApi.endpoints.fetchProjects.matchFulfilled,
+      (state, { payload }) => {
+        if (payload.length) {
+          state.data = payload;
+        }
+      }
+    );
+    builder.addMatcher(
+      projectsApi.endpoints.updateProject.matchFulfilled,
+      (state, { payload }) => {
+        const idx = state.data.findIndex(
+          ({ id }) => id === state.currentProjectId
+        );
+        if (idx !== -1) {
+          state.data[idx] = payload;
+        }
+      }
+    );
+    builder.addMatcher(
+      usersApi.endpoints.updateCurrent.matchFulfilled,
+      (state, { payload }) => {
+        state.currentProjectId = payload;
+      }
+    );
+  },
 });
+
+export const selectProject = (state: RootState) => {
+  const { data, currentProjectId } = state.projects;
+  const project = data.find(({ id }) => id === currentProjectId);
+  return project || projectsStore.data[0];
+};
 
 export const {
   changeSelectedTool,

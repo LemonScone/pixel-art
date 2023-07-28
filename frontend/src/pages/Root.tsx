@@ -1,5 +1,6 @@
 import { Outlet } from "react-router-dom";
 import Navbar from "../components/Navbar";
+import ToastList from "../components/common/Toast/ToastList";
 
 const Root = () => {
   return (
@@ -7,6 +8,7 @@ const Root = () => {
       <Navbar />
       <main>
         <Outlet />
+        <ToastList />
       </main>
     </div>
   );
