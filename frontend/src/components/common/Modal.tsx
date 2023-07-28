@@ -91,7 +91,7 @@ const Frame = ({
   return createPortal(
     <div
       className={classNames(
-        "fixed inset-0 z-10 h-screen bg-gray-600/90 p-8 text-gray-100",
+        "fixed inset-0 h-screen bg-gray-600/90 p-8 text-gray-100",
         `${open ? "block" : "hidden"}`
       )}
       onClick={closeOnClickOutside ? handleOverlayClick : undefined}
