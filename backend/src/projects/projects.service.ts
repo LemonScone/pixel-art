@@ -65,6 +65,7 @@ export class ProjectsService {
                             FROM PROJECT 
                             WHERE id = ${id};`;
     const [result] = await this.dbService.execute<Project>(query_project);
+    result.isPublished = Boolean(result.isPublished);
 
     const query_frame = `SELECT id
                               , projectid
@@ -152,7 +153,7 @@ export class ProjectsService {
   async updateProject(
     id: number,
     updateProjectDto: UpdateProjectDto,
-  ): Promise<void> {
+  ): Promise<Project> {
     const {
       cellSize,
       gridColumns,
@@ -202,6 +203,8 @@ export class ProjectsService {
       await conn.query(query_frame, values_frame);
 
       await this.dbService.commit(conn);
+
+      return await this.getProjectById(id);
     } catch (error) {
       await this.dbService.rollback(conn);
       throw new HttpException({ message: error.message, error }, error.status);
