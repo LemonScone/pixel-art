@@ -38,7 +38,7 @@ const updateProjectFromStorage = (data: Project) => {
     return false;
   }
 };
-const saveDataToStorage = <T>(data: T) => {
+const saveProjectToStorage = <T>(data: T) => {
   try {
     let dataStored = getDataFromStorage();
     if (dataStored) {
@@ -58,9 +58,44 @@ const saveDataToStorage = <T>(data: T) => {
   }
 };
 
+const saveDataToStorage = <T>(data: T) => {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    return true;
+  } catch (e) {
+    return false; // There was an error
+  }
+};
+
+const removeProjectFromStorage = (removeId: string) => {
+  const dataStored = getDataFromStorage();
+  if (dataStored) {
+    let newCurrent = "";
+    const stored = dataStored.stored as Project[];
+    const idx = stored.findIndex(({ id }) => id.toString() === removeId);
+    const rest = stored.filter(({ id }) => id.toString() !== removeId);
+
+    const newDataStored = {
+      stored: rest,
+      current: "",
+    };
+
+    if (dataStored.stored.length === 0) {
+      newCurrent = "";
+    } else {
+      newCurrent = stored[idx - 1].id.toString();
+    }
+    newDataStored.current = newCurrent;
+
+    return saveDataToStorage(newDataStored);
+  }
+  return false;
+};
+
 export {
   getDataFromStorage,
-  saveDataToStorage,
+  saveProjectToStorage,
   updateProjectFromStorage,
   updateCurrentProjectIdFromStorage,
+  removeProjectFromStorage,
 };
