@@ -121,7 +121,7 @@ const Head = ({ children }: { children: ReactNode }) => (
 );
 
 const Body = ({ children }: { children: ReactNode }) => (
-  <div className="h-[80vh] overflow-y-auto p-4">{children}</div>
+  <div className="max-h-[80vh] overflow-y-auto p-4">{children}</div>
 );
 
 export const Modal = { Frame, Head, Body };
