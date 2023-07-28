@@ -47,9 +47,13 @@ const getDataFromLocalStorage = async ({ method, body, url }: FetchArgs) => {
       return { data: body };
     }
     case httpMethod.PATCH: {
-      const newProjects = updateProjectFromStorage(body);
-      await pause(500);
-      return { data: newProjects };
+      const updatedProject = updateProjectFromStorage(body);
+      if (updatedProject) {
+        await pause(500);
+        return { data: updatedProject };
+      } else {
+        return { data: body };
+      }
     }
     case httpMethod.DELETE: {
       const regexPattern = /\/projects\/(.+)/;

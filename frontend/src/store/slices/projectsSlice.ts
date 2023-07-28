@@ -17,13 +17,13 @@ import { RootState } from "..";
 
 type Frame = {
   id: number;
-  projectId: number;
+  projectId: number | string;
   grid: string[];
   animateInterval: number;
 };
 
 type Project = {
-  id: number;
+  id: number | string;
   animate: boolean;
   cellSize: number;
   gridColumns: number;
@@ -39,7 +39,7 @@ type Project = {
 export type Projects = {
   data: Project[];
   currentFrameId: number;
-  currentProjectId: number;
+  currentProjectId: number | string;
   selectedTool: keyof ToolOption;
   options: ToolOption;
 };
@@ -344,6 +344,9 @@ const projectsSlice = createSlice({
         currentProject.gridRows -= 1;
       }
     },
+    updateCurrent(state, action: PayloadAction<number | string>) {
+      state.currentProjectId = action.payload;
+    },
   },
   extraReducers(builder) {
     builder.addCase(setAuth, (state, { payload }) => {
@@ -396,6 +399,7 @@ export const {
   decreseColumn,
   increseRow,
   decreseRow,
+  updateCurrent,
 } = projectsSlice.actions;
 
 export const projectsReducer = projectsSlice.reducer;
