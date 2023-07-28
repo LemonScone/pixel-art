@@ -3,6 +3,12 @@ import { IsNumber, IsArray } from 'class-validator';
 
 export class FrameDto {
   @ApiProperty({
+    example: 1,
+  })
+  @IsNumber()
+  id: number;
+
+  @ApiProperty({
     example: [
       '',
       '',

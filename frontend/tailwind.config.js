@@ -13,6 +13,28 @@ export default {
         "primary-color-600": "#aff285",
         "input-color": "#2c2c2c",
       },
+      keyframes: {
+        "toast-in-right": {
+          from: {
+            transform: "translateX(100%)",
+          },
+          to: {
+            transform: "translateX(0)",
+          },
+        },
+        "toast-in-left": {
+          from: {
+            transform: "translateX(-100%)",
+          },
+          to: {
+            transform: "translateX(0)",
+          },
+        },
+      },
+      animation: {
+        "toast-in-right": "toast-in-right 250ms",
+        "toast-in-left": "toast-in-left 250ms",
+      },
     },
   },
   safelist: [

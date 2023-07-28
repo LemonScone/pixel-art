@@ -2,37 +2,23 @@ import { useSearchParams } from "react-router-dom";
 import { Modal } from "./common/Modal";
 import { useLazyFetchProjectsQuery } from "../store";
 import ProjectsListItem from "./ProjectsListItem";
-import useAuth from "../hooks/useAuth";
-import { getDataFromStorage } from "../utils/storage";
-import { Project } from "../types/Project";
 import Skeleton from "./common/Skeleton";
 
 const LoadProject = () => {
   const [params, setParams] = useSearchParams();
-
-  const { accessToken } = useAuth();
 
   const [getProjects, { data, error, isFetching }] =
     useLazyFetchProjectsQuery();
 
   let content;
 
-  if (accessToken) {
-    if (isFetching) {
-      content = <Skeleton className="h-48 w-48" times={3} />;
-    } else if (error) {
-      content = <div>Error loading projects</div>;
-    } else if (data) {
-      const storageData = getDataFromStorage() || [];
-      const combined = [...data, ...storageData];
-      content = combined.map((project) => {
-        return <ProjectsListItem key={project.id} project={project} />;
-      });
-    }
-  } else {
-    const data = getDataFromStorage() || [];
+  if (isFetching) {
+    content = <Skeleton className="h-48 w-48" times={3} />;
+  } else if (error) {
+    content = <div>Error loading projects</div>;
+  } else if (data) {
     if (data.length) {
-      content = data.map((project: Project) => {
+      content = data.map((project) => {
         return <ProjectsListItem key={project.id} project={project} />;
       });
     } else {

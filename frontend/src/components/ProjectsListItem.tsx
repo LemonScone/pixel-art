@@ -6,10 +6,17 @@ import {
 } from "../utils/cssParse";
 import Animation from "./Animation";
 
+import { useModal } from "../hooks/useModal";
+import { useUpdateCurrentMutation } from "../store";
+
 type ProjectsListItemProps = {
   project: Project;
 };
+
 const ProjectsListItem = ({ project }: ProjectsListItemProps) => {
+  const { closeModal } = useModal();
+  const [updateCurrent] = useUpdateCurrentMutation();
+
   const {
     title,
     description,
@@ -36,8 +43,16 @@ const ProjectsListItem = ({ project }: ProjectsListItemProps) => {
     cssString = generatePixelDrawCSS(grid, gridColumns, cellSize, "string");
   }
 
+  const handleClick = () => {
+    updateCurrent(project.id);
+    closeModal();
+  };
+
   return (
-    <div className="shrink flex-grow-0 basis-auto transform cursor-pointer rounded-xl bg-neutral-900 p-4 transition duration-500 ease-in-out hover:-translate-y-1 hover:shadow-lg">
+    <div
+      className="shrink flex-grow-0 basis-auto transform cursor-pointer rounded-xl bg-neutral-900 p-4 transition duration-500 ease-in-out hover:-translate-y-1 hover:shadow-lg"
+      onClick={handleClick}
+    >
       <div className="relative">
         <div className="rounded-xl bg-input-color">
           <div
