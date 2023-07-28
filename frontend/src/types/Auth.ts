@@ -1,7 +1,7 @@
 export type User = {
   email: string;
   username: string;
-  current: number;
+  current: string | number;
   provider: string;
 };
 

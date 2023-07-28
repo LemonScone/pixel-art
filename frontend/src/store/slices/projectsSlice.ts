@@ -8,7 +8,7 @@ import {
   isGridsEqual,
   resizeGrid,
 } from "../../utils/grid";
-import projectsStore from "../../tests/fixtures/projectsStore";
+import { initialProjects } from "../../tests/fixtures/projectsStore";
 
 import { setAuth } from "./authSlice";
 import { projectsApi } from "../apis/projectsApi";
@@ -344,7 +344,7 @@ const projectsSlice = createSlice({
         currentProject.gridRows -= 1;
       }
     },
-    updateCurrent(state, action: PayloadAction<number | string>) {
+    updateCurrent(state, action: PayloadAction<string | number>) {
       state.currentProjectId = action.payload;
     },
   },
@@ -383,7 +383,7 @@ const projectsSlice = createSlice({
 export const selectProject = (state: RootState) => {
   const { data, currentProjectId } = state.projects;
   const project = data.find(({ id }) => id === currentProjectId);
-  return project || projectsStore.data[0];
+  return project || initialProjects.data[0];
 };
 
 export const {

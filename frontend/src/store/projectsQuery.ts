@@ -15,8 +15,7 @@ import httpMethod from "../constants/httpMethod";
 import { pause } from "../utils/pause";
 import { randomStr } from "../utils/random";
 
-import { RootState } from ".";
-import projectsStore from "../tests/fixtures/projectsStore";
+import { RootState, updateCurrent } from ".";
 
 const projectsQuery = ({ baseUrl, prepareHeaders }: FetchBaseQueryArgs) => {
   const baseQuery = fetchBaseQuery({ baseUrl, prepareHeaders });
@@ -24,21 +23,25 @@ const projectsQuery = ({ baseUrl, prepareHeaders }: FetchBaseQueryArgs) => {
     const loggedIn = (api.getState() as RootState).auth.data.accessToken;
 
     if (!loggedIn) {
-      return await getDataFromLocalStorage(args);
+      return await getDataFromLocalStorage(api, args);
     }
     return baseQuery(args, api, {});
   };
 };
 
-const getDataFromLocalStorage = async ({ method, body, url }: FetchArgs) => {
+const getDataFromLocalStorage = async (
+  api: BaseQueryApi,
+  { method, body, url }: FetchArgs
+) => {
   switch (method) {
     case httpMethod.GET: {
       const localStorageData = getDataFromStorage();
       await pause();
-      if (!localStorageData) {
-        return { data: projectsStore };
+      if (localStorageData.stored.length) {
+        api.dispatch(updateCurrent(localStorageData.currentProjectId));
+        return { data: localStorageData.stored };
       }
-      return { data: localStorageData.stored };
+      return { data: [] };
     }
     case httpMethod.POST: {
       const { id, ...rest } = body;

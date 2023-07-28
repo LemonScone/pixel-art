@@ -33,21 +33,23 @@ const updateProjectFromStorage = (data: Project) => {
       dataStored.stored = newProjects;
       localStorage.setItem(STORAGE_KEY, JSON.stringify(dataStored));
       return updatedProject;
+    } else {
+      return false;
     }
   } catch (e) {
     return false;
   }
 };
-const saveProjectToStorage = <T>(data: T) => {
+const saveProjectToStorage = <T extends { id?: string }>(data: T) => {
   try {
     let dataStored = getDataFromStorage();
     if (dataStored) {
       dataStored.stored.push(data);
-      dataStored.currentProjectId = dataStored.stored.length;
+      dataStored.currentProjectId = dataStored.data.id;
     } else {
       dataStored = {
         stored: [data],
-        currentProjectId: 0,
+        currentProjectId: data.id,
       };
     }
 
@@ -80,7 +82,7 @@ const removeProjectFromStorage = (removeId: string) => {
       current: "",
     };
 
-    if (dataStored.stored.length === 0) {
+    if (newDataStored.stored.length === 0) {
       newCurrent = "";
     } else {
       newCurrent = stored[idx - 1].id.toString();

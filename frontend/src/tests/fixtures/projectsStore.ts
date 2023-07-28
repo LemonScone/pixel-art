@@ -66,5 +66,33 @@ const exampleState = (
   };
 };
 
-export { exampleState };
+const initialProjects = {
+  data: [
+    {
+      id: "initial",
+      animate: false,
+      cellSize: 10,
+      gridColumns: 16,
+      gridRows: 16,
+      pallete: INITIAL_COLOR_PALLETE,
+      title: "",
+      description: "",
+      isPublished: false,
+      frames: [
+        {
+          id: 0,
+          projectId: "initial",
+          grid: Array.from({ length: 16 * 16 }, () => ""),
+          animateInterval: 25,
+        },
+      ],
+    },
+  ],
+  currentProjectId: "initial",
+  currentFrameId: 0,
+  selectedTool: "pen" as keyof ToolOption,
+  options: INITIAL_TOOL_OPTIONS,
+};
+
+export { exampleState, initialProjects };
 export default projectsStore;
