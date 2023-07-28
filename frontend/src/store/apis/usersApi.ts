@@ -17,7 +17,7 @@ const usersApi = createApi({
   }),
   endpoints(builder) {
     return {
-      updateCurrent: builder.mutation<number, number>({
+      updateCurrent: builder.mutation<number | string, number | string>({
         query: (current) => {
           return {
             url: "/users/current",

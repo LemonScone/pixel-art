@@ -6,13 +6,11 @@ import { setupStore } from "./store";
 import AppRoutes from "./routes/AppRoutes";
 
 import "./index.css";
-import initialState from "./tests/fixtures/projectsStore";
-import { VALID_USER } from "./tests/fixtures/auth";
+import { initialProjects } from "./tests/fixtures/projectsStore";
 import { setupListeners } from "@reduxjs/toolkit/dist/query";
 
 const store = setupStore({
-  projects: initialState,
-  auth: { data: { user: VALID_USER, accessToken: "", expired: 0 } },
+  projects: initialProjects,
 });
 
 setupListeners(store.dispatch);

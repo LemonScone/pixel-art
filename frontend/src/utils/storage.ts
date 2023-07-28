@@ -33,21 +33,23 @@ const updateProjectFromStorage = (data: Project) => {
       dataStored.stored = newProjects;
       localStorage.setItem(STORAGE_KEY, JSON.stringify(dataStored));
       return updatedProject;
+    } else {
+      return false;
     }
   } catch (e) {
     return false;
   }
 };
-const saveDataToStorage = <T>(data: T) => {
+const saveProjectToStorage = <T extends { id?: string }>(data: T) => {
   try {
     let dataStored = getDataFromStorage();
     if (dataStored) {
       dataStored.stored.push(data);
-      dataStored.currentProjectId = dataStored.stored.length;
+      dataStored.currentProjectId = dataStored.data.id;
     } else {
       dataStored = {
         stored: [data],
-        currentProjectId: 0,
+        currentProjectId: data.id,
       };
     }
 
@@ -58,9 +60,44 @@ const saveDataToStorage = <T>(data: T) => {
   }
 };
 
+const saveDataToStorage = <T>(data: T) => {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    return true;
+  } catch (e) {
+    return false; // There was an error
+  }
+};
+
+const removeProjectFromStorage = (removeId: string) => {
+  const dataStored = getDataFromStorage();
+  if (dataStored) {
+    let newCurrent = "";
+    const stored = dataStored.stored as Project[];
+    const idx = stored.findIndex(({ id }) => id.toString() === removeId);
+    const rest = stored.filter(({ id }) => id.toString() !== removeId);
+
+    const newDataStored = {
+      stored: rest,
+      current: "",
+    };
+
+    if (newDataStored.stored.length === 0) {
+      newCurrent = "";
+    } else {
+      newCurrent = stored[idx - 1].id.toString();
+    }
+    newDataStored.current = newCurrent;
+
+    return saveDataToStorage(newDataStored);
+  }
+  return false;
+};
+
 export {
   getDataFromStorage,
-  saveDataToStorage,
+  saveProjectToStorage,
   updateProjectFromStorage,
   updateCurrentProjectIdFromStorage,
+  removeProjectFromStorage,
 };

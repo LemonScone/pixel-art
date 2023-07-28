@@ -37,7 +37,7 @@ const ToastList = () => {
       <div
         className={classNames(
           position,
-          "fixed max-h-screen w-full max-w-sm overflow-y-auto overflow-x-hidden p-4"
+          "fixed z-10 max-h-screen w-full max-w-sm overflow-y-auto overflow-x-hidden p-4"
         )}
         ref={listRef}
         aria-live="assertive"

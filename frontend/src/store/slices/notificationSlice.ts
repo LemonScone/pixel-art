@@ -31,13 +31,11 @@ const notificationsSlice = createSlice({
   },
 });
 
-export const toast = (
-  { message, type, timeout }: Omit<Toast, "id"> & { timeout: number } = {
-    message: "",
-    type: "success",
-    timeout: 5000,
-  }
-): ThunkResult<void> => {
+export const toast = ({
+  message,
+  type,
+  timeout = 5000,
+}: Omit<Toast, "id"> & { timeout?: number }): ThunkResult<void> => {
   return async (dispatch) => {
     const id = Date.now();
     dispatch(sendNotification({ id, type, message }));

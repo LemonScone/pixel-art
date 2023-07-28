@@ -19,6 +19,7 @@ import {
   increseRow,
   decreseRow,
   selectProject,
+  updateCurrent,
 } from "./slices/projectsSlice";
 import {
   notificationsReducer,
@@ -70,12 +71,14 @@ export { changeSelectedTool, changePenColor, changePenSize, changeEraserSize };
 export { sendNotification, dismissNotification, toast };
 export { applyPencil, applyEraser, applyBucket, applyMove };
 export { increseColumn, decreseColumn, increseRow, decreseRow };
+export { updateCurrent };
 export { selectProject };
 export {
   useFetchProjectsQuery,
   useLazyFetchProjectsQuery,
   useAddProjectMutation,
   useUpdateProjectMutation,
+  useRemoveProjectMutation,
 } from "./apis/projectsApi";
 export { useLoginMutation, useRefreshQuery } from "./apis/authApi";
 export { useUpdateCurrentMutation } from "./apis/usersApi";

@@ -7,7 +7,7 @@ import {
 import Animation from "./Animation";
 
 import { useModal } from "../hooks/useModal";
-import { useUpdateCurrentMutation } from "../store";
+import { useRemoveProjectMutation, useUpdateCurrentMutation } from "../store";
 
 type ProjectsListItemProps = {
   project: Project;
@@ -16,6 +16,7 @@ type ProjectsListItemProps = {
 const ProjectsListItem = ({ project }: ProjectsListItemProps) => {
   const { closeModal } = useModal();
   const [updateCurrent] = useUpdateCurrentMutation();
+  const [removeProject] = useRemoveProjectMutation();
 
   const {
     title,
@@ -46,6 +47,11 @@ const ProjectsListItem = ({ project }: ProjectsListItemProps) => {
   const handleClick = () => {
     updateCurrent(project.id);
     closeModal();
+  };
+
+  const handleDeleteClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    removeProject(project);
   };
 
   return (
@@ -84,6 +90,7 @@ const ProjectsListItem = ({ project }: ProjectsListItemProps) => {
         <button
           className="text-brand-500 absolute right-3 top-3 flex items-center justify-center rounded-full bg-white p-2 hover:cursor-pointer"
           title="delete"
+          onClick={handleDeleteClick}
         >
           <div className="flex h-full w-full items-center justify-center rounded-full text-xl hover:bg-gray-50">
             <TrashIcon width="1em" height="1em" className="text-rose-600" />

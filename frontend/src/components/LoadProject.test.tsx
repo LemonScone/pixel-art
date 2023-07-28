@@ -15,7 +15,7 @@ import { STORAGE_KEY } from "../constants";
 
 import projectsStore from "../tests/fixtures/projectsStore";
 import { User } from "../types/Auth";
-import { saveDataToStorage } from "../utils/storage";
+import { saveProjectToStorage } from "../utils/storage";
 
 const renderComponent = (loggedIn = true) => {
   const { password, ...user } = VALID_USER;
@@ -31,6 +31,7 @@ const renderComponent = (loggedIn = true) => {
         expired: 0,
         accessToken: "",
       };
+
   renderWithProviders(
     <MemoryRouter>
       <LoadProject />
@@ -40,6 +41,7 @@ const renderComponent = (loggedIn = true) => {
         auth: {
           data: authData,
         },
+        projects: projectsStore,
       },
     }
   );
@@ -70,7 +72,7 @@ describe("LoadProject", () => {
       const deleteButtons = await screen.findAllByRole("button", {
         name: /delete/i,
       });
-      expect(deleteButtons).toHaveLength(3);
+      expect(deleteButtons).toHaveLength(1);
     });
   });
 
@@ -84,7 +86,7 @@ describe("LoadProject", () => {
 
       const project = projectsStore.data[0];
 
-      saveDataToStorage(project);
+      saveProjectToStorage(project);
 
       renderComponent(false);
 

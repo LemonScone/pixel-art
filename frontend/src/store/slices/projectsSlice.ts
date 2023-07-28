@@ -8,7 +8,7 @@ import {
   isGridsEqual,
   resizeGrid,
 } from "../../utils/grid";
-import projectsStore from "../../tests/fixtures/projectsStore";
+import { initialProjects } from "../../tests/fixtures/projectsStore";
 
 import { setAuth } from "./authSlice";
 import { projectsApi } from "../apis/projectsApi";
@@ -17,13 +17,13 @@ import { RootState } from "..";
 
 type Frame = {
   id: number;
-  projectId: number;
+  projectId: number | string;
   grid: string[];
   animateInterval: number;
 };
 
 type Project = {
-  id: number;
+  id: number | string;
   animate: boolean;
   cellSize: number;
   gridColumns: number;
@@ -39,7 +39,7 @@ type Project = {
 export type Projects = {
   data: Project[];
   currentFrameId: number;
-  currentProjectId: number;
+  currentProjectId: number | string;
   selectedTool: keyof ToolOption;
   options: ToolOption;
 };
@@ -344,6 +344,9 @@ const projectsSlice = createSlice({
         currentProject.gridRows -= 1;
       }
     },
+    updateCurrent(state, action: PayloadAction<string | number>) {
+      state.currentProjectId = action.payload;
+    },
   },
   extraReducers(builder) {
     builder.addCase(setAuth, (state, { payload }) => {
@@ -380,7 +383,7 @@ const projectsSlice = createSlice({
 export const selectProject = (state: RootState) => {
   const { data, currentProjectId } = state.projects;
   const project = data.find(({ id }) => id === currentProjectId);
-  return project || projectsStore.data[0];
+  return project || initialProjects.data[0];
 };
 
 export const {
@@ -396,6 +399,7 @@ export const {
   decreseColumn,
   increseRow,
   decreseRow,
+  updateCurrent,
 } = projectsSlice.actions;
 
 export const projectsReducer = projectsSlice.reducer;
