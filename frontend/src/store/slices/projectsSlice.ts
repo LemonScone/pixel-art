@@ -308,6 +308,21 @@ const projectsSlice = createSlice({
     reset() {
       return initialState;
     },
+    resetFrame(state) {
+      const { data: project, currentFrameId } = state;
+      const { gridColumns, gridRows } = project;
+
+      const currentFrame = project.frames.find(
+        (frame) => frame.id === currentFrameId
+      );
+
+      if (currentFrame) {
+        currentFrame.grid = Array.from(
+          { length: gridColumns * gridRows },
+          () => ""
+        );
+      }
+    },
   },
   extraReducers(builder) {
     builder.addCase(setAuth, (state, { payload }) => {
@@ -351,6 +366,7 @@ export const {
   decreseRow,
   changeProject,
   reset,
+  resetFrame,
 } = projectsSlice.actions;
 
 export const projectsReducer = projectsSlice.reducer;
