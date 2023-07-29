@@ -118,6 +118,7 @@ const removeProjectFromStorage = (removeId: string) => {
 };
 
 export {
+  saveDataToStorage,
   getDataFromStorage,
   saveProjectToStorage,
   updateProjectFromStorage,

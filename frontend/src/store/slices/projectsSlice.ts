@@ -313,7 +313,7 @@ const projectsSlice = createSlice({
     builder.addMatcher(
       projectsApi.endpoints.fetchProject.matchFulfilled,
       (state, { payload }) => {
-        const project = payload ?? initialProject;
+        const project = payload ?? initialProject.data;
         state.data = project;
         state.currentFrameId = project.frames[0].id;
       }
