@@ -305,6 +305,9 @@ const projectsSlice = createSlice({
       state.currentProjectId = action.payload.id;
       state.currentFrameId = action.payload.frames[0].id;
     },
+    reset() {
+      return initialState;
+    },
   },
   extraReducers(builder) {
     builder.addCase(setAuth, (state, { payload }) => {
@@ -347,6 +350,7 @@ export const {
   increseRow,
   decreseRow,
   changeProject,
+  reset,
 } = projectsSlice.actions;
 
 export const projectsReducer = projectsSlice.reducer;

@@ -192,7 +192,7 @@ export class ProjectsService {
   async createProjects(
     userId: string,
     createProjectDto: CreateProjectDto[],
-  ): Promise<Project> {
+  ): Promise<void> {
     for (const project of createProjectDto) {
       const { cellSize, gridColumns, gridRows, title, pallete, frames } =
         project;
@@ -251,7 +251,6 @@ export class ProjectsService {
         }
 
         await this.dbService.commit(conn);
-        return await this.getProjectById(projectId);
       } catch (error) {
         await this.dbService.rollback(conn);
         throw new HttpException(

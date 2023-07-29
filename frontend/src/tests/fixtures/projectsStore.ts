@@ -1,5 +1,6 @@
 import { INITIAL_COLOR_PALLETE, INITIAL_TOOL_OPTIONS } from "../../constants";
 import { ToolOption } from "../../types/Tool";
+import { randomStr } from "../../utils/random";
 import grid from "./grid";
 const initialGrid = JSON.parse(grid);
 const frame = {
@@ -88,5 +89,35 @@ const initialProject = {
   options: INITIAL_TOOL_OPTIONS,
 };
 
-export { exampleState, initialProject };
+const getNewProject = () => {
+  const id = randomStr();
+
+  return {
+    data: {
+      id,
+      animate: false,
+      cellSize: 10,
+      gridColumns: 16,
+      gridRows: 16,
+      pallete: INITIAL_COLOR_PALLETE,
+      title: "",
+      description: "",
+      isPublished: false,
+      frames: [
+        {
+          id: 0,
+          projectId: id,
+          grid: Array.from({ length: 16 * 16 }, () => ""),
+          animateInterval: 25,
+        },
+      ],
+    },
+    currentProjectId: "initial",
+    currentFrameId: 0,
+    selectedTool: "pen" as keyof ToolOption,
+    options: INITIAL_TOOL_OPTIONS,
+  };
+};
+
+export { exampleState, initialProject, getNewProject };
 export default projectsStore;
