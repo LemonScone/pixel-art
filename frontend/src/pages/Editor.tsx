@@ -67,7 +67,7 @@ const Editor = () => {
           </div>
         </div>
       </div>
-      <div className="order-1 mb-4 flex flex-col gap-6 divide-y divide-gray-700 rounded-b bg-neutral-900 md:order-2">
+      <div className="order-1 mb-4 flex flex-col gap-2 divide-y divide-gray-700 rounded-b bg-neutral-900 md:order-2">
         <div className="flex flex-col gap-2 p-4">
           <NewProject />
           <div className="flex grow justify-center gap-2">
