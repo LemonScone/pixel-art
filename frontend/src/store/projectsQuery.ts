@@ -4,6 +4,7 @@ import {
   FetchBaseQueryArgs,
 } from "@reduxjs/toolkit/dist/query/fetchBaseQuery";
 import {
+  getCurrentProjectFromStorage,
   getDataFromStorage,
   removeProjectFromStorage,
   saveProjectToStorage,
@@ -15,7 +16,7 @@ import httpMethod from "../constants/httpMethod";
 import { pause } from "../utils/pause";
 import { randomStr } from "../utils/random";
 
-import { RootState, updateCurrent } from ".";
+import { RootState } from ".";
 
 const projectsQuery = ({ baseUrl, prepareHeaders }: FetchBaseQueryArgs) => {
   const baseQuery = fetchBaseQuery({ baseUrl, prepareHeaders });
@@ -35,13 +36,17 @@ const getDataFromLocalStorage = async (
 ) => {
   switch (method) {
     case httpMethod.GET: {
-      const localStorageData = getDataFromStorage();
-      await pause();
-      if (localStorageData.stored.length) {
-        api.dispatch(updateCurrent(localStorageData.currentProjectId));
-        return { data: localStorageData.stored };
+      if (api.endpoint === "fetchProjects") {
+        const localStorageData = getDataFromStorage();
+        await pause();
+        if (localStorageData.stored.length) {
+          return { data: localStorageData.stored };
+        }
+        return { data: [] };
+      } else {
+        const currentProject = getCurrentProjectFromStorage();
+        return { data: currentProject };
       }
-      return { data: [] };
     }
     case httpMethod.POST: {
       const { id, ...rest } = body;
