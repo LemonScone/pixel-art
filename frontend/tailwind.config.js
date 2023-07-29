@@ -12,6 +12,7 @@ export default {
         "primary-color-500": "#bff49d",
         "primary-color-600": "#aff285",
         "input-color": "#2c2c2c",
+        "input-color-hover": "#414141",
       },
       keyframes: {
         "toast-in-right": {
