@@ -78,6 +78,22 @@ export class ProjectsController {
     );
   }
 
+  @Post('migration')
+  @ApiOperation({
+    summary: '여러 개의 project 생성',
+    description: '신규 project를 여러 개 생성합니다.',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: '성공적으로 프로젝트를 생성했습니다.',
+  })
+  createProjects(
+    @Req() req,
+    @Body() body: { projects: CreateProjectDto[] },
+  ): Promise<Project> {
+    return this.projectsService.createProjects(req.user.userId, body.projects);
+  }
+
   @Patch(':id')
   @ApiOperation({
     summary: '프로젝트 수정',

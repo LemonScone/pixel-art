@@ -189,6 +189,79 @@ export class ProjectsService {
     }
   }
 
+  async createProjects(
+    userId: string,
+    createProjectDto: CreateProjectDto[],
+  ): Promise<Project> {
+    for (const project of createProjectDto) {
+      const { cellSize, gridColumns, gridRows, title, pallete, frames } =
+        project;
+
+      const conn = await this.dbService.beginTransaction();
+      try {
+        const query_project = `INSERT INTO PROJECT
+                            (
+                               userId
+                            ,  animate
+                            ,  cellSize
+                            ,  gridColumns
+                            ,  gridRows
+                            ,  title
+                            ,  pallete
+                            ,  isPublished
+                            )
+                            VALUES (
+                              '${userId}'
+                            , ${frames.length > 1}
+                            , ${cellSize}
+                            , ${gridColumns}
+                            , ${gridRows}
+                            , '${title}'
+                            , '${JSON.stringify(pallete)}'
+                            , false
+                            );
+      `;
+
+        await conn.execute(query_project);
+
+        const [lastInsert] = await conn.execute(
+          'SELECT LAST_INSERT_ID() as id',
+        );
+        const projectId = lastInsert[0]['id'];
+
+        if (frames.length > 0) {
+          const query_frame = `INSERT INTO FRAME
+                            (
+                               projectId
+                            ,  grid
+                            ,  animateInterval
+                            )
+                            VALUES ?;
+                            `;
+
+          const values_frame = [
+            frames.map((obj) => [
+              projectId,
+              JSON.stringify(obj.grid),
+              obj.animateInterval,
+            ]),
+          ];
+
+          await conn.query(query_frame, values_frame);
+        }
+
+        await this.dbService.commit(conn);
+        return await this.getProjectById(projectId);
+      } catch (error) {
+        await this.dbService.rollback(conn);
+        throw new HttpException(
+          { message: error.message, error },
+          error.status,
+        );
+      }
+    }
+  }
+
   async updateProject(
     id: number,
     updateProjectDto: UpdateProjectDto,
