@@ -6,11 +6,11 @@ import { setupStore } from "./store";
 import AppRoutes from "./routes/AppRoutes";
 
 import "./index.css";
-import { initialProjects } from "./tests/fixtures/projectsStore";
+import { initialProject } from "./tests/fixtures/projectsStore";
 import { setupListeners } from "@reduxjs/toolkit/dist/query";
 
 const store = setupStore({
-  projects: initialProjects,
+  projects: initialProject,
 });
 
 setupListeners(store.dispatch);

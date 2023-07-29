@@ -41,9 +41,9 @@ describe("PixelContainer", () => {
   };
 
   it("should render a grid of pixels", () => {
-    const columns =
-      projectsStore.data[projectsStore.currentProjectId].gridColumns;
-    const rows = projectsStore.data[projectsStore.currentProjectId].gridRows;
+    const { project } = projectsStore;
+    const columns = project.gridColumns;
+    const rows = project.gridRows;
     renderPixels({});
 
     const pixels = screen.getAllByLabelText("pixel");
