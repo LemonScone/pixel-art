@@ -1,29 +1,39 @@
 import { Modal } from "./common/Modal";
 
-import { useAppSelector } from "../hooks/useRedux";
 import { useModal } from "../hooks/useModal";
 
 import ProjectsListItem from "./ProjectsListItem";
+import { useLazyFetchProjectsQuery } from "../store";
+import Skeleton from "./common/Skeleton";
 
 const LoadProject = () => {
-  const { data } = useAppSelector((state) => state.projects);
+  const [getProjects, { data, error, isLoading }] = useLazyFetchProjectsQuery();
   const { open, openModal, closeModal } = useModal();
 
   let content;
 
-  if (data.length) {
-    content = data.map((project) => {
-      return <ProjectsListItem key={project.id} project={project} />;
-    });
-  } else {
-    content = <div>No projects found.</div>;
+  if (isLoading) {
+    content = <Skeleton className="h-48 w-48" times={3} />;
+  } else if (error) {
+    content = <div>Error loading projects</div>;
+  } else if (data) {
+    if (data.length) {
+      content = data.map((project) => {
+        return <ProjectsListItem key={project.id} project={project} />;
+      });
+    } else {
+      content = <div>No projects found.</div>;
+    }
   }
 
   return (
     <>
       <button
         className="grow rounded bg-gray-500 px-4 py-2 text-sm text-gray-100"
-        onClick={openModal}
+        onClick={() => {
+          getProjects();
+          openModal();
+        }}
       >
         LOAD
       </button>
