@@ -88,10 +88,10 @@ export class AuthService {
     });
   }
 
-  async signout(refreshTokenId: number) {
+  async signout(refreshTokenId: string) {
     await this.dbService.execute(
       `DELETE FROM TOKEN
-          WHERE id = ${refreshTokenId}`,
+        WHERE id = ${refreshTokenId}`,
     );
   }
 
