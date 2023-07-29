@@ -7,6 +7,7 @@ import {
   Logger,
 } from '@nestjs/common';
 
+@Catch(HttpException)
 export class HttpExceptionFilter implements ExceptionFilter {
   catch(exception: HttpException, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
@@ -14,6 +15,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const request = ctx.getRequest();
 
     Logger.error(exception.message);
+
     const status = exception?.getStatus() ?? HttpStatus.INTERNAL_SERVER_ERROR;
     const res: any = exception.getResponse();
 
