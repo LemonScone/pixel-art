@@ -84,7 +84,7 @@ export class UsersService {
             , content
          FROM TOKEN 
         WHERE userId = '${userId}'
-          AND content = '${refreshToken}`,
+          AND content = '${refreshToken}'`,
     );
 
     // let refreshTokenId = null;
