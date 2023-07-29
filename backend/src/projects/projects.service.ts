@@ -51,6 +51,43 @@ export class ProjectsService {
     return combinedResult;
   }
 
+  async getCurrentProjectByUserId(userId: string) {
+    const query = `SELECT PROJECT.id
+                        , PROJECT.userId
+                        , PROJECT.animate
+                        , PROJECT.cellSize
+                        , PROJECT.gridColumns
+                        , PROJECT.gridRows
+                        , PROJECT.pallete
+                        , COALESCE(PROJECT.title, '') as title
+                        , COALESCE(PROJECT.description, '') as description
+                        , PROJECT.isPublished 
+                    FROM PROJECT
+                   INNER JOIN USER 
+                      ON PROJECT.userId = USER.id
+                     AND USER.current = PROJECT.id
+                   WHERE PROJECT.userId = '${userId}';
+                    `;
+    const [result] = await this.dbService.execute<Project>(query);
+
+    const query_frame = `SELECT A.id AS projectId
+                              , B.id
+                              , B.grid
+                              , B.animateInterval
+                           FROM PROJECT A
+                           JOIN FRAME B
+                             ON A.id = B.projectId
+                          WHERE A.userId = '${userId}'
+                            AND A.id = ${result.id};`;
+
+    const result_frame = await this.dbService.execute<Frame>(query_frame);
+
+    result['frames'] = result_frame;
+    result['isPublished'] = Boolean(result.isPublished);
+
+    return result;
+  }
+
   async getProjectById(id: number): Promise<Project> {
     const query_project = `SELECT id
                                 , userId

@@ -35,6 +35,15 @@ export class ProjectsController {
     return this.projectsService.getProjectByUserId(req.user.userId);
   }
 
+  @Get('/current')
+  @ApiOperation({
+    summary: 'User의 현재 프로젝트 조회',
+    description: 'User에 설정된 현재 프로젝트를 조회합니다.',
+  })
+  getCurrentProjectByUserId(@Req() req) {
+    return this.projectsService.getCurrentProjectByUserId(req.user.userId);
+  }
+
   @Get(':id')
   @ApiOperation({
     summary: '개별 프로젝트 조회',
