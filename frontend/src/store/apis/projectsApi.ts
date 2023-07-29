@@ -1,29 +1,12 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { RootState } from "..";
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { RootState, toast } from "..";
+import { projectsQuery } from "../projectsQuery";
 
-type Frame = {
-  id: number;
-  projectId: number;
-  grid: string[];
-  animateInterval: number;
-};
+import type { Project } from "../../types/Project";
 
-type Project = {
-  id: number;
-  animate: boolean;
-  cellSize: number;
-  gridColumns: number;
-  gridRows: number;
-  pallete: string[];
-  title: string;
-  description: string;
-  isPublished: boolean;
-
-  frames: Frame[];
-};
 const projectsApi = createApi({
   reducerPath: "projectsApi",
-  baseQuery: fetchBaseQuery({
+  baseQuery: projectsQuery({
     baseUrl: "/api",
     prepareHeaders: (headers, { getState }) => {
       const { accessToken } = (getState() as RootState).auth.data;
@@ -34,9 +17,28 @@ const projectsApi = createApi({
       return headers;
     },
   }),
+  tagTypes: ["Projects", "Project"],
   endpoints(builder) {
     return {
+      fetchProject: builder.query<Project, void>({
+        query: () => {
+          return {
+            url: "/projects/current",
+            method: "GET",
+          };
+        },
+      }),
       fetchProjects: builder.query<Project[], void>({
+        providesTags: (result, _error, _projects) =>
+          result
+            ? [
+                ...result.map((project) => ({
+                  type: "Project" as const,
+                  id: project.id,
+                })),
+                "Projects",
+              ]
+            : ["Projects"],
         query: () => {
           return {
             url: "/projects",
@@ -44,9 +46,68 @@ const projectsApi = createApi({
           };
         },
       }),
+      addProject: builder.mutation<Project, Project>({
+        query: (project) => {
+          return {
+            url: "/projects",
+            method: "POST",
+            body: {
+              ...project,
+            },
+          };
+        },
+        invalidatesTags: ["Projects"],
+        async onQueryStarted(_, { dispatch, queryFulfilled }) {
+          await queryFulfilled;
+          dispatch(
+            toast({
+              type: "success",
+              message: "Drawing saved",
+            })
+          );
+        },
+      }),
+      updateProject: builder.mutation<Project, Project>({
+        query: (project) => {
+          return {
+            url: `/projects/${project.id}`,
+            method: "PATCH",
+            body: {
+              ...project,
+            },
+          };
+        },
+      }),
+      removeProject: builder.mutation<Project, Project>({
+        query: (project) => {
+          return {
+            url: `/projects/${project.id}`,
+            method: "DELETE",
+          };
+        },
+        invalidatesTags: (_result, _error, project) => {
+          return [{ type: "Project", id: project.id }];
+        },
+        async onQueryStarted(_, { dispatch, queryFulfilled }) {
+          await queryFulfilled;
+          dispatch(
+            toast({
+              type: "success",
+              message: "Drawing deleted",
+            })
+          );
+        },
+      }),
     };
   },
 });
 
-export const { useFetchProjectsQuery } = projectsApi;
+export const {
+  useFetchProjectQuery,
+  useFetchProjectsQuery,
+  useLazyFetchProjectsQuery,
+  useAddProjectMutation,
+  useUpdateProjectMutation,
+  useRemoveProjectMutation,
+} = projectsApi;
 export { projectsApi };

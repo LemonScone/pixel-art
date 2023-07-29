@@ -6,17 +6,27 @@ import useOutsidePointerUp from "../hooks/useOutsidePointerUp";
 import { getGridBackgroundHoverColor, getTargetIndexes } from "../utils/grid";
 import { getHoverColor } from "../utils/color";
 
-import { applyBucket, applyEraser, applyMove, applyPencil } from "../store";
+import {
+  applyBucket,
+  applyEraser,
+  applyMove,
+  applyPencil,
+  selectFrame,
+} from "../store";
 import { useAppDispatch, useAppSelector } from "../hooks/useRedux";
 
 const PixelContainer = () => {
   const dispatch = useAppDispatch();
-  const { data, currentProjectId, currentFrameId, selectedTool, options } =
-    useAppSelector((state) => state.projects);
+  const {
+    data: project,
+    selectedTool,
+    options,
+  } = useAppSelector((state) => state.projects);
+  const frame = useAppSelector(selectFrame);
 
-  const grid = data[currentProjectId].frames[currentFrameId].grid;
-  const columns = data[currentProjectId].gridColumns;
-  const rows = data[currentProjectId].gridRows;
+  const grid = frame.grid;
+  const columns = project.gridColumns;
+  const rows = project.gridRows;
 
   const toolActiveRef = useRef(false);
   const moveCoordinateRef = useRef({

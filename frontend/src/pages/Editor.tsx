@@ -1,4 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
+import { GRID_SIZE_MAX_VALUE, GRID_SIZE_MIN_VALUE } from "../constants";
 
 import ToolConatiner from "../components/ToolContainer";
 import PixelContainer from "../components/PixelContainer";
@@ -12,33 +14,35 @@ import PixelSize from "../components/PixelSize";
 import Title from "../components/Title";
 import ColorPallete from "../components/ColorPallete";
 import PublishToggleSwitch from "../components/PublishToggleSwitch";
+import Loading from "../components/common/Loading";
 
-import { GRID_SIZE_MAX_VALUE, GRID_SIZE_MIN_VALUE } from "../constants";
-
-import {
-  decreseColumn,
-  decreseRow,
-  increseColumn,
-  increseRow,
-  useFetchProjectsQuery,
-} from "../store";
+import { decreseColumn, decreseRow, increseColumn, increseRow } from "../store";
 import { useAppDispatch, useAppSelector } from "../hooks/useRedux";
+import { useFetchProjectQuery } from "../store";
+
 import useAuth from "../hooks/useAuth";
 
 const Editor = () => {
-  const { accessToken } = useAuth();
-  useFetchProjectsQuery(undefined, {
-    skip: !accessToken,
-  });
-
   const dispatch = useAppDispatch();
+  const { data: project } = useAppSelector((state) => state.projects);
+
+  const { user } = useAuth();
+
+  const { refetch, isFetching } = useFetchProjectQuery();
 
   const [pixelSize, setPixelSize] = useState(1);
   const [publish, setPublish] = useState(false);
 
-  const { data, currentProjectId } = useAppSelector((state) => state.projects);
-  const columns = data[currentProjectId].gridColumns;
-  const rows = data[currentProjectId].gridRows;
+  useEffect(() => {
+    refetch();
+  }, [user, refetch]);
+
+  if (isFetching) {
+    return <Loading />;
+  }
+
+  const columns = project.gridColumns;
+  const rows = project.gridRows;
 
   return (
     <div className="mx-auto flex max-w-7xl flex-col justify-between md:flex-row">
@@ -68,7 +72,7 @@ const Editor = () => {
           <NewProject />
           <div className="flex grow justify-center gap-2">
             <LoadProject />
-            <SaveProject />
+            <SaveProject project={project} />
           </div>
           <ResetProject />
         </div>

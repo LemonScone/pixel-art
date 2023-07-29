@@ -1,7 +1,12 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import {
+  FetchBaseQueryError,
+  createApi,
+  fetchBaseQuery,
+} from "@reduxjs/toolkit/query/react";
 import { RootState, resetAuth, setAuth } from "..";
 import { Auth, SignInCredentials, SignUpParams, User } from "../../types/Auth";
 import { ONE_MINUTE } from "../../constants";
+import { getDataFromStorage, saveDataToStorage } from "../../utils/storage";
 
 type LoginResponse = Omit<Auth, "user"> & User;
 
@@ -22,12 +27,32 @@ const authApi = createApi({
   endpoints(builder) {
     return {
       login: builder.mutation<LoginResponse, SignInCredentials>({
-        query: (credencials) => {
-          return {
+        async queryFn(arg, _api, _extraOptions, baseQuery) {
+          const result = await baseQuery({
             url: "/auth/signin",
             method: "POST",
-            body: credencials,
-          };
+            body: arg,
+          });
+
+          const data = result.data as LoginResponse;
+
+          const localData = getDataFromStorage();
+          if (data?.accessToken && localData) {
+            await baseQuery({
+              headers: {
+                authorization: `Bearer ${data.accessToken}`,
+              },
+              url: "/projects/migration",
+              method: "POST",
+              body: {
+                projects: localData.stored,
+              },
+            });
+            saveDataToStorage({ stored: [], currentProjectId: "" });
+          }
+          return data
+            ? { data }
+            : { error: result.error as FetchBaseQueryError };
         },
         async onQueryStarted(_, { dispatch, queryFulfilled }) {
           try {
@@ -47,7 +72,7 @@ const authApi = createApi({
             };
             setTimeout(refreshToken, expired - ONE_MINUTE);
           } catch (error) {
-            console.log(error);
+            // error catch
           }
         },
       }),
@@ -77,7 +102,7 @@ const authApi = createApi({
             };
             setTimeout(refreshToken, expired - ONE_MINUTE);
           } catch (error) {
-            console.log(error);
+            // error catch
           }
         },
       }),

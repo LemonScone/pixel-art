@@ -18,16 +18,28 @@ import {
   decreseColumn,
   increseRow,
   decreseRow,
+  selectFrame,
+  changeProject,
 } from "./slices/projectsSlice";
+import {
+  notificationsReducer,
+  sendNotification,
+  dismissNotification,
+  toast,
+} from "./slices/notificationSlice";
+
 import type { Middleware, PreloadedState } from "@reduxjs/toolkit";
 import { projectsApi } from "./apis/projectsApi";
 import { authApi } from "./apis/authApi";
+import { usersApi } from "./apis/usersApi";
 
 const rootReducer = combineReducers({
   auth: authReducer,
   projects: projectsReducer,
+  notifications: notificationsReducer,
   [projectsApi.reducerPath]: projectsApi.reducer,
   [authApi.reducerPath]: authApi.reducer,
+  [usersApi.reducerPath]: usersApi.reducer,
 });
 
 const rtkQueryErrorLogger: Middleware = (_) => (next) => (action) => {
@@ -47,7 +59,8 @@ export const setupStore = (preloadedState?: PreloadedState<RootState>) => {
       return getDefaultMiddleware().concat(
         rtkQueryErrorLogger,
         projectsApi.middleware,
-        authApi.middleware
+        authApi.middleware,
+        usersApi.middleware
       );
     },
   });
@@ -55,10 +68,20 @@ export const setupStore = (preloadedState?: PreloadedState<RootState>) => {
 
 export { setAuth, resetAuth };
 export { changeSelectedTool, changePenColor, changePenSize, changeEraserSize };
+export { sendNotification, dismissNotification, toast };
 export { applyPencil, applyEraser, applyBucket, applyMove };
 export { increseColumn, decreseColumn, increseRow, decreseRow };
-export { useFetchProjectsQuery } from "./apis/projectsApi";
+export { changeProject, selectFrame };
+export {
+  useFetchProjectQuery,
+  useFetchProjectsQuery,
+  useLazyFetchProjectsQuery,
+  useAddProjectMutation,
+  useUpdateProjectMutation,
+  useRemoveProjectMutation,
+} from "./apis/projectsApi";
 export { useLoginMutation, useRefreshQuery } from "./apis/authApi";
+export { useUpdateCurrentMutation } from "./apis/usersApi";
 export type RootState = ReturnType<typeof rootReducer>;
 export type AppStore = ReturnType<typeof setupStore>;
 export type AppDispatch = AppStore["dispatch"];
