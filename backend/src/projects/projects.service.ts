@@ -70,20 +70,22 @@ export class ProjectsService {
                     `;
     const [result] = await this.dbService.execute<Project>(query);
 
-    const query_frame = `SELECT A.id AS projectId
-                              , B.id
-                              , B.grid
-                              , B.animateInterval
-                           FROM PROJECT A
-                           JOIN FRAME B
-                             ON A.id = B.projectId
-                          WHERE A.userId = '${userId}'
-                            AND A.id = ${result.id};`;
+    if (result) {
+      const query_frame = `SELECT A.id AS projectId
+                                , B.id
+                                , B.grid
+                                , B.animateInterval
+                            FROM PROJECT A
+                            JOIN FRAME B
+                              ON A.id = B.projectId
+                            WHERE A.userId = '${userId}'
+                              AND A.id = ${result.id};`;
 
-    const result_frame = await this.dbService.execute<Frame>(query_frame);
+      const result_frame = await this.dbService.execute<Frame>(query_frame);
 
-    result['frames'] = result_frame;
-    result['isPublished'] = Boolean(result.isPublished);
+      result['frames'] = result_frame;
+      result['isPublished'] = Boolean(result.isPublished);
+    }
 
     return result;
   }
