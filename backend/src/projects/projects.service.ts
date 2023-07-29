@@ -51,6 +51,45 @@ export class ProjectsService {
     return combinedResult;
   }
 
+  async getCurrentProjectByUserId(userId: string) {
+    const query = `SELECT PROJECT.id
+                        , PROJECT.userId
+                        , PROJECT.animate
+                        , PROJECT.cellSize
+                        , PROJECT.gridColumns
+                        , PROJECT.gridRows
+                        , PROJECT.pallete
+                        , COALESCE(PROJECT.title, '') as title
+                        , COALESCE(PROJECT.description, '') as description
+                        , PROJECT.isPublished 
+                    FROM PROJECT
+                   INNER JOIN USER 
+                      ON PROJECT.userId = USER.id
+                     AND USER.current = PROJECT.id
+                   WHERE PROJECT.userId = '${userId}';
+                    `;
+    const [result] = await this.dbService.execute<Project>(query);
+
+    if (result) {
+      const query_frame = `SELECT A.id AS projectId
+                                , B.id
+                                , B.grid
+                                , B.animateInterval
+                            FROM PROJECT A
+                            JOIN FRAME B
+                              ON A.id = B.projectId
+                            WHERE A.userId = '${userId}'
+                              AND A.id = ${result.id};`;
+
+      const result_frame = await this.dbService.execute<Frame>(query_frame);
+
+      result['frames'] = result_frame;
+      result['isPublished'] = Boolean(result.isPublished);
+    }
+
+    return result;
+  }
+
   async getProjectById(id: number): Promise<Project> {
     const query_project = `SELECT id
                                 , userId
@@ -147,6 +186,79 @@ export class ProjectsService {
     } catch (error) {
       await this.dbService.rollback(conn);
       throw new HttpException({ message: error.message, error }, error.status);
+    }
+  }
+
+  async createProjects(
+    userId: string,
+    createProjectDto: CreateProjectDto[],
+  ): Promise<Project> {
+    for (const project of createProjectDto) {
+      const { cellSize, gridColumns, gridRows, title, pallete, frames } =
+        project;
+
+      const conn = await this.dbService.beginTransaction();
+      try {
+        const query_project = `INSERT INTO PROJECT
+                            (
+                               userId
+                            ,  animate
+                            ,  cellSize
+                            ,  gridColumns
+                            ,  gridRows
+                            ,  title
+                            ,  pallete
+                            ,  isPublished
+                            )
+                            VALUES (
+                              '${userId}'
+                            , ${frames.length > 1}
+                            , ${cellSize}
+                            , ${gridColumns}
+                            , ${gridRows}
+                            , '${title}'
+                            , '${JSON.stringify(pallete)}'
+                            , false
+                            );
+      `;
+
+        await conn.execute(query_project);
+
+        const [lastInsert] = await conn.execute(
+          'SELECT LAST_INSERT_ID() as id',
+        );
+        const projectId = lastInsert[0]['id'];
+
+        if (frames.length > 0) {
+          const query_frame = `INSERT INTO FRAME
+                            (
+                               projectId
+                            ,  grid
+                            ,  animateInterval
+                            )
+                            VALUES ?;
+                            `;
+
+          const values_frame = [
+            frames.map((obj) => [
+              projectId,
+              JSON.stringify(obj.grid),
+              obj.animateInterval,
+            ]),
+          ];
+
+          await conn.query(query_frame, values_frame);
+        }
+
+        await this.dbService.commit(conn);
+        return await this.getProjectById(projectId);
+      } catch (error) {
+        await this.dbService.rollback(conn);
+        throw new HttpException(
+          { message: error.message, error },
+          error.status,
+        );
+      }
     }
   }
 

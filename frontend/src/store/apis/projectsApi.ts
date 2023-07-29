@@ -20,6 +20,14 @@ const projectsApi = createApi({
   tagTypes: ["Projects", "Project"],
   endpoints(builder) {
     return {
+      fetchProject: builder.query<Project, void>({
+        query: () => {
+          return {
+            url: "/projects/current",
+            method: "GET",
+          };
+        },
+      }),
       fetchProjects: builder.query<Project[], void>({
         providesTags: (result, _error, _projects) =>
           result
@@ -95,6 +103,7 @@ const projectsApi = createApi({
 });
 
 export const {
+  useFetchProjectQuery,
   useFetchProjectsQuery,
   useLazyFetchProjectsQuery,
   useAddProjectMutation,

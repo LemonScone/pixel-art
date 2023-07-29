@@ -7,13 +7,16 @@ import {
 import Animation from "./Animation";
 
 import { useModal } from "../hooks/useModal";
+import { changeProject } from "../store";
 import { useRemoveProjectMutation, useUpdateCurrentMutation } from "../store";
+import { useAppDispatch } from "../hooks/useRedux";
 
 type ProjectsListItemProps = {
   project: Project;
 };
 
 const ProjectsListItem = ({ project }: ProjectsListItemProps) => {
+  const dispatch = useAppDispatch();
   const { closeModal } = useModal();
   const [updateCurrent] = useUpdateCurrentMutation();
   const [removeProject] = useRemoveProjectMutation();
@@ -45,6 +48,7 @@ const ProjectsListItem = ({ project }: ProjectsListItemProps) => {
   }
 
   const handleClick = () => {
+    dispatch(changeProject(project));
     updateCurrent(project.id);
     closeModal();
   };
@@ -88,12 +92,12 @@ const ProjectsListItem = ({ project }: ProjectsListItemProps) => {
           </div>
         </div>
         <button
-          className="text-brand-500 absolute right-3 top-3 flex items-center justify-center rounded-full bg-white p-2 hover:cursor-pointer"
+          className="absolute right-3 top-3 flex items-center justify-center rounded-full bg-white p-2 hover:cursor-pointer"
           title="delete"
           onClick={handleDeleteClick}
         >
-          <div className="flex h-full w-full items-center justify-center rounded-full text-xl hover:bg-gray-50">
-            <TrashIcon width="1em" height="1em" className="text-rose-600" />
+          <div className="flex h-full w-full items-center justify-center rounded-full text-xl hover:bg-gray-200">
+            <TrashIcon width="1em" height="1em" className="text-rose-600 " />
           </div>
         </button>
       </div>

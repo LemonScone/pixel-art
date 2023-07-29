@@ -11,18 +11,19 @@ import {
   applyEraser,
   applyMove,
   applyPencil,
-  selectProject,
+  selectFrame,
 } from "../store";
 import { useAppDispatch, useAppSelector } from "../hooks/useRedux";
 
 const PixelContainer = () => {
   const dispatch = useAppDispatch();
-  const { currentFrameId, selectedTool, options } = useAppSelector(
-    (state) => state.projects
-  );
-  const project = useAppSelector(selectProject);
+  const {
+    data: project,
+    selectedTool,
+    options,
+  } = useAppSelector((state) => state.projects);
+  const frame = useAppSelector(selectFrame);
 
-  const frame = project.frames[currentFrameId];
   const grid = frame.grid;
   const columns = project.gridColumns;
   const rows = project.gridRows;

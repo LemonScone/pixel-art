@@ -72,7 +72,7 @@ describe("LoadProject", () => {
       const deleteButtons = await screen.findAllByRole("button", {
         name: /delete/i,
       });
-      expect(deleteButtons).toHaveLength(1);
+      expect(deleteButtons).toHaveLength(3);
     });
   });
 
@@ -84,7 +84,7 @@ describe("LoadProject", () => {
         localStorage.clear();
       });
 
-      const project = projectsStore.data[0];
+      const { data: project } = projectsStore;
 
       saveProjectToStorage(project);
 

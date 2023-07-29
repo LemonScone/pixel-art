@@ -35,6 +35,15 @@ export class ProjectsController {
     return this.projectsService.getProjectByUserId(req.user.userId);
   }
 
+  @Get('/current')
+  @ApiOperation({
+    summary: 'User의 현재 프로젝트 조회',
+    description: 'User에 설정된 현재 프로젝트를 조회합니다.',
+  })
+  getCurrentProjectByUserId(@Req() req) {
+    return this.projectsService.getCurrentProjectByUserId(req.user.userId);
+  }
+
   @Get(':id')
   @ApiOperation({
     summary: '개별 프로젝트 조회',
@@ -67,6 +76,22 @@ export class ProjectsController {
       req.user.userId,
       createProjectDto,
     );
+  }
+
+  @Post('migration')
+  @ApiOperation({
+    summary: '여러 개의 project 생성',
+    description: '신규 project를 여러 개 생성합니다.',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: '성공적으로 프로젝트를 생성했습니다.',
+  })
+  createProjects(
+    @Req() req,
+    @Body() body: { projects: CreateProjectDto[] },
+  ): Promise<Project> {
+    return this.projectsService.createProjects(req.user.userId, body.projects);
   }
 
   @Patch(':id')

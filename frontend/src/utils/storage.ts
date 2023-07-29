@@ -10,11 +10,31 @@ const getDataFromStorage = () => {
   }
 };
 
+const getCurrentProjectFromStorage = () => {
+  try {
+    const data = getDataFromStorage();
+    if (data) {
+      const { stored, currentProjectId } = data;
+      if (stored.length) {
+        const find = (stored as Project[]).find(
+          ({ id }) => id === currentProjectId
+        );
+        return find;
+      } else {
+        return null;
+      }
+    }
+  } catch (e) {
+    return null;
+  }
+};
+
 const updateCurrentProjectIdFromStorage = (currentProjectId: number) => {
   try {
     const dataStored = getDataFromStorage();
     if (dataStored) {
       dataStored.currentProjectId = currentProjectId;
+      saveDataToStorage(dataStored);
     }
   } catch (e) {
     return false;
@@ -40,12 +60,12 @@ const updateProjectFromStorage = (data: Project) => {
     return false;
   }
 };
-const saveProjectToStorage = <T extends { id?: string }>(data: T) => {
+const saveProjectToStorage = <T extends { id?: Project["id"] }>(data: T) => {
   try {
     let dataStored = getDataFromStorage();
     if (dataStored) {
       dataStored.stored.push(data);
-      dataStored.currentProjectId = dataStored.data.id;
+      dataStored.currentProjectId = data.id;
     } else {
       dataStored = {
         stored: [data],
@@ -72,22 +92,25 @@ const saveDataToStorage = <T>(data: T) => {
 const removeProjectFromStorage = (removeId: string) => {
   const dataStored = getDataFromStorage();
   if (dataStored) {
-    let newCurrent = "";
     const stored = dataStored.stored as Project[];
     const idx = stored.findIndex(({ id }) => id.toString() === removeId);
     const rest = stored.filter(({ id }) => id.toString() !== removeId);
 
     const newDataStored = {
       stored: rest,
-      current: "",
+      currentProjectId: "",
     };
 
+    let newCurrent = "";
     if (newDataStored.stored.length === 0) {
       newCurrent = "";
-    } else {
+    } else if (idx > 0) {
       newCurrent = stored[idx - 1].id.toString();
+    } else {
+      newCurrent = newDataStored.stored[0].id.toString();
     }
-    newDataStored.current = newCurrent;
+
+    newDataStored.currentProjectId = newCurrent.toString();
 
     return saveDataToStorage(newDataStored);
   }
@@ -95,9 +118,11 @@ const removeProjectFromStorage = (removeId: string) => {
 };
 
 export {
+  saveDataToStorage,
   getDataFromStorage,
   saveProjectToStorage,
   updateProjectFromStorage,
   updateCurrentProjectIdFromStorage,
   removeProjectFromStorage,
+  getCurrentProjectFromStorage,
 };

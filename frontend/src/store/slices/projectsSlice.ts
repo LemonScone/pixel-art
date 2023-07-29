@@ -8,36 +8,16 @@ import {
   isGridsEqual,
   resizeGrid,
 } from "../../utils/grid";
-import { initialProjects } from "../../tests/fixtures/projectsStore";
+import { initialProject } from "../../tests/fixtures/projectsStore";
 
 import { setAuth } from "./authSlice";
 import { projectsApi } from "../apis/projectsApi";
-import { usersApi } from "../apis/usersApi";
 import { RootState } from "..";
 
-type Frame = {
-  id: number;
-  projectId: number | string;
-  grid: string[];
-  animateInterval: number;
-};
-
-type Project = {
-  id: number | string;
-  animate: boolean;
-  cellSize: number;
-  gridColumns: number;
-  gridRows: number;
-  pallete: string[];
-  title: string;
-  description: string;
-  isPublished: boolean;
-
-  frames: Frame[];
-};
+import type { Project } from "../../types/Project";
 
 export type Projects = {
-  data: Project[];
+  data: Project;
   currentFrameId: number;
   currentProjectId: number | string;
   selectedTool: keyof ToolOption;
@@ -51,7 +31,7 @@ type MoveOptions = {
 };
 
 const initialState: Projects = {
-  data: [],
+  data: initialProject.data,
   currentFrameId: 0,
   currentProjectId: 0,
   selectedTool: "pen",
@@ -65,17 +45,14 @@ const projectsSlice = createSlice({
     applyPencil(state, action: PayloadAction<number>) {
       const color = state.options.pen.color;
       const size = state.options.pen.size;
-      const { data, currentProjectId, currentFrameId } = state;
+      const { data: project, currentFrameId } = state;
 
-      const currentProject = data.find(
-        (project) => project.id === currentProjectId
-      );
-      const currentFrame = currentProject?.frames.find(
+      const currentFrame = project.frames.find(
         (frame) => frame.id === currentFrameId
       );
       const newGrid = currentFrame?.grid.slice();
-      const columns = currentProject?.gridColumns;
-      const rows = currentProject?.gridRows;
+      const columns = project.gridColumns;
+      const rows = project.gridRows;
 
       if (columns && rows) {
         const targetIndexes = getTargetIndexes(
@@ -98,18 +75,15 @@ const projectsSlice = createSlice({
     },
     applyEraser(state, action: PayloadAction<number>) {
       const size = state.options.eraser.size;
-      const { data, currentProjectId, currentFrameId } = state;
+      const { data: project, currentFrameId } = state;
 
-      const currentProject = data.find(
-        (project) => project.id === currentProjectId
-      );
-      const currentFrame = currentProject?.frames.find(
+      const currentFrame = project.frames.find(
         (frame) => frame.id === currentFrameId
       );
 
       const newGrid = currentFrame?.grid.slice();
-      const columns = currentProject?.gridColumns;
-      const rows = currentProject?.gridRows;
+      const columns = project.gridColumns;
+      const rows = project.gridRows;
 
       if (columns && rows) {
         const targetIndexes = getTargetIndexes(
@@ -134,18 +108,15 @@ const projectsSlice = createSlice({
     },
     applyBucket(state, action: PayloadAction<number>) {
       const penColor = state.options.pen.color;
-      const { data, currentProjectId, currentFrameId } = state;
+      const { data: project, currentFrameId } = state;
 
-      const currentProject = data.find(
-        (project) => project.id === currentProjectId
-      );
-      const currentFrame = currentProject?.frames.find(
+      const currentFrame = project.frames.find(
         (frame) => frame.id === currentFrameId
       );
 
       const newGrid = currentFrame?.grid.slice();
-      const columns = currentProject?.gridColumns;
-      const rows = currentProject?.gridRows;
+      const columns = project.gridColumns;
+      const rows = project.gridRows;
 
       if (currentFrame && newGrid && columns && rows) {
         const originColor = currentFrame.grid[action.payload];
@@ -167,17 +138,14 @@ const projectsSlice = createSlice({
       }
     },
     applyMove(state, action: PayloadAction<MoveOptions>) {
-      const { data, currentProjectId, currentFrameId } = state;
+      const { data: project, currentFrameId } = state;
 
-      const currentProject = data.find(
-        (project) => project.id === currentProjectId
-      );
-      const currentFrame = currentProject?.frames.find(
+      const currentFrame = project.frames.find(
         (frame) => frame.id === currentFrameId
       );
 
-      const columns = currentProject?.gridColumns;
-      const rows = currentProject?.gridRows;
+      const columns = project.gridColumns;
+      const rows = project.gridRows;
 
       if (columns && rows && currentFrame) {
         let newGrid = currentFrame.grid;
@@ -249,18 +217,15 @@ const projectsSlice = createSlice({
       state.options.eraser.size = action.payload;
     },
     increseColumn(state) {
-      const { data, currentProjectId, currentFrameId } = state;
+      const { data: project, currentFrameId } = state;
 
-      const currentProject = data.find(
-        (project) => project.id === currentProjectId
-      );
-      const currentFrame = currentProject?.frames.find(
+      const currentFrame = project.frames.find(
         (frame) => frame.id === currentFrameId
       );
 
-      if (currentProject && currentFrame) {
-        const columns = currentProject.gridColumns;
-        const rows = currentProject.gridRows;
+      if (currentFrame) {
+        const columns = project.gridColumns;
+        const rows = project.gridRows;
 
         currentFrame.grid = resizeGrid(
           currentFrame?.grid,
@@ -269,22 +234,19 @@ const projectsSlice = createSlice({
           rows,
           columns + 1
         );
-        currentProject.gridColumns += 1;
+        project.gridColumns += 1;
       }
     },
     decreseColumn(state) {
-      const { data, currentProjectId, currentFrameId } = state;
+      const { data: project, currentFrameId } = state;
 
-      const currentProject = data.find(
-        (project) => project.id === currentProjectId
-      );
-      const currentFrame = currentProject?.frames.find(
+      const currentFrame = project.frames.find(
         (frame) => frame.id === currentFrameId
       );
 
-      if (currentProject && currentFrame) {
-        const columns = currentProject.gridColumns;
-        const rows = currentProject.gridRows;
+      if (currentFrame) {
+        const columns = project.gridColumns;
+        const rows = project.gridRows;
 
         currentFrame.grid = resizeGrid(
           currentFrame?.grid,
@@ -293,22 +255,19 @@ const projectsSlice = createSlice({
           rows,
           columns - 1
         );
-        currentProject.gridColumns -= 1;
+        project.gridColumns -= 1;
       }
     },
     increseRow(state) {
-      const { data, currentProjectId, currentFrameId } = state;
+      const { data: project, currentFrameId } = state;
 
-      const currentProject = data.find(
-        (project) => project.id === currentProjectId
-      );
-      const currentFrame = currentProject?.frames.find(
+      const currentFrame = project.frames.find(
         (frame) => frame.id === currentFrameId
       );
 
-      if (currentProject && currentFrame) {
-        const columns = currentProject.gridColumns;
-        const rows = currentProject.gridRows;
+      if (currentFrame) {
+        const columns = project.gridColumns;
+        const rows = project.gridRows;
 
         currentFrame.grid = resizeGrid(
           currentFrame?.grid,
@@ -317,22 +276,19 @@ const projectsSlice = createSlice({
           rows + 1,
           columns
         );
-        currentProject.gridRows += 1;
+        project.gridRows += 1;
       }
     },
     decreseRow(state) {
-      const { data, currentProjectId, currentFrameId } = state;
+      const { data: project, currentFrameId } = state;
 
-      const currentProject = data.find(
-        (project) => project.id === currentProjectId
-      );
-      const currentFrame = currentProject?.frames.find(
+      const currentFrame = project.frames.find(
         (frame) => frame.id === currentFrameId
       );
 
-      if (currentProject && currentFrame) {
-        const columns = currentProject.gridColumns;
-        const rows = currentProject.gridRows;
+      if (currentFrame) {
+        const columns = project.gridColumns;
+        const rows = project.gridRows;
 
         currentFrame.grid = resizeGrid(
           currentFrame?.grid,
@@ -341,11 +297,13 @@ const projectsSlice = createSlice({
           rows - 1,
           columns
         );
-        currentProject.gridRows -= 1;
+        project.gridRows -= 1;
       }
     },
-    updateCurrent(state, action: PayloadAction<string | number>) {
-      state.currentProjectId = action.payload;
+    changeProject(state, action: PayloadAction<Project>) {
+      state.data = action.payload;
+      state.currentProjectId = action.payload.id;
+      state.currentFrameId = action.payload.frames[0].id;
     },
   },
   extraReducers(builder) {
@@ -353,37 +311,26 @@ const projectsSlice = createSlice({
       state.currentProjectId = payload.user.current;
     });
     builder.addMatcher(
-      projectsApi.endpoints.fetchProjects.matchFulfilled,
+      projectsApi.endpoints.fetchProject.matchFulfilled,
       (state, { payload }) => {
-        if (payload.length) {
-          state.data = payload;
-        }
+        const project = payload ?? initialProject.data;
+        state.data = project;
+        state.currentFrameId = project.frames[0].id;
       }
     );
     builder.addMatcher(
       projectsApi.endpoints.updateProject.matchFulfilled,
       (state, { payload }) => {
-        const idx = state.data.findIndex(
-          ({ id }) => id === state.currentProjectId
-        );
-        if (idx !== -1) {
-          state.data[idx] = payload;
-        }
-      }
-    );
-    builder.addMatcher(
-      usersApi.endpoints.updateCurrent.matchFulfilled,
-      (state, { payload }) => {
-        state.currentProjectId = payload;
+        state.data = payload;
       }
     );
   },
 });
 
-export const selectProject = (state: RootState) => {
-  const { data, currentProjectId } = state.projects;
-  const project = data.find(({ id }) => id === currentProjectId);
-  return project || initialProjects.data[0];
+export const selectFrame = (state: RootState) => {
+  const { data: project, currentFrameId } = state.projects;
+  const frame = project.frames.find(({ id }) => id === currentFrameId);
+  return frame || initialProject.data.frames[0];
 };
 
 export const {
@@ -399,7 +346,7 @@ export const {
   decreseColumn,
   increseRow,
   decreseRow,
-  updateCurrent,
+  changeProject,
 } = projectsSlice.actions;
 
 export const projectsReducer = projectsSlice.reducer;

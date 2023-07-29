@@ -58,9 +58,9 @@ export class UsersService {
   }
 
   async insertUserRefreshToken(userId: number, refreshToken: string) {
-    const hashedRefreshToken = await this.getHashedRefreshToken(refreshToken);
+    // const hashedRefreshToken = await this.getHashedRefreshToken(refreshToken);
     await this.dbService.execute(
-      `INSERT INTO TOKEN (content, userId) VALUES ('${hashedRefreshToken}', '${userId}');`,
+      `INSERT INTO TOKEN (content, userId) VALUES ('${refreshToken}', '${userId}');`,
     );
   }
 
@@ -79,23 +79,24 @@ export class UsersService {
   }
 
   async getRefreshTokenId(userId: string, refreshToken: string) {
-    const tokens = await this.dbService.execute<Token>(
+    const [tokens] = await this.dbService.execute<Token>(
       `SELECT id
             , content
          FROM TOKEN 
-        WHERE userId = '${userId}'`,
+        WHERE userId = '${userId}'
+          AND content = '${refreshToken}'`,
     );
 
-    let refreshTokenId = null;
-    for (const token of tokens) {
-      const storedRefreshToken = token.content;
-      if (await bcrypt.compare(refreshToken, storedRefreshToken)) {
-        refreshTokenId = token.id;
-        break;
-      }
-    }
+    // let refreshTokenId = null;
+    // for (const token of tokens) {
+    //   const storedRefreshToken = token.content;
+    //   if (await bcrypt.compare(refreshToken, storedRefreshToken)) {
+    //     refreshTokenId = token.id;
+    //     break;
+    //   }
+    // }
 
-    return refreshTokenId;
+    return tokens.id;
   }
 
   async updateCurrent(userId: string, current: number) {
