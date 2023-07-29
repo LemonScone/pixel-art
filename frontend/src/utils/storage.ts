@@ -15,6 +15,7 @@ const updateCurrentProjectIdFromStorage = (currentProjectId: number) => {
     const dataStored = getDataFromStorage();
     if (dataStored) {
       dataStored.currentProjectId = currentProjectId;
+      saveDataToStorage(dataStored);
     }
   } catch (e) {
     return false;
