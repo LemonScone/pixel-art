@@ -1,12 +1,12 @@
 import { ChangeEvent, useEffect, useState } from "react";
 import { useInterval } from "../hooks/useInterval";
 import { useAppSelector } from "../hooks/useRedux";
-import { selectProject, useUpdateProjectMutation } from "../store";
+import { useUpdateProjectMutation } from "../store";
 
 import SpinIcon from "./common/icon/SpinIcon";
 
 const Title = () => {
-  const project = useAppSelector(selectProject);
+  const { project } = useAppSelector((state) => state.projects);
 
   const { title: storedTitle } = project;
   const [title, setTitle] = useState("");

@@ -16,25 +16,19 @@ import ColorPallete from "../components/ColorPallete";
 import PublishToggleSwitch from "../components/PublishToggleSwitch";
 import Loading from "../components/common/Loading";
 
-import {
-  decreseColumn,
-  decreseRow,
-  increseColumn,
-  increseRow,
-  selectProject,
-} from "../store";
+import { decreseColumn, decreseRow, increseColumn, increseRow } from "../store";
 import { useAppDispatch, useAppSelector } from "../hooks/useRedux";
-import { useFetchProjectsQuery } from "../store";
+import { useFetchProjectQuery } from "../store";
 
 import useAuth from "../hooks/useAuth";
 
 const Editor = () => {
   const dispatch = useAppDispatch();
-  const project = useAppSelector(selectProject);
+  const { project } = useAppSelector((state) => state.projects);
 
   const { user } = useAuth();
 
-  const { refetch, isLoading } = useFetchProjectsQuery();
+  const { refetch, isLoading } = useFetchProjectQuery();
 
   const [pixelSize, setPixelSize] = useState(1);
   const [publish, setPublish] = useState(false);

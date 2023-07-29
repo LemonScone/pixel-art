@@ -18,8 +18,8 @@ import {
   decreseColumn,
   increseRow,
   decreseRow,
-  selectProject,
-  updateCurrent,
+  selectFrame,
+  changeProject,
 } from "./slices/projectsSlice";
 import {
   notificationsReducer,
@@ -71,9 +71,9 @@ export { changeSelectedTool, changePenColor, changePenSize, changeEraserSize };
 export { sendNotification, dismissNotification, toast };
 export { applyPencil, applyEraser, applyBucket, applyMove };
 export { increseColumn, decreseColumn, increseRow, decreseRow };
-export { updateCurrent };
-export { selectProject };
+export { changeProject, selectFrame };
 export {
+  useFetchProjectQuery,
   useFetchProjectsQuery,
   useLazyFetchProjectsQuery,
   useAddProjectMutation,
