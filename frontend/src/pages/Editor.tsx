@@ -24,11 +24,11 @@ import useAuth from "../hooks/useAuth";
 
 const Editor = () => {
   const dispatch = useAppDispatch();
-  const { project } = useAppSelector((state) => state.projects);
+  const { data: project } = useAppSelector((state) => state.projects);
 
   const { user } = useAuth();
 
-  const { refetch, isLoading } = useFetchProjectQuery();
+  const { refetch, isFetching } = useFetchProjectQuery();
 
   const [pixelSize, setPixelSize] = useState(1);
   const [publish, setPublish] = useState(false);
@@ -37,7 +37,7 @@ const Editor = () => {
     refetch();
   }, [user, refetch]);
 
-  if (isLoading) {
+  if (isFetching) {
     return <Loading />;
   }
 

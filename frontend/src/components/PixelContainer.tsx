@@ -17,9 +17,11 @@ import { useAppDispatch, useAppSelector } from "../hooks/useRedux";
 
 const PixelContainer = () => {
   const dispatch = useAppDispatch();
-  const { project, selectedTool, options } = useAppSelector(
-    (state) => state.projects
-  );
+  const {
+    data: project,
+    selectedTool,
+    options,
+  } = useAppSelector((state) => state.projects);
   const frame = useAppSelector(selectFrame);
 
   const grid = frame.grid;

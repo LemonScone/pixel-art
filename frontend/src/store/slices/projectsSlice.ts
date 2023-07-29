@@ -17,7 +17,7 @@ import { RootState } from "..";
 import type { Project } from "../../types/Project";
 
 export type Projects = {
-  project: Project;
+  data: Project;
   currentFrameId: number;
   currentProjectId: number | string;
   selectedTool: keyof ToolOption;
@@ -31,7 +31,7 @@ type MoveOptions = {
 };
 
 const initialState: Projects = {
-  project: initialProject.project,
+  data: initialProject.data,
   currentFrameId: 0,
   currentProjectId: 0,
   selectedTool: "pen",
@@ -45,7 +45,7 @@ const projectsSlice = createSlice({
     applyPencil(state, action: PayloadAction<number>) {
       const color = state.options.pen.color;
       const size = state.options.pen.size;
-      const { project, currentFrameId } = state;
+      const { data: project, currentFrameId } = state;
 
       const currentFrame = project.frames.find(
         (frame) => frame.id === currentFrameId
@@ -75,7 +75,7 @@ const projectsSlice = createSlice({
     },
     applyEraser(state, action: PayloadAction<number>) {
       const size = state.options.eraser.size;
-      const { project, currentFrameId } = state;
+      const { data: project, currentFrameId } = state;
 
       const currentFrame = project.frames.find(
         (frame) => frame.id === currentFrameId
@@ -108,7 +108,7 @@ const projectsSlice = createSlice({
     },
     applyBucket(state, action: PayloadAction<number>) {
       const penColor = state.options.pen.color;
-      const { project, currentFrameId } = state;
+      const { data: project, currentFrameId } = state;
 
       const currentFrame = project.frames.find(
         (frame) => frame.id === currentFrameId
@@ -138,7 +138,7 @@ const projectsSlice = createSlice({
       }
     },
     applyMove(state, action: PayloadAction<MoveOptions>) {
-      const { project, currentFrameId } = state;
+      const { data: project, currentFrameId } = state;
 
       const currentFrame = project.frames.find(
         (frame) => frame.id === currentFrameId
@@ -217,7 +217,7 @@ const projectsSlice = createSlice({
       state.options.eraser.size = action.payload;
     },
     increseColumn(state) {
-      const { project, currentFrameId } = state;
+      const { data: project, currentFrameId } = state;
 
       const currentFrame = project.frames.find(
         (frame) => frame.id === currentFrameId
@@ -238,7 +238,7 @@ const projectsSlice = createSlice({
       }
     },
     decreseColumn(state) {
-      const { project, currentFrameId } = state;
+      const { data: project, currentFrameId } = state;
 
       const currentFrame = project.frames.find(
         (frame) => frame.id === currentFrameId
@@ -259,7 +259,7 @@ const projectsSlice = createSlice({
       }
     },
     increseRow(state) {
-      const { project, currentFrameId } = state;
+      const { data: project, currentFrameId } = state;
 
       const currentFrame = project.frames.find(
         (frame) => frame.id === currentFrameId
@@ -280,7 +280,7 @@ const projectsSlice = createSlice({
       }
     },
     decreseRow(state) {
-      const { project, currentFrameId } = state;
+      const { data: project, currentFrameId } = state;
 
       const currentFrame = project.frames.find(
         (frame) => frame.id === currentFrameId
@@ -301,7 +301,7 @@ const projectsSlice = createSlice({
       }
     },
     changeProject(state, action: PayloadAction<Project>) {
-      state.project = action.payload;
+      state.data = action.payload;
       state.currentProjectId = action.payload.id;
       state.currentFrameId = action.payload.frames[0].id;
     },
@@ -314,24 +314,23 @@ const projectsSlice = createSlice({
       projectsApi.endpoints.fetchProject.matchFulfilled,
       (state, { payload }) => {
         const project = payload ?? initialProject;
-        console.log({ project });
-        state.project = project;
+        state.data = project;
         state.currentFrameId = project.frames[0].id;
       }
     );
     builder.addMatcher(
       projectsApi.endpoints.updateProject.matchFulfilled,
       (state, { payload }) => {
-        state.project = payload;
+        state.data = payload;
       }
     );
   },
 });
 
 export const selectFrame = (state: RootState) => {
-  const { project, currentFrameId } = state.projects;
+  const { data: project, currentFrameId } = state.projects;
   const frame = project.frames.find(({ id }) => id === currentFrameId);
-  return frame || initialProject.project.frames[0];
+  return frame || initialProject.data.frames[0];
 };
 
 export const {

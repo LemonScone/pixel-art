@@ -10,7 +10,7 @@ const frame = {
 };
 
 const projectsStore = {
-  project: {
+  data: {
     id: 0,
     animate: false,
     cellSize: 10,
@@ -35,7 +35,7 @@ const exampleState = (
   gridRows: number
 ) => {
   return {
-    project: {
+    data: {
       id: 0,
       animate: false,
       cellSize: 10,
@@ -63,7 +63,7 @@ const exampleState = (
 };
 
 const initialProject = {
-  project: {
+  data: {
     id: "initial",
     animate: false,
     cellSize: 10,

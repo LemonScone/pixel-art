@@ -84,7 +84,7 @@ describe("LoadProject", () => {
         localStorage.clear();
       });
 
-      const { project } = projectsStore;
+      const { data: project } = projectsStore;
 
       saveProjectToStorage(project);
 

@@ -9,8 +9,9 @@ import { ToolOption } from "../types/Tool";
 
 import { INITIAL_TOOL_OPTIONS } from "../constants";
 import { renderWithProviders } from "../utils/test-utils";
-import projectsStore, { exampleState } from "../tests/fixtures/projectsStore";
 import { Projects } from "../store/slices/projectsSlice";
+
+import projectsStore, { exampleState } from "../tests/fixtures/projectsStore";
 
 describe("PixelContainer", () => {
   beforeEach(() => {
@@ -41,7 +42,7 @@ describe("PixelContainer", () => {
   };
 
   it("should render a grid of pixels", () => {
-    const { project } = projectsStore;
+    const { data: project } = projectsStore;
     const columns = project.gridColumns;
     const rows = project.gridRows;
     renderPixels({});

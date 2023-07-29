@@ -7,7 +7,7 @@ import { renderWithProviders } from "../utils/test-utils";
 const renderComponent = () => {
   renderWithProviders(
     <MemoryRouter>
-      <ProjectsListItem project={projectsStore.project} />
+      <ProjectsListItem project={projectsStore.data} />
     </MemoryRouter>
   );
 };
@@ -22,7 +22,7 @@ describe("ProjectsListItem", () => {
       });
       expect(deleteButton).toBeInTheDocument();
 
-      const title = screen.getByText(projectsStore.project.title);
+      const title = screen.getByText(projectsStore.data.title);
       expect(title).toBeInTheDocument();
     });
   });
