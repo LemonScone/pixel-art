@@ -27,6 +27,7 @@ import {
   changeFrame,
   changeFrameInterval,
   newFrame,
+  reorderFrame,
 } from "./slices/projectsSlice";
 import {
   notificationsReducer,
@@ -87,6 +88,7 @@ export {
   changeFrame,
   changeFrameInterval,
   newFrame,
+  reorderFrame,
 };
 export {
   useFetchProjectQuery,

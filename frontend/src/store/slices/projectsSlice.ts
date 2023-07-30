@@ -357,6 +357,19 @@ const projectsSlice = createSlice({
       state.data.frames.push(newFrame);
       state.currentFrameId = id;
     },
+    reorderFrame(
+      state,
+      action: PayloadAction<{ sourceIndex: number; destIndex: number }>
+    ) {
+      const { sourceIndex, destIndex } = action.payload;
+      const targetFrame = { ...state.data.frames[sourceIndex] };
+      const frames = [...state.data.frames].map((frame, idx) =>
+        idx === sourceIndex ? { ...frame, id: "x" } : { ...frame }
+      );
+
+      frames.splice(destIndex, 0, targetFrame);
+      state.data.frames = frames.filter(({ id }) => id !== "x");
+    },
   },
   extraReducers(builder) {
     builder.addCase(setAuth, (state, { payload }) => {
@@ -405,6 +418,7 @@ export const {
   removeFrame,
   changeFrame,
   newFrame,
+  reorderFrame,
   changeFrameInterval,
 } = projectsSlice.actions;
 
