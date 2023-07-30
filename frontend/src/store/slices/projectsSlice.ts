@@ -363,6 +363,13 @@ const projectsSlice = createSlice({
     changeFrame(state, action: PayloadAction<number | string>) {
       state.currentFrameId = action.payload;
     },
+    changeFrameInterval(state, action: PayloadAction<number>) {
+      const { currentFrameId } = state;
+      const frame = state.data.frames.find(({ id }) => id === currentFrameId);
+      if (frame) {
+        frame.animateInterval = action.payload;
+      }
+    },
     newFrame(state) {
       const { currentProjectId: projectId, data } = state;
       const { gridColumns, gridRows } = data;
@@ -426,6 +433,7 @@ export const {
   removeFrame,
   changeFrame,
   newFrame,
+  changeFrameInterval,
 } = projectsSlice.actions;
 
 export const projectsReducer = projectsSlice.reducer;

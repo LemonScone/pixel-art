@@ -21,6 +21,7 @@ import { useAppDispatch, useAppSelector } from "../hooks/useRedux";
 import { useFetchProjectQuery } from "../store";
 
 import useAuth from "../hooks/useAuth";
+import FrameList from "../components/FrameList";
 
 const Editor = () => {
   const dispatch = useAppDispatch();
@@ -62,7 +63,7 @@ const Editor = () => {
               <div className="h-24 w-36 bg-black text-white">preview</div>
             </div>
             <div className="flex-grow">
-              <h1 className="text-white">Frames</h1>
+              <FrameList />
             </div>
           </div>
         </div>
