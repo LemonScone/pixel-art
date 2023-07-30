@@ -1,5 +1,5 @@
 export type Frame = {
-  id: number;
+  id: number | string;
   projectId: number | string;
   grid: string[];
   animateInterval: number;
