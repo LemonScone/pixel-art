@@ -218,88 +218,60 @@ const projectsSlice = createSlice({
       state.options.eraser.size = action.payload;
     },
     increseColumn(state) {
-      const { data: project, currentFrameId } = state;
+      const { data: project } = state;
 
-      const currentFrame = project.frames.find(
-        (frame) => frame.id === currentFrameId
-      );
+      const columns = project.gridColumns;
+      const rows = project.gridRows;
 
-      if (currentFrame) {
-        const columns = project.gridColumns;
-        const rows = project.gridRows;
+      const newFrames = project.frames.map((frame) => ({
+        ...frame,
+        grid: resizeGrid(frame.grid, rows, columns, rows, columns + 1),
+      }));
+      state.data.frames = newFrames;
 
-        currentFrame.grid = resizeGrid(
-          currentFrame?.grid,
-          rows,
-          columns,
-          rows,
-          columns + 1
-        );
-        project.gridColumns += 1;
-      }
+      project.gridColumns += 1;
     },
     decreseColumn(state) {
-      const { data: project, currentFrameId } = state;
+      const { data: project } = state;
 
-      const currentFrame = project.frames.find(
-        (frame) => frame.id === currentFrameId
-      );
+      const columns = project.gridColumns;
+      const rows = project.gridRows;
 
-      if (currentFrame) {
-        const columns = project.gridColumns;
-        const rows = project.gridRows;
+      const newFrames = project.frames.map((frame) => ({
+        ...frame,
+        grid: resizeGrid(frame.grid, rows, columns, rows, columns - 1),
+      }));
+      state.data.frames = newFrames;
 
-        currentFrame.grid = resizeGrid(
-          currentFrame?.grid,
-          rows,
-          columns,
-          rows,
-          columns - 1
-        );
-        project.gridColumns -= 1;
-      }
+      project.gridColumns -= 1;
     },
     increseRow(state) {
-      const { data: project, currentFrameId } = state;
+      const { data: project } = state;
 
-      const currentFrame = project.frames.find(
-        (frame) => frame.id === currentFrameId
-      );
+      const columns = project.gridColumns;
+      const rows = project.gridRows;
 
-      if (currentFrame) {
-        const columns = project.gridColumns;
-        const rows = project.gridRows;
+      const newFrames = project.frames.map((frame) => ({
+        ...frame,
+        grid: resizeGrid(frame.grid, rows, columns, rows + 1, columns),
+      }));
+      state.data.frames = newFrames;
 
-        currentFrame.grid = resizeGrid(
-          currentFrame?.grid,
-          rows,
-          columns,
-          rows + 1,
-          columns
-        );
-        project.gridRows += 1;
-      }
+      project.gridRows += 1;
     },
     decreseRow(state) {
-      const { data: project, currentFrameId } = state;
+      const { data: project } = state;
 
-      const currentFrame = project.frames.find(
-        (frame) => frame.id === currentFrameId
-      );
+      const columns = project.gridColumns;
+      const rows = project.gridRows;
 
-      if (currentFrame) {
-        const columns = project.gridColumns;
-        const rows = project.gridRows;
+      const newFrames = project.frames.map((frame) => ({
+        ...frame,
+        grid: resizeGrid(frame.grid, rows, columns, rows - 1, columns),
+      }));
+      state.data.frames = newFrames;
 
-        currentFrame.grid = resizeGrid(
-          currentFrame?.grid,
-          rows,
-          columns,
-          rows - 1,
-          columns
-        );
-        project.gridRows -= 1;
-      }
+      project.gridRows -= 1;
     },
     changeProject(state, action: PayloadAction<Project>) {
       state.data = action.payload;
