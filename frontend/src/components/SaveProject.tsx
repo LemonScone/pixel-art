@@ -10,7 +10,7 @@ const SaveProject = ({ project }: { project: Project }) => {
   };
   return (
     <Button
-      className="flex grow justify-center rounded bg-gray-500 px-4 py-2 text-center text-sm text-gray-100"
+      className="flex grow justify-center rounded bg-input-color px-2 py-1 text-center text-sm text-gray-100 hover:bg-input-color-hover"
       onClick={handleSaveProject}
       loading={results.isLoading}
     >

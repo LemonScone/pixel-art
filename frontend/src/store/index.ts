@@ -22,6 +22,12 @@ import {
   changeProject,
   reset,
   resetFrame,
+  copyFrame,
+  removeFrame,
+  changeFrame,
+  changeFrameInterval,
+  newFrame,
+  reorderFrame,
 } from "./slices/projectsSlice";
 import {
   notificationsReducer,
@@ -73,7 +79,17 @@ export { changeSelectedTool, changePenColor, changePenSize, changeEraserSize };
 export { sendNotification, dismissNotification, toast };
 export { applyPencil, applyEraser, applyBucket, applyMove };
 export { increseColumn, decreseColumn, increseRow, decreseRow };
-export { changeProject, selectFrame, reset, resetFrame };
+export { changeProject, reset };
+export {
+  selectFrame,
+  resetFrame,
+  copyFrame,
+  removeFrame,
+  changeFrame,
+  changeFrameInterval,
+  newFrame,
+  reorderFrame,
+};
 export {
   useFetchProjectQuery,
   useFetchProjectsQuery,

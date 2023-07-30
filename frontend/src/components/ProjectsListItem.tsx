@@ -91,15 +91,21 @@ const ProjectsListItem = ({ project }: ProjectsListItemProps) => {
             </div>
           </div>
         </div>
-        <button
-          className="absolute right-3 top-3 flex items-center justify-center rounded-full bg-white p-2 hover:cursor-pointer"
-          title="delete"
-          onClick={handleDeleteClick}
-        >
-          <div className="flex h-full w-full items-center justify-center rounded-full text-xl hover:bg-gray-200">
-            <TrashIcon width="1em" height="1em" className="text-rose-600 " />
+        <div className="absolute right-3 top-3 ">
+          <div className="rounded bg-neutral-900">
+            <button
+              className="flex items-center justify-center rounded-full p-2 hover:cursor-pointer"
+              title="delete"
+              onClick={handleDeleteClick}
+            >
+              <TrashIcon
+                width="1em"
+                height="1em"
+                className="text-gray-100 hover:text-primary-color"
+              />
+            </button>
           </div>
-        </button>
+        </div>
       </div>
       <div className="my-3 flex items-center justify-between px-1 md:items-start">
         <div className="mb-2">
