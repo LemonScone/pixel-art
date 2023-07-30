@@ -48,10 +48,10 @@ const Editor = () => {
   return (
     <div className="mx-auto flex max-w-7xl flex-col justify-between md:flex-row">
       <div className="order-2 flex grow flex-col justify-between md:order-1">
-        <div className="z-10 flex flex-col items-center md:flex-row">
+        <div className="flex flex-col items-center md:flex-row">
           <ToolConatiner />
           <div className="flex flex-grow flex-col items-center p-4">
-            <div className="h-fit w-72 touch-none select-none sm:w-80 md:w-96 lg:w-[30rem] xl:w-[32rem] 2xl:w-[50rem]">
+            <div className="z-10 h-fit w-72 touch-none select-none sm:w-80 md:w-96 lg:w-[30rem] xl:w-[32rem] 2xl:w-[50rem]">
               <PixelContainer />
             </div>
           </div>
