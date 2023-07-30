@@ -15,10 +15,11 @@ import { projectsApi } from "../apis/projectsApi";
 import { RootState } from "..";
 
 import type { Project } from "../../types/Project";
+import { randomStr } from "../../utils/random";
 
 export type Projects = {
   data: Project;
-  currentFrameId: number;
+  currentFrameId: number | string;
   currentProjectId: number | string;
   selectedTool: keyof ToolOption;
   options: ToolOption;
@@ -323,6 +324,60 @@ const projectsSlice = createSlice({
         );
       }
     },
+    copyFrame(state, action: PayloadAction<number | string>) {
+      const { data: project } = state;
+
+      const currentIndex = project.frames.findIndex(
+        ({ id }) => id === action.payload
+      );
+      const currentFrame = project.frames[currentIndex];
+
+      if (currentFrame) {
+        const id = randomStr();
+        const newFrame = {
+          ...currentFrame,
+          id,
+        };
+        project.frames.splice(currentIndex + 1, 0, newFrame);
+        state.currentFrameId = id;
+      }
+    },
+    removeFrame(state, action: PayloadAction<number | string>) {
+      const { data: project } = state;
+
+      const removeIndex = project.frames.findIndex(
+        ({ id }) => id === action.payload
+      );
+      const nextActive =
+        removeIndex > 0
+          ? project.frames[removeIndex - 1]
+          : project.frames[removeIndex + 1];
+
+      const filteredFrames = project.frames.filter(
+        ({ id }) => id !== action.payload
+      );
+
+      state.data.frames = filteredFrames;
+      state.currentFrameId = nextActive.id;
+    },
+    changeFrame(state, action: PayloadAction<number | string>) {
+      state.currentFrameId = action.payload;
+    },
+    newFrame(state) {
+      const { currentProjectId: projectId, data } = state;
+      const { gridColumns, gridRows } = data;
+
+      const id = randomStr();
+      const newFrame = {
+        id,
+        projectId,
+        grid: Array.from({ length: gridColumns * gridRows }, () => ""),
+        animateInterval: 10,
+      };
+
+      state.data.frames.push(newFrame);
+      state.currentFrameId = id;
+    },
   },
   extraReducers(builder) {
     builder.addCase(setAuth, (state, { payload }) => {
@@ -367,6 +422,10 @@ export const {
   changeProject,
   reset,
   resetFrame,
+  copyFrame,
+  removeFrame,
+  changeFrame,
+  newFrame,
 } = projectsSlice.actions;
 
 export const projectsReducer = projectsSlice.reducer;
