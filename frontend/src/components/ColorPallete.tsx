@@ -23,7 +23,7 @@ const ColorAddButton = ({
     <div
       role="button"
       aria-label="add new color"
-      className={`m-2 flex h-9 w-9 cursor-pointer items-center justify-center rounded text-[rgb(175,242,133)] shadow-[0_0px_2px_1px_rgba(175,242,133)] hover:scale-125`}
+      className={`m-2 flex h-6 w-6 cursor-pointer items-center justify-center rounded text-[rgb(175,242,133)] shadow-[0_0px_2px_1px_rgba(175,242,133)] hover:scale-125`}
       onClick={handleClick}
     >
       ✚
@@ -55,7 +55,7 @@ const ColorPallete = () => {
   };
 
   return (
-    <div className="flex max-w-[260px] flex-wrap" role="pallete">
+    <div className="grid grid-cols-5" role="pallete">
       {colorPallete.map((color) => {
         return <ColorSwatch key={color} color={color} />;
       })}
