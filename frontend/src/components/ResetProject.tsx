@@ -6,7 +6,7 @@ const ResetProject = () => {
 
   return (
     <button
-      className="rounded bg-input-color px-4 py-2 text-sm text-gray-100 hover:bg-input-color-hover"
+      className="rounded bg-input-color px-2 py-1 text-sm text-gray-100 hover:bg-input-color-hover"
       onClick={() => dispatch(resetFrame())}
     >
       RESET
