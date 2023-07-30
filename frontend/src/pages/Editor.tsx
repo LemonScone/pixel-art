@@ -62,7 +62,7 @@ const Editor = () => {
             <div className="p-4">
               <div className="h-24 w-36 bg-black text-white">preview</div>
             </div>
-            <div className="flex max-w-3xl flex-nowrap overflow-x-auto">
+            <div className="flex max-w-[48rem] flex-nowrap overflow-x-auto">
               <FrameList />
             </div>
           </div>
