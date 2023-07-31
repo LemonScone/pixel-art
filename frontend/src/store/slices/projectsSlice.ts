@@ -35,7 +35,7 @@ type MoveOptions = {
 };
 
 const initialState: Projects = {
-  data: initialProject.data,
+  data: initialProject.present.data,
   currentFrameId: 0,
   currentProjectId: 0,
   selectedTool: "pen",
@@ -398,7 +398,7 @@ const projectsSlice = createSlice({
     builder.addMatcher(
       projectsApi.endpoints.fetchProject.matchFulfilled,
       (state, { payload }) => {
-        const project = payload ?? initialProject.data;
+        const project = payload ?? initialProject.present.data;
         state.data = project;
         state.currentFrameId = project.frames[0].id;
       }
@@ -413,9 +413,9 @@ const projectsSlice = createSlice({
 });
 
 export const selectFrame = (state: RootState) => {
-  const { data: project, currentFrameId } = state.projects;
+  const { data: project, currentFrameId } = state.projects.present;
   const frame = project.frames.find(({ id }) => id === currentFrameId);
-  return frame || initialProject.data.frames[0];
+  return frame || initialProject.present.data.frames[0];
 };
 
 export const {

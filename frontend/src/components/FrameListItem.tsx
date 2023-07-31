@@ -31,7 +31,7 @@ const FrameListItem = ({
   canDelete,
 }: FrameListItemProps) => {
   const ref = useRef<HTMLDivElement>(null);
-  const { currentFrameId } = useAppSelector((state) => state.projects);
+  const { currentFrameId } = useAppSelector((state) => state.projects.present);
   const dispatch = useAppDispatch();
   const [animateInterval, setAnimateInterval] = useState(frame.animateInterval);
 

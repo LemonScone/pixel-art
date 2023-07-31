@@ -6,7 +6,7 @@ import { useUpdateProjectMutation } from "../store";
 import SpinIcon from "./common/icon/SpinIcon";
 
 const Title = () => {
-  const { data: project } = useAppSelector((state) => state.projects);
+  const { data: project } = useAppSelector((state) => state.projects.present);
 
   const { title: storedTitle } = project;
   const [title, setTitle] = useState("");

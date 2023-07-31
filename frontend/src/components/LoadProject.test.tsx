@@ -43,7 +43,11 @@ const renderComponent = (loggedIn = true) => {
         auth: {
           data: authData,
         },
-        projects: projectsStore,
+        projects: {
+          present: projectsStore,
+          past: [],
+          future: [],
+        },
       },
     }
   );

@@ -6,7 +6,11 @@ import projectsStore from "../tests/fixtures/projectsStore";
 const renderComponent = () => {
   renderWithProviders(<Bucket />, {
     preloadedState: {
-      projects: { ...projectsStore, selectedTool: "bucket" },
+      projects: {
+        present: { ...projectsStore, selectedTool: "bucket" },
+        past: [],
+        future: [],
+      },
     },
   });
 };

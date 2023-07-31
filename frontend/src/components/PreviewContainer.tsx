@@ -11,7 +11,9 @@ const CELL_SIZE_LG = 6;
 
 const PreviewContainer = () => {
   const dispatch = useDispatch();
-  const storedDuration = useAppSelector((state) => state.projects.duration);
+  const storedDuration = useAppSelector(
+    (state) => state.projects.present.duration
+  );
 
   const [large, setLarge] = useState(false);
   const [play, setPlay] = useState(false);

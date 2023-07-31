@@ -11,7 +11,11 @@ import { vitest } from "vitest";
 
 const renderComponent = (project = projectsStore) => {
   const preloadedState = {
-    projects: { ...projectsStore, project },
+    projects: {
+      present: { ...projectsStore, project },
+      past: [],
+      future: [],
+    },
   };
   renderWithProviders(<FrameList />, {
     preloadedState,
