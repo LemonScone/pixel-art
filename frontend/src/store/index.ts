@@ -3,6 +3,8 @@ import {
   configureStore,
   isRejectedWithValue,
 } from "@reduxjs/toolkit";
+import undoable from "redux-undo";
+
 import { projectsReducer } from "./slices/projectsSlice";
 import { setAuth, resetAuth, authReducer } from "./slices/authSlice";
 import {
@@ -46,7 +48,9 @@ import { usersApi } from "./apis/usersApi";
 
 const rootReducer = combineReducers({
   auth: authReducer,
-  projects: projectsReducer,
+  projects: undoable(projectsReducer, {
+    limit: 10,
+  }),
   notifications: notificationsReducer,
   modal: modalReducer,
   [projectsApi.reducerPath]: projectsApi.reducer,
