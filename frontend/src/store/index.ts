@@ -36,6 +36,7 @@ import {
   dismissNotification,
   toast,
 } from "./slices/notificationSlice";
+import { modalReducer, openModal, closeModal } from "./slices/modalSlice";
 
 import type { Middleware, PreloadedState } from "@reduxjs/toolkit";
 import { projectsApi } from "./apis/projectsApi";
@@ -46,6 +47,7 @@ const rootReducer = combineReducers({
   auth: authReducer,
   projects: projectsReducer,
   notifications: notificationsReducer,
+  modal: modalReducer,
   [projectsApi.reducerPath]: projectsApi.reducer,
   [authApi.reducerPath]: authApi.reducer,
   [usersApi.reducerPath]: usersApi.reducer,
@@ -92,6 +94,7 @@ export {
   newFrame,
   reorderFrame,
 };
+export { openModal, closeModal };
 export {
   useFetchProjectQuery,
   useFetchProjectsQuery,
