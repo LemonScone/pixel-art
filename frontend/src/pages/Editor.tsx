@@ -25,7 +25,7 @@ import PreviewContainer from "../components/PreviewContainer";
 
 const Editor = () => {
   const dispatch = useAppDispatch();
-  const { data: project } = useAppSelector((state) => state.projects);
+  const { data: project } = useAppSelector((state) => state.projects.present);
 
   const { user } = useAuth();
 

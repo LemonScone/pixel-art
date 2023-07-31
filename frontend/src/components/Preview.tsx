@@ -10,8 +10,8 @@ type PreviewProps = {
   cellSize: number;
 };
 const Preview = ({ animate, cellSize }: PreviewProps) => {
-  const data = useAppSelector((state) => state.projects.data);
-  const duration = useAppSelector((state) => state.projects.duration);
+  const data = useAppSelector((state) => state.projects.present.data);
+  const duration = useAppSelector((state) => state.projects.present.duration);
 
   const { gridColumns, gridRows, frames } = data;
 

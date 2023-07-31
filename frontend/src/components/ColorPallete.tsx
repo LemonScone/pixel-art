@@ -37,7 +37,7 @@ const ColorPallete = () => {
     options: {
       pen: { color },
     },
-  } = useAppSelector((state) => state.projects);
+  } = useAppSelector((state) => state.projects.present);
 
   const [colorPallete, setColorPallete] = useState(INITIAL_COLOR_PALLETE);
   const [isColorPickerActive, setIsColorPickerActive] =

@@ -13,7 +13,7 @@ const ColorSwatch = ({ color }: ColorSwatchProps) => {
     options: {
       pen: { color: currentColor },
     },
-  } = useAppSelector((state) => state.projects);
+  } = useAppSelector((state) => state.projects.present);
 
   const handleColorClick = (e: React.MouseEvent<HTMLDivElement>) => {
     const target = e.target as HTMLDivElement;

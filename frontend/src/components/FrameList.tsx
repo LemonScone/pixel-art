@@ -15,7 +15,7 @@ import { useEffect } from "react";
 
 const FrameList = () => {
   const dispatch = useAppDispatch();
-  const { data } = useAppSelector((state) => state.projects);
+  const { data } = useAppSelector((state) => state.projects.present);
 
   const frames = data.frames;
   const columns = data.gridColumns;
