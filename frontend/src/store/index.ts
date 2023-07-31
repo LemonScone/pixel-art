@@ -3,6 +3,8 @@ import {
   configureStore,
   isRejectedWithValue,
 } from "@reduxjs/toolkit";
+import undoable from "redux-undo";
+
 import { projectsReducer } from "./slices/projectsSlice";
 import { setAuth, resetAuth, authReducer } from "./slices/authSlice";
 import {
@@ -20,6 +22,16 @@ import {
   decreseRow,
   selectFrame,
   changeProject,
+  reset,
+  resetFrame,
+  copyFrame,
+  removeFrame,
+  changeFrame,
+  changeFrameInterval,
+  changeFramesInterval,
+  newFrame,
+  reorderFrame,
+  changeDuration,
 } from "./slices/projectsSlice";
 import {
   notificationsReducer,
@@ -27,6 +39,7 @@ import {
   dismissNotification,
   toast,
 } from "./slices/notificationSlice";
+import { modalReducer, openModal, closeModal } from "./slices/modalSlice";
 
 import type { Middleware, PreloadedState } from "@reduxjs/toolkit";
 import { projectsApi } from "./apis/projectsApi";
@@ -35,8 +48,11 @@ import { usersApi } from "./apis/usersApi";
 
 const rootReducer = combineReducers({
   auth: authReducer,
-  projects: projectsReducer,
+  projects: undoable(projectsReducer, {
+    limit: 10,
+  }),
   notifications: notificationsReducer,
+  modal: modalReducer,
   [projectsApi.reducerPath]: projectsApi.reducer,
   [authApi.reducerPath]: authApi.reducer,
   [usersApi.reducerPath]: usersApi.reducer,
@@ -71,7 +87,20 @@ export { changeSelectedTool, changePenColor, changePenSize, changeEraserSize };
 export { sendNotification, dismissNotification, toast };
 export { applyPencil, applyEraser, applyBucket, applyMove };
 export { increseColumn, decreseColumn, increseRow, decreseRow };
-export { changeProject, selectFrame };
+export { changeProject, reset };
+export {
+  selectFrame,
+  resetFrame,
+  copyFrame,
+  removeFrame,
+  changeFrame,
+  changeFrameInterval,
+  changeFramesInterval,
+  newFrame,
+  reorderFrame,
+  changeDuration,
+};
+export { openModal, closeModal };
 export {
   useFetchProjectQuery,
   useFetchProjectsQuery,

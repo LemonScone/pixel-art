@@ -87,10 +87,7 @@ export class ProjectsController {
     status: HttpStatus.OK,
     description: '성공적으로 프로젝트를 생성했습니다.',
   })
-  createProjects(
-    @Req() req,
-    @Body() body: { projects: CreateProjectDto[] },
-  ): Promise<Project> {
+  createProjects(@Req() req, @Body() body: { projects: CreateProjectDto[] }) {
     return this.projectsService.createProjects(req.user.userId, body.projects);
   }
 

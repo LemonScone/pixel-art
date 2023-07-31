@@ -1,5 +1,6 @@
 import { INITIAL_COLOR_PALLETE, INITIAL_TOOL_OPTIONS } from "../../constants";
 import { ToolOption } from "../../types/Tool";
+import { randomStr } from "../../utils/random";
 import grid from "./grid";
 const initialGrid = JSON.parse(grid);
 const frame = {
@@ -27,6 +28,7 @@ const projectsStore = {
   currentFrameId: 0,
   selectedTool: "pen" as keyof ToolOption,
   options: INITIAL_TOOL_OPTIONS,
+  duration: 1,
 };
 
 const exampleState = (
@@ -59,34 +61,71 @@ const exampleState = (
     currentFrameId: 0,
     selectedTool: "pen" as keyof ToolOption,
     options: INITIAL_TOOL_OPTIONS,
+    duration: 1,
   };
 };
 
 const initialProject = {
-  data: {
-    id: "initial",
-    animate: false,
-    cellSize: 10,
-    gridColumns: 16,
-    gridRows: 16,
-    pallete: INITIAL_COLOR_PALLETE,
-    title: "",
-    description: "",
-    isPublished: false,
-    frames: [
-      {
-        id: 0,
-        projectId: "initial",
-        grid: Array.from({ length: 16 * 16 }, () => ""),
-        animateInterval: 25,
-      },
-    ],
+  present: {
+    data: {
+      id: "initial",
+      animate: false,
+      cellSize: 10,
+      gridColumns: 16,
+      gridRows: 16,
+      pallete: INITIAL_COLOR_PALLETE,
+      title: "",
+      description: "",
+      isPublished: false,
+      frames: [
+        {
+          id: 0,
+          projectId: "initial",
+          grid: Array.from({ length: 16 * 16 }, () => ""),
+          animateInterval: 25,
+        },
+      ],
+    },
+    currentProjectId: "initial",
+    currentFrameId: 0,
+    selectedTool: "pen" as keyof ToolOption,
+    options: INITIAL_TOOL_OPTIONS,
+    duration: 1,
   },
-  currentProjectId: "initial",
-  currentFrameId: 0,
-  selectedTool: "pen" as keyof ToolOption,
-  options: INITIAL_TOOL_OPTIONS,
+  past: [],
+  future: [],
 };
 
-export { exampleState, initialProject };
+const getNewProject = () => {
+  const id = randomStr();
+
+  return {
+    data: {
+      id,
+      animate: false,
+      cellSize: 10,
+      gridColumns: 16,
+      gridRows: 16,
+      pallete: INITIAL_COLOR_PALLETE,
+      title: "",
+      description: "",
+      isPublished: false,
+      frames: [
+        {
+          id: 0,
+          projectId: id,
+          grid: Array.from({ length: 16 * 16 }, () => ""),
+          animateInterval: 25,
+        },
+      ],
+    },
+    currentProjectId: "initial",
+    currentFrameId: 0,
+    selectedTool: "pen" as keyof ToolOption,
+    options: INITIAL_TOOL_OPTIONS,
+    duration: 1,
+  };
+};
+
+export { exampleState, initialProject, getNewProject };
 export default projectsStore;

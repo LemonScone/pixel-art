@@ -13,7 +13,7 @@ const ColorSwatch = ({ color }: ColorSwatchProps) => {
     options: {
       pen: { color: currentColor },
     },
-  } = useAppSelector((state) => state.projects);
+  } = useAppSelector((state) => state.projects.present);
 
   const handleColorClick = (e: React.MouseEvent<HTMLDivElement>) => {
     const target = e.target as HTMLDivElement;
@@ -41,7 +41,7 @@ const ColorSwatch = ({ color }: ColorSwatchProps) => {
     <div
       role="button"
       aria-label="color swatch"
-      className={`m-2 h-9 w-9 cursor-pointer rounded bg-transparent hover:scale-125`}
+      className="m-2 h-6 w-6 cursor-pointer rounded bg-transparent hover:scale-125"
       style={{
         boxShadow: `${
           isCurrentColor ? ` ${color} 0px 0px 2px 1px,` : ""

@@ -10,7 +10,11 @@ const renderComponent = () => {
     <Eraser />,
     {
       preloadedState: {
-        projects: { ...projectsStore, selectedTool: "eraser" },
+        projects: {
+          present: { ...projectsStore, selectedTool: "eraser" },
+          past: [],
+          future: [],
+        },
       },
     },
     true

@@ -13,7 +13,7 @@ const Eraser = () => {
     options: {
       eraser: { size },
     },
-  } = useAppSelector((state) => state.projects);
+  } = useAppSelector((state) => state.projects.present);
 
   const [showToolbar, setShowToolbar] = useState(false);
 

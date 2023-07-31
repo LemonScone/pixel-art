@@ -3,7 +3,7 @@ import { changeSelectedTool } from "../store";
 
 const Move = () => {
   const dispatch = useAppDispatch();
-  const { selectedTool } = useAppSelector((state) => state.projects);
+  const { selectedTool } = useAppSelector((state) => state.projects.present);
 
   return (
     <a

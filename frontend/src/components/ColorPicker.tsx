@@ -50,7 +50,7 @@ const ColorPicker = ({
         className="fixed bottom-0 left-0 right-0 top-0"
         onClick={handleClose}
       />
-      <div className="relative z-10">
+      <div className="relative z-20">
         <ChromePicker
           color={selectedColor}
           onChange={handleChangeComplete}

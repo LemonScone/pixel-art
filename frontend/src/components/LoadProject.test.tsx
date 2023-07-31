@@ -16,6 +16,7 @@ import { STORAGE_KEY } from "../constants";
 import projectsStore from "../tests/fixtures/projectsStore";
 import { User } from "../types/Auth";
 import { saveProjectToStorage } from "../utils/storage";
+import GlobalModal from "./GlobalModal";
 
 const renderComponent = (loggedIn = true) => {
   const { password, ...user } = VALID_USER;
@@ -35,13 +36,18 @@ const renderComponent = (loggedIn = true) => {
   renderWithProviders(
     <MemoryRouter>
       <LoadProject />
+      <GlobalModal />
     </MemoryRouter>,
     {
       preloadedState: {
         auth: {
           data: authData,
         },
-        projects: projectsStore,
+        projects: {
+          present: projectsStore,
+          past: [],
+          future: [],
+        },
       },
     }
   );
@@ -55,8 +61,8 @@ describe("LoadProject", () => {
       const button = screen.getByRole("button", { name: /load/i });
       await user.click(button);
 
-      const modalHeader = screen.getByRole("heading", {
-        name: /load project/i,
+      const modalHeader = await screen.findByRole("heading", {
+        name: /load projects/i,
       });
       expect(modalHeader).toBeInTheDocument();
     });

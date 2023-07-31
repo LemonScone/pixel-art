@@ -4,7 +4,6 @@ import { GRID_SIZE_MAX_VALUE, GRID_SIZE_MIN_VALUE } from "../constants";
 
 import ToolConatiner from "../components/ToolContainer";
 import PixelContainer from "../components/PixelContainer";
-import PreviewHandler from "../components/PreviewHandler";
 import NewProject from "../components/NewProject";
 import LoadProject from "../components/LoadProject";
 import SaveProject from "../components/SaveProject";
@@ -21,10 +20,12 @@ import { useAppDispatch, useAppSelector } from "../hooks/useRedux";
 import { useFetchProjectQuery } from "../store";
 
 import useAuth from "../hooks/useAuth";
+import FrameList from "../components/FrameList";
+import PreviewContainer from "../components/PreviewContainer";
 
 const Editor = () => {
   const dispatch = useAppDispatch();
-  const { data: project } = useAppSelector((state) => state.projects);
+  const { data: project } = useAppSelector((state) => state.projects.present);
 
   const { user } = useAuth();
 
@@ -46,28 +47,25 @@ const Editor = () => {
 
   return (
     <div className="mx-auto flex max-w-7xl flex-col justify-between md:flex-row">
-      <div className="order-2 flex flex-grow flex-col justify-between md:order-1">
+      <div className="order-2 flex grow flex-col justify-between md:order-1">
         <div className="flex flex-col items-center md:flex-row">
           <ToolConatiner />
-          <div className="flex flex-grow flex-col items-center p-10">
-            <div className="h-fit w-72 touch-none select-none sm:w-80 md:w-96 lg:w-[32rem] xl:w-[50rem]">
+          <div className="flex flex-grow flex-col items-center p-4">
+            <div className="z-10 h-fit w-72 touch-none select-none sm:w-80 md:w-96 lg:w-[30rem] xl:w-[32rem] 2xl:w-[50rem]">
               <PixelContainer />
             </div>
           </div>
         </div>
-        <div className="ml-4 mr-4 mt-4 flex flex-col pb-4">
-          <PreviewHandler />
-          <div className="flex divide-x divide-gray-700 rounded bg-neutral-900">
-            <div className="p-4">
-              <div className="h-24 w-36 bg-black text-white">preview</div>
-            </div>
-            <div className="flex-grow">
-              <h1 className="text-white">Frames</h1>
+        <div className="-mt-20 grid grid-cols-6">
+          <PreviewContainer />
+          <div className="col-span-5 flex flex-col justify-center bg-neutral-900">
+            <div className="flex max-w-[48rem] flex-nowrap overflow-x-auto ">
+              <FrameList />
             </div>
           </div>
         </div>
       </div>
-      <div className="order-1 mb-4 flex flex-col gap-6 divide-y divide-gray-700 rounded-b bg-neutral-900 md:order-2">
+      <div className="order-1 flex flex-col gap-1 divide-y divide-gray-700 rounded-b bg-neutral-900 md:order-2">
         <div className="flex flex-col gap-2 p-4">
           <NewProject />
           <div className="flex grow justify-center gap-2">

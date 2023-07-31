@@ -6,7 +6,7 @@ import { useUpdateProjectMutation } from "../store";
 import SpinIcon from "./common/icon/SpinIcon";
 
 const Title = () => {
-  const { data: project } = useAppSelector((state) => state.projects);
+  const { data: project } = useAppSelector((state) => state.projects.present);
 
   const { title: storedTitle } = project;
   const [title, setTitle] = useState("");
@@ -33,7 +33,7 @@ const Title = () => {
     <>
       <div className="flex w-full flex-col">
         <div className="flex">
-          <label htmlFor="title" className="w-1/3 text-lg text-gray-100">
+          <label htmlFor="title" className="w-1/3 text-sm text-gray-100">
             Title
           </label>
           <div className="flex w-2/3 flex-col">

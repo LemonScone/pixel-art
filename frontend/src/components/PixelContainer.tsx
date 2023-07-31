@@ -21,7 +21,7 @@ const PixelContainer = () => {
     data: project,
     selectedTool,
     options,
-  } = useAppSelector((state) => state.projects);
+  } = useAppSelector((state) => state.projects.present);
   const frame = useAppSelector(selectFrame);
 
   const grid = frame.grid;
