@@ -6,7 +6,7 @@ type PixelSizeProps = {
 const PixelSize = ({ value, onChangePixelSize }: PixelSizeProps) => {
   return (
     <>
-      <label htmlFor="pixelSize" className="w-1/3 text-lg text-gray-100">
+      <label htmlFor="pixelSize" className="w-1/3 text-sm text-gray-100">
         Pixel size
       </label>
       <div className="flex w-2/3">

@@ -17,12 +17,15 @@ import { RootState } from "..";
 import type { Project } from "../../types/Project";
 import { randomStr } from "../../utils/random";
 
+import getFrameInterval from "../../utils/getFrameInterval";
+
 export type Projects = {
   data: Project;
   currentFrameId: number | string;
   currentProjectId: number | string;
   selectedTool: keyof ToolOption;
   options: ToolOption;
+  duration: number;
 };
 
 type MoveOptions = {
@@ -37,6 +40,7 @@ const initialState: Projects = {
   currentProjectId: 0,
   selectedTool: "pen",
   options: INITIAL_TOOL_OPTIONS,
+  duration: 1,
 };
 
 const projectsSlice = createSlice({
@@ -342,6 +346,19 @@ const projectsSlice = createSlice({
         frame.animateInterval = action.payload;
       }
     },
+    changeFramesInterval(state) {
+      const { data: project } = state;
+
+      const newFrames = project.frames.map((frame, idx, totalFrames) => ({
+        ...frame,
+        animateInterval: getFrameInterval({
+          currentIndex: idx,
+          totalFrames: totalFrames.length,
+        }),
+      }));
+
+      state.data.frames = newFrames;
+    },
     newFrame(state) {
       const { currentProjectId: projectId, data } = state;
       const { gridColumns, gridRows } = data;
@@ -369,6 +386,9 @@ const projectsSlice = createSlice({
 
       frames.splice(destIndex, 0, targetFrame);
       state.data.frames = frames.filter(({ id }) => id !== "x");
+    },
+    changeDuration(state, action: PayloadAction<number>) {
+      state.duration = action.payload;
     },
   },
   extraReducers(builder) {
@@ -420,6 +440,8 @@ export const {
   newFrame,
   reorderFrame,
   changeFrameInterval,
+  changeFramesInterval,
+  changeDuration,
 } = projectsSlice.actions;
 
 export const projectsReducer = projectsSlice.reducer;

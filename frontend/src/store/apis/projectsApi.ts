@@ -77,6 +77,9 @@ const projectsApi = createApi({
             },
           };
         },
+        invalidatesTags: (_result, _error, project) => {
+          return [{ type: "Project", id: project.id }];
+        },
       }),
       removeProject: builder.mutation<Project, Project>({
         query: (project) => {

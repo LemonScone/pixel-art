@@ -28,6 +28,7 @@ const projectsStore = {
   currentFrameId: 0,
   selectedTool: "pen" as keyof ToolOption,
   options: INITIAL_TOOL_OPTIONS,
+  duration: 1,
 };
 
 const exampleState = (
@@ -60,6 +61,7 @@ const exampleState = (
     currentFrameId: 0,
     selectedTool: "pen" as keyof ToolOption,
     options: INITIAL_TOOL_OPTIONS,
+    duration: 1,
   };
 };
 
@@ -87,6 +89,7 @@ const initialProject = {
   currentFrameId: 0,
   selectedTool: "pen" as keyof ToolOption,
   options: INITIAL_TOOL_OPTIONS,
+  duration: 1,
 };
 
 const getNewProject = () => {
@@ -116,6 +119,7 @@ const getNewProject = () => {
     currentFrameId: 0,
     selectedTool: "pen" as keyof ToolOption,
     options: INITIAL_TOOL_OPTIONS,
+    duration: 1,
   };
 };
 

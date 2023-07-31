@@ -86,7 +86,7 @@ const ProjectsListItem = ({ project }: ProjectsListItemProps) => {
               }
             >
               {animation ? (
-                <Animation boxShadow={animationData} duration={10} />
+                <Animation boxShadow={animationData} duration={1} />
               ) : null}
             </div>
           </div>

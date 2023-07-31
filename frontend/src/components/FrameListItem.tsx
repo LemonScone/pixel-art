@@ -139,7 +139,7 @@ const FrameListItem = ({
         </div>
         <input
           type="number"
-          id="input-group-1"
+          id="interval"
           className="block w-full rounded-lg border border-gray-600 bg-input-color p-0.5 pl-3 text-center text-sm text-white placeholder-gray-400 focus:border-blue-500 focus:ring-blue-500"
           value={animateInterval}
           onChange={handleIntervalChange}

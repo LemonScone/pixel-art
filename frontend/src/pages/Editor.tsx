@@ -4,7 +4,6 @@ import { GRID_SIZE_MAX_VALUE, GRID_SIZE_MIN_VALUE } from "../constants";
 
 import ToolConatiner from "../components/ToolContainer";
 import PixelContainer from "../components/PixelContainer";
-import PreviewHandler from "../components/PreviewHandler";
 import NewProject from "../components/NewProject";
 import LoadProject from "../components/LoadProject";
 import SaveProject from "../components/SaveProject";
@@ -22,6 +21,7 @@ import { useFetchProjectQuery } from "../store";
 
 import useAuth from "../hooks/useAuth";
 import FrameList from "../components/FrameList";
+import PreviewContainer from "../components/PreviewContainer";
 
 const Editor = () => {
   const dispatch = useAppDispatch();
@@ -56,19 +56,16 @@ const Editor = () => {
             </div>
           </div>
         </div>
-        <div className="-mt-4 ml-4 mr-4 flex flex-col pb-4 md:-mt-20">
-          <PreviewHandler />
-          <div className="flex divide-x divide-gray-700 rounded bg-neutral-900 ">
-            <div className="p-4">
-              <div className="h-24 w-36 bg-black text-white">preview</div>
-            </div>
-            <div className="flex max-w-[48rem] flex-nowrap overflow-x-auto">
+        <div className="-mt-20 grid grid-cols-6">
+          <PreviewContainer />
+          <div className="col-span-5 flex flex-col justify-center bg-neutral-900">
+            <div className="flex max-w-[48rem] flex-nowrap overflow-x-auto ">
               <FrameList />
             </div>
           </div>
         </div>
       </div>
-      <div className="order-1 mb-4 flex flex-col gap-1 divide-y divide-gray-700 rounded-b bg-neutral-900 md:order-2">
+      <div className="order-1 flex flex-col gap-1 divide-y divide-gray-700 rounded-b bg-neutral-900 md:order-2">
         <div className="flex flex-col gap-2 p-4">
           <NewProject />
           <div className="flex grow justify-center gap-2">

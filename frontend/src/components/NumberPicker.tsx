@@ -17,7 +17,7 @@ const NumberPicker = ({
 }: NumberPickerProps) => {
   return (
     <>
-      <label htmlFor={name} className="w-1/3 text-lg text-gray-100">
+      <label htmlFor={name} className="w-1/3 text-sm text-gray-100">
         {name}
       </label>
       <div className="relative mt-1 flex w-2/3 flex-row  rounded-lg bg-transparent">
