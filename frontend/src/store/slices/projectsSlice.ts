@@ -17,6 +17,8 @@ import { RootState } from "..";
 import type { Project } from "../../types/Project";
 import { randomStr } from "../../utils/random";
 
+import getFrameInterval from "../../utils/getFrameInterval";
+
 export type Projects = {
   data: Project;
   currentFrameId: number | string;
@@ -342,6 +344,19 @@ const projectsSlice = createSlice({
         frame.animateInterval = action.payload;
       }
     },
+    changeFramesInterval(state) {
+      const { data: project } = state;
+
+      const newFrames = project.frames.map((frame, idx, totalFrames) => ({
+        ...frame,
+        animateInterval: getFrameInterval({
+          currentIndex: idx,
+          totalFrames: totalFrames.length,
+        }),
+      }));
+
+      state.data.frames = newFrames;
+    },
     newFrame(state) {
       const { currentProjectId: projectId, data } = state;
       const { gridColumns, gridRows } = data;
@@ -420,6 +435,7 @@ export const {
   newFrame,
   reorderFrame,
   changeFrameInterval,
+  changeFramesInterval,
 } = projectsSlice.actions;
 
 export const projectsReducer = projectsSlice.reducer;

@@ -26,6 +26,7 @@ import {
   removeFrame,
   changeFrame,
   changeFrameInterval,
+  changeFramesInterval,
   newFrame,
   reorderFrame,
 } from "./slices/projectsSlice";
@@ -87,6 +88,7 @@ export {
   removeFrame,
   changeFrame,
   changeFrameInterval,
+  changeFramesInterval,
   newFrame,
   reorderFrame,
 };
