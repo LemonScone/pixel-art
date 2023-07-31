@@ -36,7 +36,11 @@ describe("PixelContainer", () => {
     }
     renderWithProviders(<PixelContainer />, {
       preloadedState: {
-        projects: preloadedState,
+        projects: {
+          present: preloadedState,
+          past: [],
+          future: [],
+        },
       },
     });
   };

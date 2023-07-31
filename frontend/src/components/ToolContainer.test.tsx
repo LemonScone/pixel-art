@@ -10,7 +10,11 @@ const renderComponent = () => {
     <ToolConatiner />,
     {
       preloadedState: {
-        projects: { ...projectsStore, selectedTool: "pen" },
+        projects: {
+          present: { ...projectsStore, selectedTool: "pen" },
+          past: [],
+          future: [],
+        },
       },
     },
     true

@@ -8,7 +8,11 @@ import projectsStore from "../tests/fixtures/projectsStore";
 const renderComponent = () => {
   renderWithProviders(<ColorPallete />, {
     preloadedState: {
-      projects: { ...projectsStore, selectedTool: "pen" },
+      projects: {
+        present: { ...projectsStore, selectedTool: "pen" },
+        past: [],
+        future: [],
+      },
     },
   });
 };

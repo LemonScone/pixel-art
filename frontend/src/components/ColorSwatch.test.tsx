@@ -11,12 +11,16 @@ const renderComponent = ({ color = "rgb(0, 0, 0)" }) => {
   renderWithProviders(<ColorSwatch color={color} />, {
     preloadedState: {
       projects: {
-        ...projectsStore,
-        selectedTool: "pen",
-        options: {
-          ...projectsStore.options,
-          pen: { color: COLOR_CODE_STRING, size: 1 },
+        present: {
+          ...projectsStore,
+          selectedTool: "pen",
+          options: {
+            ...projectsStore.options,
+            pen: { color: COLOR_CODE_STRING, size: 1 },
+          },
         },
+        past: [],
+        future: [],
       },
     },
   });
