@@ -19,8 +19,6 @@ const Animation = ({
         position: "absolute",
         animation: `x ${duration}s infinite`,
         animationName: keyframeName,
-        left: "-5px",
-        top: "-5px",
       }}
     >
       <style>{animStr}</style>
