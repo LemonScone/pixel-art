@@ -10,7 +10,9 @@ type PreviewProps = {
   cellSize: number;
 };
 const Preview = ({ animate, cellSize }: PreviewProps) => {
-  const { data } = useAppSelector((state) => state.projects);
+  const data = useAppSelector((state) => state.projects.data);
+  const duration = useAppSelector((state) => state.projects.duration);
+
   const { gridColumns, gridRows, frames } = data;
 
   const animation = frames.length > 1 && animate;
@@ -53,7 +55,7 @@ const Preview = ({ animate, cellSize }: PreviewProps) => {
           }
         >
           {animation ? (
-            <Animation boxShadow={animationData} duration={1} />
+            <Animation boxShadow={animationData} duration={duration} />
           ) : null}
         </div>
       </div>

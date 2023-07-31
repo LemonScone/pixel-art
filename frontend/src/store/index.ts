@@ -29,6 +29,7 @@ import {
   changeFramesInterval,
   newFrame,
   reorderFrame,
+  changeDuration,
 } from "./slices/projectsSlice";
 import {
   notificationsReducer,
@@ -93,6 +94,7 @@ export {
   changeFramesInterval,
   newFrame,
   reorderFrame,
+  changeDuration,
 };
 export { openModal, closeModal };
 export {

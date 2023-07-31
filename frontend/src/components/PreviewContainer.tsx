@@ -1,22 +1,42 @@
 import { ClockIcon } from "@heroicons/react/24/outline";
 import Preview from "./Preview";
 import PreviewHandler from "./PreviewHandler";
-import { useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
+import { useAppSelector } from "../hooks/useRedux";
+import { useDispatch } from "react-redux";
+import { changeDuration } from "../store";
 
 const CELL_SIZE_SM = 3;
 const CELL_SIZE_LG = 6;
 
 const PreviewContainer = () => {
+  const dispatch = useDispatch();
+  const storedDuration = useAppSelector((state) => state.projects.duration);
+
   const [large, setLarge] = useState(false);
   const [play, setPlay] = useState(false);
+  const [duration, setDuration] = useState(storedDuration);
+
   const cellSize = large ? CELL_SIZE_LG : CELL_SIZE_SM;
 
   const handleToggleSize = () => {
     setLarge((prevLarge) => !prevLarge);
   };
+
   const handleTogglePlay = () => {
     setPlay((prevPlay) => !prevPlay);
   };
+
+  const handleDurationChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+    if (value.length <= 2) {
+      dispatch(changeDuration(parseInt(e.target.value, 10) || 1));
+    }
+  };
+
+  useEffect(() => {
+    setDuration(storedDuration);
+  }, [storedDuration]);
 
   return (
     <>
@@ -37,7 +57,9 @@ const PreviewContainer = () => {
             <input
               type="number"
               id="duration"
+              value={duration}
               className="block w-full rounded-lg border border-gray-600 bg-input-color p-0.5 pl-3 text-center text-sm text-white placeholder-gray-400 focus:border-blue-500 focus:ring-blue-500"
+              onChange={handleDurationChange}
             />
           </div>
         </div>

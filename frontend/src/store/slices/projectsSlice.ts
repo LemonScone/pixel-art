@@ -25,6 +25,7 @@ export type Projects = {
   currentProjectId: number | string;
   selectedTool: keyof ToolOption;
   options: ToolOption;
+  duration: number;
 };
 
 type MoveOptions = {
@@ -39,6 +40,7 @@ const initialState: Projects = {
   currentProjectId: 0,
   selectedTool: "pen",
   options: INITIAL_TOOL_OPTIONS,
+  duration: 1,
 };
 
 const projectsSlice = createSlice({
@@ -385,6 +387,9 @@ const projectsSlice = createSlice({
       frames.splice(destIndex, 0, targetFrame);
       state.data.frames = frames.filter(({ id }) => id !== "x");
     },
+    changeDuration(state, action: PayloadAction<number>) {
+      state.duration = action.payload;
+    },
   },
   extraReducers(builder) {
     builder.addCase(setAuth, (state, { payload }) => {
@@ -436,6 +441,7 @@ export const {
   reorderFrame,
   changeFrameInterval,
   changeFramesInterval,
+  changeDuration,
 } = projectsSlice.actions;
 
 export const projectsReducer = projectsSlice.reducer;
