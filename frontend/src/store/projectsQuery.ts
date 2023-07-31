@@ -50,7 +50,11 @@ const getDataFromLocalStorage = async (
     }
     case httpMethod.POST: {
       const { id, ...rest } = body;
-      saveProjectToStorage({ id: randomStr(), ...rest });
+      saveProjectToStorage({
+        ...rest,
+        id: randomStr(),
+        animate: rest.frames.length > 1,
+      });
       await pause(500);
       return { data: body };
     }
