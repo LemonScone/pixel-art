@@ -1,4 +1,4 @@
-const modalTypes = ["Preview", "LoadProjects"] as const;
+const modalTypes = ["Preview", "LoadProjects", "Export"] as const;
 type ModalType = (typeof modalTypes)[number];
 
 export type { ModalType };
