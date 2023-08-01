@@ -1,4 +1,4 @@
-import { PayloadAction, createSlice } from "@reduxjs/toolkit";
+import { PayloadAction, createSlice, isAnyOf } from "@reduxjs/toolkit";
 import { ToolOption } from "../../types/Tool";
 import { INITIAL_TOOL_OPTIONS } from "../../constants";
 import {
@@ -395,6 +395,22 @@ const projectsSlice = createSlice({
     builder.addCase(setAuth, (state, { payload }) => {
       state.currentProjectId = payload.user.current;
     });
+    builder.addMatcher(
+      isAnyOf(copyFrame, removeFrame, newFrame, reorderFrame),
+      (state) => {
+        const { data: project } = state;
+
+        const newFrames = project.frames.map((frame, idx, totalFrames) => ({
+          ...frame,
+          animateInterval: getFrameInterval({
+            currentIndex: idx,
+            totalFrames: totalFrames.length,
+          }),
+        }));
+
+        state.data.frames = newFrames;
+      }
+    );
     builder.addMatcher(
       projectsApi.endpoints.fetchProject.matchFulfilled,
       (state, { payload }) => {

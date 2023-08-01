@@ -1,7 +1,7 @@
 import { PlusIcon } from "@heroicons/react/24/outline";
 import { useAppDispatch, useAppSelector } from "../hooks/useRedux";
 
-import { changeFramesInterval, newFrame, reorderFrame } from "../store";
+import { newFrame, reorderFrame } from "../store";
 
 import FrameListItem from "./FrameListItem";
 
@@ -11,7 +11,6 @@ import {
   Droppable,
   DropResult,
 } from "@hello-pangea/dnd";
-import { useEffect } from "react";
 
 const FrameList = () => {
   const dispatch = useAppDispatch();
@@ -20,10 +19,6 @@ const FrameList = () => {
   const frames = data.frames;
   const columns = data.gridColumns;
   const rows = data.gridRows;
-
-  useEffect(() => {
-    dispatch(changeFramesInterval());
-  }, [dispatch]);
 
   const handleDragEnd = (result: DropResult) => {
     const { destination, source } = result;
