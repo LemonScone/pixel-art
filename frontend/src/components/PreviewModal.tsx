@@ -2,19 +2,14 @@ import { useSearchParams } from "react-router-dom";
 import { useAppDispatch } from "../hooks/useRedux";
 import { Modal } from "./common/Modal";
 import { closeModal } from "../store";
+import { Tab } from "./common/Tab";
+
 import Preview from "./Preview";
-import { useState } from "react";
 
 const PreviewModal = () => {
   const dispatch = useAppDispatch();
 
   const [params, setParams] = useSearchParams();
-
-  const [animate, setAnimate] = useState(false);
-
-  const handleToggleAnimate = () => {
-    setAnimate((prevAnimate) => !prevAnimate);
-  };
 
   return (
     <Modal.Frame
@@ -28,36 +23,14 @@ const PreviewModal = () => {
     >
       <Modal.Head>Preview</Modal.Head>
       <Modal.Body>
-        <div>
-          <div className="flex items-center justify-between">
-            <label
-              htmlFor="view-type"
-              className="inline-flex cursor-pointer items-center rounded bg-neutral-900 p-1 text-gray-100"
-            >
-              <input
-                id="view-type"
-                type="checkbox"
-                role="switch"
-                className="peer hidden"
-                onChange={handleToggleAnimate}
-                checked={animate}
-              />
-              <span
-                aria-hidden="true"
-                className="rounded bg-primary-color px-4 py-2 text-sm text-black peer-checked:bg-neutral-900 peer-checked:text-gray-100"
-              >
-                Static
-              </span>
-              <span
-                aria-hidden="true"
-                className="rounded bg-neutral-900 px-4 py-2 text-sm peer-checked:bg-primary-color peer-checked:text-black"
-              >
-                Animation
-              </span>
-            </label>
-          </div>
-          <Preview animate={animate} cellSize={10} />
-        </div>
+        <Tab.Frame>
+          <Tab.TabPane display="Static">
+            <Preview animate={false} cellSize={10} />
+          </Tab.TabPane>
+          <Tab.TabPane display="Animation">
+            <Preview animate={true} cellSize={10} />
+          </Tab.TabPane>
+        </Tab.Frame>
       </Modal.Body>
     </Modal.Frame>
   );
