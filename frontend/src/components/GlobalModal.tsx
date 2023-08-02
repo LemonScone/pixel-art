@@ -1,5 +1,6 @@
 import { useAppSelector } from "../hooks/useRedux";
 import { ModalType } from "../types/Modal";
+import ExportModal from "./ExportModal";
 import LoadProjectsModal from "./LoadProjectsModal";
 import PreviewModal from "./PreviewModal";
 
@@ -16,6 +17,10 @@ const MODAL_COMPONENTS: ModalComponent[] = [
   {
     type: "Preview",
     component: <PreviewModal />,
+  },
+  {
+    type: "Export",
+    component: <ExportModal />,
   },
 ];
 
