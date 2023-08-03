@@ -25,6 +25,7 @@ import PreviewContainer from "../components/PreviewContainer";
 
 const Editor = () => {
   const dispatch = useAppDispatch();
+
   const { data: project } = useAppSelector((state) => state.projects.present);
 
   const { user } = useAuth();
@@ -32,7 +33,6 @@ const Editor = () => {
   const { refetch, isFetching } = useFetchProjectQuery();
 
   const [pixelSize, setPixelSize] = useState(1);
-  const [publish, setPublish] = useState(false);
 
   useEffect(() => {
     refetch();
@@ -106,10 +106,7 @@ const Editor = () => {
           <ColorPallete />
         </div>
         <div className="p-4">
-          <PublishToggleSwitch
-            checked={publish}
-            onToggleSwitch={() => setPublish((prevPublish) => !prevPublish)}
-          />
+          <PublishToggleSwitch />
         </div>
       </div>
     </div>
