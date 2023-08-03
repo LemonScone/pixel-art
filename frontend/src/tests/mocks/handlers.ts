@@ -576,6 +576,10 @@ const handlers = [
       ])
     );
   }),
+
+  rest.patch("/api/projects/0/status", async (_, res, ctx) => {
+    return res(ctx.status(httpStatus.OK));
+  }),
 ];
 
 export { handlers };

@@ -425,6 +425,12 @@ const projectsSlice = createSlice({
         state.data = payload;
       }
     );
+    builder.addMatcher(
+      projectsApi.endpoints.updateProjectStatus.matchFulfilled,
+      (state) => {
+        state.data.isPublished = !state.data.isPublished;
+      }
+    );
   },
 });
 

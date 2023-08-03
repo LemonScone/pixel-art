@@ -101,6 +101,29 @@ const projectsApi = createApi({
           );
         },
       }),
+      updateProjectStatus: builder.mutation<void, Project>({
+        query: (project) => {
+          return {
+            url: `/projects/${project.id}/status`,
+            method: "PATCH",
+            body: {
+              status: !project.isPublished,
+            },
+          };
+        },
+        async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+          await queryFulfilled;
+          const { isPublished } = arg;
+          dispatch(
+            toast({
+              type: "success",
+              message: isPublished
+                ? "The project has been unpublished."
+                : "The project has been published.",
+            })
+          );
+        },
+      }),
     };
   },
 });
@@ -112,5 +135,6 @@ export const {
   useAddProjectMutation,
   useUpdateProjectMutation,
   useRemoveProjectMutation,
+  useUpdateProjectStatusMutation,
 } = projectsApi;
 export { projectsApi };
