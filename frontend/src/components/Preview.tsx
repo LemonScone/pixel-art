@@ -8,8 +8,9 @@ import Animation from "./Animation";
 type PreviewProps = {
   animate: boolean;
   cellSize: number;
+  activeFrameIndex?: number;
 };
-const Preview = ({ animate, cellSize }: PreviewProps) => {
+const Preview = ({ animate, cellSize, activeFrameIndex = 0 }: PreviewProps) => {
   const data = useAppSelector((state) => state.projects.present.data);
   const duration = useAppSelector((state) => state.projects.present.duration);
 
@@ -27,7 +28,7 @@ const Preview = ({ animate, cellSize }: PreviewProps) => {
       cellSize
     );
   } else {
-    const grid = frames[0].grid;
+    const grid = frames[activeFrameIndex].grid;
     cssString = generatePixelDrawCSS(grid, gridColumns, cellSize, "string");
   }
 

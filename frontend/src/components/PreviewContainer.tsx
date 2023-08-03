@@ -14,6 +14,13 @@ const PreviewContainer = () => {
   const storedDuration = useAppSelector(
     (state) => state.projects.present.duration
   );
+  const { frames } = useAppSelector((state) => state.projects.present.data);
+  const currentFrameId = useAppSelector(
+    (state) => state.projects.present.currentFrameId
+  );
+  const activeFrameIndex = frames.findIndex(
+    (frame) => frame.id === currentFrameId
+  );
 
   const [large, setLarge] = useState(false);
   const [play, setPlay] = useState(false);
@@ -51,7 +58,11 @@ const PreviewContainer = () => {
       <div className="col-span-5"></div>
       <div className="bg-neutral-900 p-4">
         <div className="flex h-full grow flex-col justify-between gap-1">
-          <Preview animate={play} cellSize={cellSize} />
+          <Preview
+            animate={play}
+            cellSize={cellSize}
+            activeFrameIndex={activeFrameIndex}
+          />
           <div className="relative py-2">
             <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
               <ClockIcon className="h-3 w-3 text-gray-400" />
