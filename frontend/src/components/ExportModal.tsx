@@ -1,6 +1,6 @@
 import { useSearchParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../hooks/useRedux";
-import { closeModal, toast } from "../store";
+import { toast } from "../store";
 
 import { FileType } from "../types/FileType";
 
@@ -14,7 +14,13 @@ import { Modal } from "./common/Modal";
 import { Tab } from "./common/Tab";
 import { useState } from "react";
 
-const ExportModal = () => {
+const ExportModal = ({
+  open,
+  onClose,
+}: {
+  open: boolean;
+  onClose: () => void;
+}) => {
   const dispatch = useAppDispatch();
   const { data, duration, currentFrameId } = useAppSelector(
     (state) => state.projects.present
@@ -49,11 +55,11 @@ const ExportModal = () => {
 
   return (
     <Modal.Frame
-      open={!!params.get("modal")}
+      open={open}
       onClose={() => {
         params.delete("modal");
         setParams(params);
-        dispatch(closeModal());
+        onClose();
       }}
       size="5xl"
     >
@@ -68,13 +74,15 @@ const ExportModal = () => {
               onChange={handleToggleAnimation}
               className="ml-1 mt-2"
             />
-            <Preview
-              project={data}
-              duration={duration}
-              animate={animate}
-              cellSize={10}
-              activeFrameIndex={activeFrameIndex}
-            />
+            <div className="w-full overflow-auto">
+              <Preview
+                project={data}
+                duration={duration}
+                animate={animate}
+                cellSize={10}
+                activeFrameIndex={activeFrameIndex}
+              />
+            </div>
             <div className="flex gap-1">
               <Button
                 className="rounded bg-neutral-900 p-2"
@@ -110,13 +118,15 @@ const ExportModal = () => {
               onChange={handleToggleAnimation}
               className="ml-1 mt-2"
             />
-            <Preview
-              project={data}
-              duration={duration}
-              animate={animate}
-              cellSize={10}
-              activeFrameIndex={activeFrameIndex}
-            />
+            <div className="w-full overflow-auto">
+              <Preview
+                project={data}
+                duration={duration}
+                animate={animate}
+                cellSize={10}
+                activeFrameIndex={activeFrameIndex}
+              />
+            </div>
             <ExportCSS animate={animate} />
           </Tab.TabPane>
         </Tab.Frame>
