@@ -16,7 +16,6 @@ import { STORAGE_KEY } from "../constants";
 import projectsStore from "../tests/fixtures/projectsStore";
 import { User } from "../types/Auth";
 import { saveProjectToStorage } from "../utils/storage";
-import GlobalModal from "./GlobalModal";
 
 const renderComponent = (loggedIn = true) => {
   const { password, ...user } = VALID_USER;
@@ -36,7 +35,6 @@ const renderComponent = (loggedIn = true) => {
   renderWithProviders(
     <MemoryRouter>
       <LoadProject />
-      <GlobalModal />
     </MemoryRouter>,
     {
       preloadedState: {

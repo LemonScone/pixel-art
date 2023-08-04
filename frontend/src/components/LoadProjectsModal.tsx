@@ -1,15 +1,26 @@
 import { useSearchParams } from "react-router-dom";
-import { useAppDispatch } from "../hooks/useRedux";
 import { Modal } from "./common/Modal";
-import { closeModal, useFetchProjectsQuery } from "../store";
+import { useLazyFetchProjectsQuery } from "../store";
 import Skeleton from "./common/Skeleton";
 import ProjectsListItem from "./ProjectsListItem";
+import { useEffect } from "react";
 
-const LoadProjectsModal = () => {
+const LoadProjectsModal = ({
+  open,
+  onClose,
+}: {
+  open: boolean;
+  onClose: () => void;
+}) => {
   const [params, setParams] = useSearchParams();
-  const dispatch = useAppDispatch();
+  const [fetchProjects, { data, error, isLoading }] =
+    useLazyFetchProjectsQuery();
 
-  const { data, error, isLoading } = useFetchProjectsQuery();
+  useEffect(() => {
+    if (open) {
+      fetchProjects();
+    }
+  }, [open, fetchProjects]);
 
   let content;
 
@@ -29,11 +40,11 @@ const LoadProjectsModal = () => {
 
   return (
     <Modal.Frame
-      open={!!params.get("modal")}
+      open={open}
       onClose={() => {
         params.delete("modal");
         setParams(params);
-        dispatch(closeModal());
+        onClose();
       }}
       size="6xl"
     >
