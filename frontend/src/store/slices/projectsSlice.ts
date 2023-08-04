@@ -427,7 +427,6 @@ const projectsSlice = createSlice({
       projectsApi.endpoints.updateProject.matchFulfilled,
       (state, { payload }) => {
         state.data = payload;
-        state.currentProjectId = payload.id;
       }
     );
     builder.addMatcher(
