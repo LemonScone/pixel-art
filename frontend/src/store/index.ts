@@ -39,7 +39,6 @@ import {
   dismissNotification,
   toast,
 } from "./slices/notificationSlice";
-import { modalReducer, openModal, closeModal } from "./slices/modalSlice";
 
 import type { Middleware, PreloadedState } from "@reduxjs/toolkit";
 import { projectsApi } from "./apis/projectsApi";
@@ -52,7 +51,6 @@ const rootReducer = combineReducers({
     limit: 10,
   }),
   notifications: notificationsReducer,
-  modal: modalReducer,
   [projectsApi.reducerPath]: projectsApi.reducer,
   [authApi.reducerPath]: authApi.reducer,
   [usersApi.reducerPath]: usersApi.reducer,
@@ -100,7 +98,6 @@ export {
   reorderFrame,
   changeDuration,
 };
-export { openModal, closeModal };
 export {
   useFetchProjectQuery,
   useFetchProjectsQuery,
@@ -108,6 +105,8 @@ export {
   useAddProjectMutation,
   useUpdateProjectMutation,
   useRemoveProjectMutation,
+  useUpdateProjectStatusMutation,
+  useFetchArtworksQuery,
 } from "./apis/projectsApi";
 export { useLoginMutation, useRefreshQuery } from "./apis/authApi";
 export { useUpdateCurrentMutation } from "./apis/usersApi";

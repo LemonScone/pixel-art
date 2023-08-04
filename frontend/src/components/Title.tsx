@@ -18,7 +18,9 @@ const Title = () => {
 
   const autoSave = () => {
     if (storedTitle !== title) {
-      updateProject({ ...project, title });
+      if (project.id !== "initial") {
+        updateProject({ ...project, title });
+      }
     }
   };
 

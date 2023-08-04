@@ -25,6 +25,7 @@ import PreviewContainer from "../components/PreviewContainer";
 
 const Editor = () => {
   const dispatch = useAppDispatch();
+
   const { data: project } = useAppSelector((state) => state.projects.present);
 
   const { user } = useAuth();
@@ -32,7 +33,6 @@ const Editor = () => {
   const { refetch, isFetching } = useFetchProjectQuery();
 
   const [pixelSize, setPixelSize] = useState(1);
-  const [publish, setPublish] = useState(false);
 
   useEffect(() => {
     refetch();
@@ -51,21 +51,21 @@ const Editor = () => {
         <div className="flex flex-col items-center md:flex-row">
           <ToolConatiner />
           <div className="flex flex-grow flex-col items-center p-4">
-            <div className="z-10 h-fit w-72 touch-none select-none sm:w-80 md:w-96 lg:w-[30rem] xl:w-[32rem] 2xl:w-[50rem]">
+            <div className="z-10 h-fit w-72 touch-none select-none border-2 border-input-color sm:w-80 md:w-96 lg:w-[30rem] xl:w-[32rem] 2xl:w-[50rem]">
               <PixelContainer />
             </div>
           </div>
         </div>
-        <div className="-mt-20 grid grid-cols-6">
+        <div className="grid grid-cols-8">
           <PreviewContainer />
-          <div className="col-span-5 flex flex-col justify-center bg-neutral-900">
+          <div className="col-span-5 flex flex-col justify-center bg-neutral-900 sm:col-span-6">
             <div className="flex max-w-[48rem] flex-nowrap overflow-x-auto ">
               <FrameList />
             </div>
           </div>
         </div>
       </div>
-      <div className="order-1 flex flex-col gap-1 divide-y divide-gray-700 rounded-b bg-neutral-900 md:order-2">
+      <div className="order-1 flex min-w-[14rem] flex-col gap-1 divide-y divide-gray-700 rounded-b bg-neutral-900 md:order-2">
         <div className="flex flex-col gap-2 p-4">
           <NewProject />
           <div className="flex grow justify-center gap-2">
@@ -106,10 +106,7 @@ const Editor = () => {
           <ColorPallete />
         </div>
         <div className="p-4">
-          <PublishToggleSwitch
-            checked={publish}
-            onToggleSwitch={() => setPublish((prevPublish) => !prevPublish)}
-          />
+          <PublishToggleSwitch />
         </div>
       </div>
     </div>

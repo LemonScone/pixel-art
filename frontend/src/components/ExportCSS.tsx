@@ -62,7 +62,7 @@ const ExportCSS = ({ animate }: { animate: boolean }) => {
 
   return (
     <div className="flex flex-col">
-      <div>
+      <div className="relative">
         <p
           className="h-40 overflow-scroll whitespace-pre rounded bg-neutral-900 p-2"
           dangerouslySetInnerHTML={{
@@ -70,7 +70,7 @@ const ExportCSS = ({ animate }: { animate: boolean }) => {
           }}
         ></p>
         <Button
-          className="absolute bottom-2 right-2 cursor-pointer rounded-full bg-primary-color p-2  active:animate-copy"
+          className="absolute bottom-0.5 right-0.5 cursor-pointer rounded-full bg-primary-color p-2  active:animate-copy"
           onClick={() => handleClickCopy(cssClass)}
         >
           <ClipboardIcon className="h-5 w-5 text-black" />

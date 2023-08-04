@@ -384,7 +384,11 @@ const projectsSlice = createSlice({
         idx === sourceIndex ? { ...frame, id: "x" } : { ...frame }
       );
 
-      frames.splice(destIndex, 0, targetFrame);
+      frames.splice(
+        destIndex > sourceIndex ? destIndex + 1 : destIndex,
+        0,
+        targetFrame
+      );
       state.data.frames = frames.filter(({ id }) => id !== "x");
     },
     changeDuration(state, action: PayloadAction<number>) {
@@ -423,6 +427,29 @@ const projectsSlice = createSlice({
       projectsApi.endpoints.updateProject.matchFulfilled,
       (state, { payload }) => {
         state.data = payload;
+      }
+    );
+    builder.addMatcher(
+      projectsApi.endpoints.updateProjectStatus.matchFulfilled,
+      (state) => {
+        state.data.isPublished = !state.data.isPublished;
+      }
+    );
+    builder.addMatcher(
+      projectsApi.endpoints.addProject.matchFulfilled,
+      (state, { payload }) => {
+        state.data = payload;
+        state.currentProjectId = payload.id;
+        state.currentFrameId = payload.frames[0].id;
+      }
+    );
+    builder.addMatcher(
+      projectsApi.endpoints.removeProject.matchFulfilled,
+      (state, { payload }) => {
+        if (state.data.id.toString() === payload.id.toString()) {
+          state.data = initialProject.present.data;
+          state.currentFrameId = initialProject.present.data.frames[0].id;
+        }
       }
     );
   },
