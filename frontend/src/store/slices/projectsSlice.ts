@@ -384,7 +384,11 @@ const projectsSlice = createSlice({
         idx === sourceIndex ? { ...frame, id: "x" } : { ...frame }
       );
 
-      frames.splice(destIndex, 0, targetFrame);
+      frames.splice(
+        destIndex > sourceIndex ? destIndex + 1 : destIndex,
+        0,
+        targetFrame
+      );
       state.data.frames = frames.filter(({ id }) => id !== "x");
     },
     changeDuration(state, action: PayloadAction<number>) {
