@@ -21,6 +21,10 @@ import { RootState } from ".";
 const projectsQuery = ({ baseUrl, prepareHeaders }: FetchBaseQueryArgs) => {
   const baseQuery = fetchBaseQuery({ baseUrl, prepareHeaders });
   return async (args: FetchArgs, api: BaseQueryApi) => {
+    if (api.endpoint === "fetchArtworks") {
+      return baseQuery(args, api, {});
+    }
+
     const loggedIn = (api.getState() as RootState).auth.data.accessToken;
 
     if (!loggedIn) {

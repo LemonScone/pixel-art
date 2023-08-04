@@ -2,7 +2,7 @@ import { createApi } from "@reduxjs/toolkit/query/react";
 import { RootState, toast } from "..";
 import { projectsQuery } from "../projectsQuery";
 
-import type { Project } from "../../types/Project";
+import type { Artwork, Project } from "../../types/Project";
 
 const projectsApi = createApi({
   reducerPath: "projectsApi",
@@ -124,6 +124,14 @@ const projectsApi = createApi({
           );
         },
       }),
+      fetchArtworks: builder.query<Artwork[], void>({
+        query: () => {
+          return {
+            url: "/artworks",
+            method: "GET",
+          };
+        },
+      }),
     };
   },
 });
@@ -136,5 +144,6 @@ export const {
   useUpdateProjectMutation,
   useRemoveProjectMutation,
   useUpdateProjectStatusMutation,
+  useFetchArtworksQuery,
 } = projectsApi;
 export { projectsApi };
