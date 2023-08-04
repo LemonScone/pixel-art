@@ -69,6 +69,8 @@ const ExportModal = () => {
               className="ml-1 mt-2"
             />
             <Preview
+              project={data}
+              duration={duration}
               animate={animate}
               cellSize={10}
               activeFrameIndex={activeFrameIndex}
@@ -109,6 +111,8 @@ const ExportModal = () => {
               className="ml-1 mt-2"
             />
             <Preview
+              project={data}
+              duration={duration}
               animate={animate}
               cellSize={10}
               activeFrameIndex={activeFrameIndex}

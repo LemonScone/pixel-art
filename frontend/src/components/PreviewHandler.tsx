@@ -26,7 +26,7 @@ const PreviewHandler = ({
   const [params, setParams] = useSearchParams();
 
   return (
-    <div className="mb-4 mt-2 flex w-fit rounded bg-neutral-900">
+    <div className="col-span-2 mb-4 mt-2 flex w-fit rounded bg-neutral-900">
       <div className="flex items-center justify-center p-2">
         <button
           type="button"
