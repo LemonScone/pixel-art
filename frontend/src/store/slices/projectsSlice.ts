@@ -423,12 +423,21 @@ const projectsSlice = createSlice({
       projectsApi.endpoints.updateProject.matchFulfilled,
       (state, { payload }) => {
         state.data = payload;
+        state.currentProjectId = payload.id;
       }
     );
     builder.addMatcher(
       projectsApi.endpoints.updateProjectStatus.matchFulfilled,
       (state) => {
         state.data.isPublished = !state.data.isPublished;
+      }
+    );
+    builder.addMatcher(
+      projectsApi.endpoints.addProject.matchFulfilled,
+      (state, { payload }) => {
+        state.data = payload;
+        state.currentProjectId = payload.id;
+        state.currentFrameId = payload.frames[0].id;
       }
     );
   },
