@@ -21,6 +21,10 @@ import { RootState } from ".";
 const projectsQuery = ({ baseUrl, prepareHeaders }: FetchBaseQueryArgs) => {
   const baseQuery = fetchBaseQuery({ baseUrl, prepareHeaders });
   return async (args: FetchArgs, api: BaseQueryApi) => {
+    if (api.endpoint === "fetchArtworks") {
+      return baseQuery(args, api, {});
+    }
+
     const loggedIn = (api.getState() as RootState).auth.data.accessToken;
 
     if (!loggedIn) {
@@ -50,13 +54,13 @@ const getDataFromLocalStorage = async (
     }
     case httpMethod.POST: {
       const { id, ...rest } = body;
-      saveProjectToStorage({
+      const storedData = saveProjectToStorage({
         ...rest,
         id: randomStr(),
         animate: rest.frames.length > 1,
       });
       await pause(500);
-      return { data: body };
+      return { data: storedData };
     }
     case httpMethod.PATCH: {
       const updatedProject = updateProjectFromStorage(body);
@@ -72,6 +76,7 @@ const getDataFromLocalStorage = async (
       const match = url.match(regexPattern);
       if (match && match[1]) {
         removeProjectFromStorage(match[1]);
+        return { data: { id: match[1] } };
       }
       return { data: "" };
     }

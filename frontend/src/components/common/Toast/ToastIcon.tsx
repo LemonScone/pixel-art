@@ -7,9 +7,9 @@ import {
 
 const ToastIcon = ({ type }: { type: ToastType }) => {
   const icon = {
-    success: <CheckIcon className="h-5 w-5" />,
-    failure: <ExclamationCircleIcon className="h-5 w-5" />,
-    information: <BellIcon className="h-5 w-5" />,
+    success: <CheckIcon className="h-5 w-5 stroke-2" />,
+    failure: <ExclamationCircleIcon className="h-5 w-5 stroke-2" />,
+    information: <BellIcon className="h-5 w-5 stroke-2" />,
   };
 
   const toastIcon = icon[type];

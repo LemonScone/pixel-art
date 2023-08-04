@@ -18,3 +18,5 @@ export type Project = {
 
   frames: Frame[];
 };
+
+export type Artwork = Project & { username: string; createdAt: string };

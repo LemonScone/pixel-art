@@ -74,9 +74,9 @@ const saveProjectToStorage = <T extends { id?: Project["id"] }>(data: T) => {
     }
 
     localStorage.setItem(STORAGE_KEY, JSON.stringify(dataStored));
-    return true;
+    return data;
   } catch (e) {
-    return false;
+    return null;
   }
 };
 

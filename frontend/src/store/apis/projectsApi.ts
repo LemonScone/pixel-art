@@ -2,7 +2,7 @@ import { createApi } from "@reduxjs/toolkit/query/react";
 import { RootState, toast } from "..";
 import { projectsQuery } from "../projectsQuery";
 
-import type { Project } from "../../types/Project";
+import type { Artwork, Project } from "../../types/Project";
 
 const projectsApi = createApi({
   reducerPath: "projectsApi",
@@ -81,7 +81,7 @@ const projectsApi = createApi({
           return [{ type: "Project", id: project.id }];
         },
       }),
-      removeProject: builder.mutation<Project, Project>({
+      removeProject: builder.mutation<{ id: number | string }, Project>({
         query: (project) => {
           return {
             url: `/projects/${project.id}`,
@@ -101,6 +101,48 @@ const projectsApi = createApi({
           );
         },
       }),
+      updateProjectStatus: builder.mutation<void, Project>({
+        query: (project) => {
+          return {
+            url: `/projects/${project.id}/status`,
+            method: "PATCH",
+            body: {
+              status: !project.isPublished,
+            },
+          };
+        },
+        invalidatesTags: ["Projects"],
+        async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+          await queryFulfilled;
+          const { isPublished } = arg;
+          dispatch(
+            toast({
+              type: "success",
+              message: isPublished
+                ? "The project has been unpublished."
+                : "The project has been published.",
+            })
+          );
+        },
+      }),
+      fetchArtworks: builder.query<Artwork[], void>({
+        providesTags: (result, _error, _projects) =>
+          result
+            ? [
+                ...result.map((project) => ({
+                  type: "Project" as const,
+                  id: project.id,
+                })),
+                "Projects",
+              ]
+            : ["Projects"],
+        query: () => {
+          return {
+            url: "/artworks",
+            method: "GET",
+          };
+        },
+      }),
     };
   },
 });
@@ -112,5 +154,7 @@ export const {
   useAddProjectMutation,
   useUpdateProjectMutation,
   useRemoveProjectMutation,
+  useUpdateProjectStatusMutation,
+  useFetchArtworksQuery,
 } = projectsApi;
 export { projectsApi };

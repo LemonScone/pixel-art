@@ -1,7 +1,7 @@
 import { PlusIcon } from "@heroicons/react/24/outline";
 import { useAppDispatch, useAppSelector } from "../hooks/useRedux";
 
-import { changeFramesInterval, newFrame, reorderFrame } from "../store";
+import { newFrame, reorderFrame } from "../store";
 
 import FrameListItem from "./FrameListItem";
 
@@ -11,19 +11,16 @@ import {
   Droppable,
   DropResult,
 } from "@hello-pangea/dnd";
-import { useEffect } from "react";
+import { useState } from "react";
 
 const FrameList = () => {
   const dispatch = useAppDispatch();
+  const [frameUpdated, setFrameUpdated] = useState(false);
   const { data } = useAppSelector((state) => state.projects.present);
 
   const frames = data.frames;
   const columns = data.gridColumns;
   const rows = data.gridRows;
-
-  useEffect(() => {
-    dispatch(changeFramesInterval());
-  }, [dispatch]);
 
   const handleDragEnd = (result: DropResult) => {
     const { destination, source } = result;
@@ -71,21 +68,26 @@ const FrameList = () => {
                       rows={rows}
                       cellSize={2}
                       canDelete={frames.length > 1}
+                      frameUpdated={frameUpdated}
+                      onUpdated={(updated) => setFrameUpdated(updated)}
                     />
                   </div>
                 )}
               </Draggable>
             ))}
+            {provided.placeholder}
             <div className="flex w-4">
               <button
                 className="h-full w-full rounded bg-input-color hover:bg-input-color-hover"
-                onClick={() => dispatch(newFrame())}
+                onClick={() => {
+                  dispatch(newFrame());
+                  setFrameUpdated(true);
+                }}
                 title="new"
               >
                 <PlusIcon />
               </button>
             </div>
-            {provided.placeholder}
           </div>
         )}
       </Droppable>

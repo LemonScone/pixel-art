@@ -11,6 +11,7 @@ export default {
         "primary-color-400": "#c7f5a9",
         "primary-color-500": "#bff49d",
         "primary-color-600": "#aff285",
+        "primary-color-700": "#8cc26a",
         "input-color": "#2c2c2c",
         "input-color-hover": "#414141",
       },
@@ -31,10 +32,19 @@ export default {
             transform: "translateX(0)",
           },
         },
+        copy: {
+          from: {
+            transform: "translate(0, 0) scale(0.9)",
+          },
+          to: {
+            transform: "translate(0, 0) scale(1.12)",
+          },
+        },
       },
       animation: {
         "toast-in-right": "toast-in-right 250ms",
         "toast-in-left": "toast-in-left 250ms",
+        copy: "copy 1s",
       },
     },
   },

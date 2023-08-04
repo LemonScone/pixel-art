@@ -1,4 +1,4 @@
-import { PayloadAction, createSlice } from "@reduxjs/toolkit";
+import { PayloadAction, createSlice, isAnyOf } from "@reduxjs/toolkit";
 import { ToolOption } from "../../types/Tool";
 import { INITIAL_TOOL_OPTIONS } from "../../constants";
 import {
@@ -384,7 +384,11 @@ const projectsSlice = createSlice({
         idx === sourceIndex ? { ...frame, id: "x" } : { ...frame }
       );
 
-      frames.splice(destIndex, 0, targetFrame);
+      frames.splice(
+        destIndex > sourceIndex ? destIndex + 1 : destIndex,
+        0,
+        targetFrame
+      );
       state.data.frames = frames.filter(({ id }) => id !== "x");
     },
     changeDuration(state, action: PayloadAction<number>) {
@@ -395,6 +399,22 @@ const projectsSlice = createSlice({
     builder.addCase(setAuth, (state, { payload }) => {
       state.currentProjectId = payload.user.current;
     });
+    builder.addMatcher(
+      isAnyOf(copyFrame, removeFrame, newFrame, reorderFrame),
+      (state) => {
+        const { data: project } = state;
+
+        const newFrames = project.frames.map((frame, idx, totalFrames) => ({
+          ...frame,
+          animateInterval: getFrameInterval({
+            currentIndex: idx,
+            totalFrames: totalFrames.length,
+          }),
+        }));
+
+        state.data.frames = newFrames;
+      }
+    );
     builder.addMatcher(
       projectsApi.endpoints.fetchProject.matchFulfilled,
       (state, { payload }) => {
@@ -407,6 +427,29 @@ const projectsSlice = createSlice({
       projectsApi.endpoints.updateProject.matchFulfilled,
       (state, { payload }) => {
         state.data = payload;
+      }
+    );
+    builder.addMatcher(
+      projectsApi.endpoints.updateProjectStatus.matchFulfilled,
+      (state) => {
+        state.data.isPublished = !state.data.isPublished;
+      }
+    );
+    builder.addMatcher(
+      projectsApi.endpoints.addProject.matchFulfilled,
+      (state, { payload }) => {
+        state.data = payload;
+        state.currentProjectId = payload.id;
+        state.currentFrameId = payload.frames[0].id;
+      }
+    );
+    builder.addMatcher(
+      projectsApi.endpoints.removeProject.matchFulfilled,
+      (state, { payload }) => {
+        if (state.data.id.toString() === payload.id.toString()) {
+          state.data = initialProject.present.data;
+          state.currentFrameId = initialProject.present.data.frames[0].id;
+        }
       }
     );
   },

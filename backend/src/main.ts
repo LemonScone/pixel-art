@@ -4,6 +4,7 @@ import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './utils/httpExceptionFilter';
 import { ExpressAdapter } from '@nestjs/platform-express';
 import helmet from 'helmet';
+import { urlencoded, json } from 'body-parser';
 
 import * as fs from 'fs';
 import * as express from 'express';
@@ -18,6 +19,9 @@ async function bootstrap() {
   app.setGlobalPrefix('api');
 
   app.use(helmet());
+
+  app.use(json({ limit: '50mb' }));
+  app.use(urlencoded({ limit: '50mb', extended: true }));
 
   app.useGlobalFilters(new HttpExceptionFilter());
 

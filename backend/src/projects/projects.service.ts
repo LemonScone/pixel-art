@@ -322,7 +322,7 @@ export class ProjectsService {
     }
   }
 
-  async deleteProject(id: number): Promise<void> {
+  async deleteProject(id: number): Promise<{ id: number }> {
     const conn = await this.dbService.beginTransaction();
     try {
       const existProjectId = await this.getProjectById(id);
@@ -338,6 +338,8 @@ export class ProjectsService {
       await conn.execute(query_project);
 
       await this.dbService.commit(conn);
+
+      return { id };
     } catch (error) {
       await this.dbService.rollback(conn);
       throw new HttpException({ message: error.message, error }, error.status);

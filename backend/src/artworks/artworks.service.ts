@@ -18,6 +18,7 @@ export class ArtworksService {
                                   , P.title
                                   , P.description
                                   , P.isPublished 
+                                  , P.createdAt
                                FROM PROJECT P
                                JOIN USER U
                                  ON P.userId = U.id

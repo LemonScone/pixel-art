@@ -1,4 +1,4 @@
-import { useAppSelector } from "../hooks/useRedux";
+import { Project } from "../types/Project";
 import {
   generateAnimationCSSData,
   generatePixelDrawCSS,
@@ -6,14 +6,20 @@ import {
 import Animation from "./Animation";
 
 type PreviewProps = {
+  project: Project;
+  duration: number;
   animate: boolean;
   cellSize: number;
+  activeFrameIndex?: number;
 };
-const Preview = ({ animate, cellSize }: PreviewProps) => {
-  const data = useAppSelector((state) => state.projects.present.data);
-  const duration = useAppSelector((state) => state.projects.present.duration);
-
-  const { gridColumns, gridRows, frames } = data;
+const Preview = ({
+  project,
+  duration,
+  animate,
+  cellSize,
+  activeFrameIndex = 0,
+}: PreviewProps) => {
+  const { gridColumns, gridRows, frames } = project;
 
   const animation = frames.length > 1 && animate;
 
@@ -27,37 +33,35 @@ const Preview = ({ animate, cellSize }: PreviewProps) => {
       cellSize
     );
   } else {
-    const grid = frames[0].grid;
+    const grid = frames[activeFrameIndex].grid;
     cssString = generatePixelDrawCSS(grid, gridColumns, cellSize, "string");
   }
 
   return (
-    <div className="flex items-center justify-center rounded-xl bg-input-color">
+    <div
+      style={{
+        width: gridColumns * cellSize + cellSize * 2,
+        height: gridRows * cellSize + cellSize * 2,
+        position: "relative",
+      }}
+    >
       <div
-        style={{
-          width: gridColumns * cellSize + cellSize * 2,
-          height: gridRows * cellSize + cellSize * 2,
-          position: "relative",
-        }}
+        style={
+          animation
+            ? undefined
+            : {
+                height: cellSize,
+                width: cellSize,
+                boxShadow: cssString,
+                MozBoxShadow: cssString,
+                WebkitBoxShadow: cssString,
+                position: "absolute",
+              }
+        }
       >
-        <div
-          style={
-            animation
-              ? undefined
-              : {
-                  height: cellSize,
-                  width: cellSize,
-                  boxShadow: cssString,
-                  MozBoxShadow: cssString,
-                  WebkitBoxShadow: cssString,
-                  position: "absolute",
-                }
-          }
-        >
-          {animation ? (
-            <Animation boxShadow={animationData} duration={duration} />
-          ) : null}
-        </div>
+        {animation ? (
+          <Animation boxShadow={animationData} duration={duration} />
+        ) : null}
       </div>
     </div>
   );

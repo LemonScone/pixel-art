@@ -1,6 +1,13 @@
-import { getImageData, getAnimationKeyframes } from "box-shadow-pixels";
+import {
+  getImageData,
+  getAnimationKeyframes,
+  getAnimationCssClassOutput,
+  getImageCssClassOutput,
+} from "box-shadow-pixels";
 import { Frame } from "../types/Project";
 import { BoxShadow } from "../types/BoxShadow";
+
+const CSS_CLASS_NAME = "grid-a-pixel";
 
 const generatePixelDrawCSS = (
   frame: string[],
@@ -51,4 +58,50 @@ const generateKeyframes = (obj: BoxShadow) => {
 
   return css;
 };
-export { generatePixelDrawCSS, generateAnimationCSSData, generateKeyframes };
+
+const generateAnimationCSSClass = ({
+  frames,
+  columns,
+  cellSize,
+  duration,
+}: {
+  frames: Frame[];
+  columns: number;
+  cellSize: number;
+  duration: number;
+}) => {
+  const frameWithInterval = frames.map((frame) => ({
+    ...frame,
+    interval: frame.animateInterval,
+  }));
+  return getAnimationCssClassOutput(frameWithInterval, {
+    pSize: cellSize,
+    c: columns,
+    duration,
+    cssClassName: CSS_CLASS_NAME,
+  });
+};
+
+const generateImageCssClass = ({
+  frame,
+  columns,
+  cellSize,
+}: {
+  frame: Frame;
+  columns: number;
+  cellSize: number;
+}) => {
+  return getImageCssClassOutput(frame.grid, {
+    format: "string",
+    pSize: cellSize,
+    c: columns,
+    cssClassName: CSS_CLASS_NAME,
+  });
+};
+export {
+  generatePixelDrawCSS,
+  generateAnimationCSSData,
+  generateKeyframes,
+  generateAnimationCSSClass,
+  generateImageCssClass,
+};

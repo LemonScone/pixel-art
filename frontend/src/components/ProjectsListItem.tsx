@@ -1,15 +1,11 @@
 import { Project } from "../types/Project";
-import { TrashIcon } from "@heroicons/react/24/outline";
-import {
-  generatePixelDrawCSS,
-  generateAnimationCSSData,
-} from "../utils/cssParse";
-import Animation from "./Animation";
-
 import { useModal } from "../hooks/useModal";
 import { changeProject } from "../store";
 import { useRemoveProjectMutation, useUpdateCurrentMutation } from "../store";
 import { useAppDispatch } from "../hooks/useRedux";
+
+import { TrashIcon } from "@heroicons/react/24/outline";
+import Preview from "./Preview";
 
 type ProjectsListItemProps = {
   project: Project;
@@ -20,32 +16,6 @@ const ProjectsListItem = ({ project }: ProjectsListItemProps) => {
   const { closeModal } = useModal();
   const [updateCurrent] = useUpdateCurrentMutation();
   const [removeProject] = useRemoveProjectMutation();
-
-  const {
-    title,
-    description,
-    cellSize,
-    gridColumns,
-    gridRows,
-    animate,
-    frames,
-  } = project;
-
-  const animation = frames.length > 1 && animate;
-
-  let cssString;
-  let animationData;
-
-  if (animation) {
-    animationData = generateAnimationCSSData(
-      frames.map((frame) => ({ ...frame, interval: frame.animateInterval })),
-      gridColumns,
-      cellSize
-    );
-  } else {
-    const grid = frames[0].grid;
-    cssString = generatePixelDrawCSS(grid, gridColumns, cellSize, "string");
-  }
 
   const handleClick = () => {
     dispatch(changeProject(project));
@@ -64,32 +34,14 @@ const ProjectsListItem = ({ project }: ProjectsListItemProps) => {
       onClick={handleClick}
     >
       <div className="relative">
-        <div className="rounded-xl bg-input-color">
-          <div
-            style={{
-              width: gridColumns * cellSize + cellSize * 2,
-              height: gridRows * cellSize + cellSize * 2,
-              position: "relative",
-            }}
-          >
-            <div
-              style={
-                animation
-                  ? undefined
-                  : {
-                      height: cellSize,
-                      width: cellSize,
-                      boxShadow: cssString,
-                      MozBoxShadow: cssString,
-                      WebkitBoxShadow: cssString,
-                    }
-              }
-            >
-              {animation ? (
-                <Animation boxShadow={animationData} duration={1} />
-              ) : null}
-            </div>
-          </div>
+        <div className="min-h-[5rem] rounded-xl bg-input-color">
+          <Preview
+            animate={project.frames.length > 1}
+            cellSize={5}
+            duration={1}
+            project={project}
+            activeFrameIndex={0}
+          />
         </div>
         <div className="absolute right-3 top-3 ">
           <div className="rounded bg-neutral-900">
@@ -110,10 +62,10 @@ const ProjectsListItem = ({ project }: ProjectsListItemProps) => {
       <div className="my-3 flex items-center justify-between px-1 md:items-start">
         <div className="mb-2">
           <p className="text-navy-700 text-lg font-bold">
-            {title ? title : "Untitled"}
+            {project.title ? project.title : "Untitled"}
           </p>
           <p className="mt-1 text-sm font-medium text-gray-600 md:mt-2">
-            {description}
+            {project.description}
           </p>
         </div>
       </div>

@@ -14,6 +14,14 @@ const PreviewContainer = () => {
   const storedDuration = useAppSelector(
     (state) => state.projects.present.duration
   );
+  const project = useAppSelector((state) => state.projects.present.data);
+  const { frames } = project;
+  const currentFrameId = useAppSelector(
+    (state) => state.projects.present.currentFrameId
+  );
+  const activeFrameIndex = frames.findIndex(
+    (frame) => frame.id === currentFrameId
+  );
 
   const [large, setLarge] = useState(false);
   const [play, setPlay] = useState(false);
@@ -48,10 +56,18 @@ const PreviewContainer = () => {
         onToggleSize={handleToggleSize}
         onTogglePlay={handleTogglePlay}
       />
-      <div className="col-span-5"></div>
-      <div className="bg-neutral-900 p-4">
-        <div className="flex h-full grow flex-col justify-between gap-1">
-          <Preview animate={play} cellSize={cellSize} />
+      <div className="col-span-5 sm:col-span-6"></div>
+      <div className="col-span-3 bg-neutral-900 p-4 sm:col-span-2">
+        <div className="flex grow flex-col justify-between gap-1">
+          <div className="h-[4.2rem] overflow-auto rounded bg-input-color">
+            <Preview
+              project={project}
+              duration={duration}
+              animate={play}
+              cellSize={cellSize}
+              activeFrameIndex={activeFrameIndex}
+            />
+          </div>
           <div className="relative py-2">
             <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
               <ClockIcon className="h-3 w-3 text-gray-400" />

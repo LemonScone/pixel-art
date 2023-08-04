@@ -1,63 +1,62 @@
 import { useSearchParams } from "react-router-dom";
-import { useAppDispatch } from "../hooks/useRedux";
+import { useAppSelector } from "../hooks/useRedux";
+
 import { Modal } from "./common/Modal";
-import { closeModal } from "../store";
+import { Tab } from "./common/Tab";
 import Preview from "./Preview";
-import { useState } from "react";
 
-const PreviewModal = () => {
-  const dispatch = useAppDispatch();
-
+const PreviewModal = ({
+  open,
+  onClose,
+}: {
+  open: boolean;
+  onClose: () => void;
+}) => {
+  const project = useAppSelector((state) => state.projects.present.data);
+  const duration = useAppSelector((state) => state.projects.present.duration);
+  const currentFrameId = useAppSelector(
+    (state) => state.projects.present.currentFrameId
+  );
   const [params, setParams] = useSearchParams();
-
-  const [animate, setAnimate] = useState(false);
-
-  const handleToggleAnimate = () => {
-    setAnimate((prevAnimate) => !prevAnimate);
-  };
+  const activeFrameIndex = project.frames.findIndex(
+    (frame) => frame.id === currentFrameId
+  );
 
   return (
     <Modal.Frame
-      open={!!params.get("modal")}
+      open={open}
       onClose={() => {
         params.delete("modal");
         setParams(params);
-        dispatch(closeModal());
+        onClose();
       }}
-      size="5xl"
+      size="6xl"
     >
       <Modal.Head>Preview</Modal.Head>
       <Modal.Body>
-        <div>
-          <div className="flex items-center justify-between">
-            <label
-              htmlFor="view-type"
-              className="inline-flex cursor-pointer items-center rounded bg-neutral-900 p-1 text-gray-100"
-            >
-              <input
-                id="view-type"
-                type="checkbox"
-                role="switch"
-                className="peer hidden"
-                onChange={handleToggleAnimate}
-                checked={animate}
+        <Tab.Frame>
+          <Tab.TabPane display="Static">
+            <div className="w-full overflow-auto">
+              <Preview
+                project={project}
+                duration={duration}
+                animate={false}
+                activeFrameIndex={activeFrameIndex}
+                cellSize={10}
               />
-              <span
-                aria-hidden="true"
-                className="rounded bg-primary-color px-4 py-2 text-sm text-black peer-checked:bg-neutral-900 peer-checked:text-gray-100"
-              >
-                Static
-              </span>
-              <span
-                aria-hidden="true"
-                className="rounded bg-neutral-900 px-4 py-2 text-sm peer-checked:bg-primary-color peer-checked:text-black"
-              >
-                Animation
-              </span>
-            </label>
-          </div>
-          <Preview animate={animate} cellSize={10} />
-        </div>
+            </div>
+          </Tab.TabPane>
+          <Tab.TabPane display="Animation">
+            <div className="w-full overflow-auto">
+              <Preview
+                project={project}
+                duration={duration}
+                animate={true}
+                cellSize={10}
+              />
+            </div>
+          </Tab.TabPane>
+        </Tab.Frame>
       </Modal.Body>
     </Modal.Frame>
   );

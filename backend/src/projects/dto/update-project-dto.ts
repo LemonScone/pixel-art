@@ -1,7 +1,6 @@
 import {
   IsString,
   MaxLength,
-  MinLength,
   IsBoolean,
   IsNumber,
   Min,
@@ -9,10 +8,9 @@ import {
   IsArray,
   ValidateNested,
 } from 'class-validator';
-import { Frame } from '../frame.model';
 import { ApiProperty } from '@nestjs/swagger';
-import { FrameDto } from './frame-dto';
 import { Type } from 'class-transformer';
+import { UpdateFrameDto } from './update-frame-dto';
 
 export class UpdateProjectDto {
   @ApiProperty({
@@ -98,8 +96,8 @@ export class UpdateProjectDto {
   @IsBoolean()
   isPublished: boolean;
 
-  @ApiProperty({ isArray: true, type: FrameDto, required: true })
+  @ApiProperty({ isArray: true, type: UpdateFrameDto, required: true })
   @ValidateNested()
-  @Type(() => FrameDto)
-  frames: Frame[];
+  @Type(() => UpdateFrameDto)
+  frames: UpdateFrameDto[];
 }
