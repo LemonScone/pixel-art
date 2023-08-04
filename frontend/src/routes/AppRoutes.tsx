@@ -2,7 +2,6 @@ import React, { Suspense } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Root, ErrorPage } from "../pages";
 import { PublicRoute } from "./PublicRoute";
-import GlobalModal from "../components/GlobalModal";
 
 const Editor = React.lazy(() => import("../pages/Editor"));
 const Gallery = React.lazy(() => import("../pages/Gallery"));
@@ -41,7 +40,6 @@ const AppRoutes = () => {
             />
           </Route>
         </Routes>
-        <GlobalModal />
       </Suspense>
     </BrowserRouter>
   );
