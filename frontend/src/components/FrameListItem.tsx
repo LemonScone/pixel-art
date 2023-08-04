@@ -21,6 +21,8 @@ type FrameListItemProps = {
   rows: number;
   cellSize: number;
   canDelete: boolean;
+  frameUpdated: boolean;
+  onUpdated: (updated: boolean) => void;
 };
 
 const FrameListItem = ({
@@ -29,6 +31,8 @@ const FrameListItem = ({
   rows,
   cellSize,
   canDelete,
+  frameUpdated,
+  onUpdated,
 }: FrameListItemProps) => {
   const ref = useRef<HTMLDivElement>(null);
   const { currentFrameId } = useAppSelector((state) => state.projects.present);
@@ -49,12 +53,18 @@ const FrameListItem = ({
   const cursorPointer = "cursor-pointer";
 
   useEffect(() => {
-    if (active) {
+    if (active && frameUpdated) {
       if (ref.current) {
-        ref.current.scrollIntoView();
+        ref.current.scrollIntoView({
+          behavior: "smooth",
+          block: "nearest",
+          inline: "nearest",
+        });
+
+        onUpdated(false);
       }
     }
-  }, [active]);
+  }, [active, frameUpdated, onUpdated]);
 
   useEffect(() => {
     setAnimateInterval(frame.animateInterval);
@@ -108,6 +118,7 @@ const FrameListItem = ({
               onClick={(e) => {
                 e.stopPropagation();
                 dispatch(removeFrame(frame.id));
+                onUpdated(true);
               }}
             >
               <TrashIcon
@@ -122,6 +133,7 @@ const FrameListItem = ({
               onClick={(e) => {
                 e.stopPropagation();
                 dispatch(copyFrame(frame.id));
+                onUpdated(true);
               }}
             >
               <DocumentDuplicateIcon
