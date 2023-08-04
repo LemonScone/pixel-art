@@ -1,13 +1,17 @@
 import { useSearchParams } from "react-router-dom";
-import { useAppDispatch, useAppSelector } from "../hooks/useRedux";
-import { Modal } from "./common/Modal";
-import { closeModal } from "../store";
-import { Tab } from "./common/Tab";
+import { useAppSelector } from "../hooks/useRedux";
 
+import { Modal } from "./common/Modal";
+import { Tab } from "./common/Tab";
 import Preview from "./Preview";
 
-const PreviewModal = () => {
-  const dispatch = useAppDispatch();
+const PreviewModal = ({
+  open,
+  onClose,
+}: {
+  open: boolean;
+  onClose: () => void;
+}) => {
   const project = useAppSelector((state) => state.projects.present.data);
   const duration = useAppSelector((state) => state.projects.present.duration);
   const currentFrameId = useAppSelector(
@@ -20,11 +24,11 @@ const PreviewModal = () => {
 
   return (
     <Modal.Frame
-      open={!!params.get("modal")}
+      open={open}
       onClose={() => {
         params.delete("modal");
         setParams(params);
-        dispatch(closeModal());
+        onClose();
       }}
       size="6xl"
     >

@@ -6,8 +6,8 @@ import {
   WindowIcon,
 } from "@heroicons/react/24/outline";
 import { useSearchParams } from "react-router-dom";
-import { useAppDispatch } from "../hooks/useRedux";
-import { openModal } from "../store";
+import { useState } from "react";
+import PreviewModal from "./PreviewModal";
 
 type PreviewHandlerProps = {
   play: boolean;
@@ -22,8 +22,8 @@ const PreviewHandler = ({
   onToggleSize,
   onTogglePlay,
 }: PreviewHandlerProps) => {
-  const dispatch = useAppDispatch();
   const [params, setParams] = useSearchParams();
+  const [openModal, setOpenModal] = useState(false);
 
   return (
     <div className="col-span-2 mb-4 mt-2 flex w-fit rounded bg-neutral-900">
@@ -57,12 +57,13 @@ const PreviewHandler = ({
           className="rounded-lg bg-neutral-900 p-1 text-gray-100 hover:text-primary-color focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
           onClick={() => {
             setParams({ ...params, modal: "true" });
-            dispatch(openModal("Preview"));
+            setOpenModal(true);
           }}
         >
           <span className="sr-only">New window</span>
           <WindowIcon className="h-6 w-6" aria-hidden="true" />
         </button>
+        <PreviewModal open={openModal} onClose={() => setOpenModal(false)} />
       </div>
     </div>
   );
