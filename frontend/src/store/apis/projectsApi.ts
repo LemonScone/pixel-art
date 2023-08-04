@@ -81,7 +81,7 @@ const projectsApi = createApi({
           return [{ type: "Project", id: project.id }];
         },
       }),
-      removeProject: builder.mutation<Project, Project>({
+      removeProject: builder.mutation<{ id: number | string }, Project>({
         query: (project) => {
           return {
             url: `/projects/${project.id}`,
@@ -111,6 +111,7 @@ const projectsApi = createApi({
             },
           };
         },
+        invalidatesTags: ["Projects"],
         async onQueryStarted(arg, { dispatch, queryFulfilled }) {
           await queryFulfilled;
           const { isPublished } = arg;
@@ -125,6 +126,16 @@ const projectsApi = createApi({
         },
       }),
       fetchArtworks: builder.query<Artwork[], void>({
+        providesTags: (result, _error, _projects) =>
+          result
+            ? [
+                ...result.map((project) => ({
+                  type: "Project" as const,
+                  id: project.id,
+                })),
+                "Projects",
+              ]
+            : ["Projects"],
         query: () => {
           return {
             url: "/artworks",
