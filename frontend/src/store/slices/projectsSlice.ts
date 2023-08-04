@@ -443,6 +443,15 @@ const projectsSlice = createSlice({
         state.currentFrameId = payload.frames[0].id;
       }
     );
+    builder.addMatcher(
+      projectsApi.endpoints.removeProject.matchFulfilled,
+      (state, { payload }) => {
+        if (state.data.id.toString() === payload.id.toString()) {
+          state.data = initialProject.present.data;
+          state.currentFrameId = initialProject.present.data.frames[0].id;
+        }
+      }
+    );
   },
 });
 
