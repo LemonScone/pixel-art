@@ -33,7 +33,7 @@
 - palette 색상을 무제한으로 추가할 수 있습니다.
 - 작업물을 공유할 수 있습니다.
 
-[✏️ 사용해보기](https://www.gridapixel.site/)
+[✏️ 사용해보기](https://gridapixel.site/)
 
 <p align="center">
   <img width="600" src="Screenshot.png">
