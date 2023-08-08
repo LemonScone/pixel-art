@@ -1,6 +1,6 @@
 # Grida Pixel
 
-<img src="icon.png" align="right"
+<img src="img/logo.svg" align="right"
      alt="Grida Pixel logo by padosum" width="120" height="178">
 <br>
 [Grida Pixel](https://gridapixel.site/)은 움직이는 pixel art를 만드는 애플리케이션입니다.
@@ -36,7 +36,7 @@
 [✏️ 사용해보기](https://gridapixel.site/)
 
 <p align="center">
-  <img width="600" src="Screenshot.png">
+  <img width="600" src="img/Screenshot.png">
 </p>
 
 ## Built With
