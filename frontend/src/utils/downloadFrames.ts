@@ -2,8 +2,9 @@ import { GIFEncoder, quantize, applyPalette } from "gifenc";
 import type { FileType } from "../types/FileType";
 import type { Frame } from "../types/Project";
 import { randomStr } from "./random";
+import { convert } from "./pixelsToSvg";
 
-const download = ({
+export const download = ({
   buffer,
   filename,
   type = "image/png",
@@ -96,7 +97,7 @@ const renderPixelToCanvas = ({
       break;
   }
 
-  return ctx.getImageData(0, 0, canvasWidth, canvasHeight).data;
+  return ctx.getImageData(0, 0, canvasWidth, canvasHeight);
 };
 
 const getPaletteWithTransparent = (data: Uint8ClampedArray) => {
@@ -170,6 +171,30 @@ const downloadFrames = ({
 
       break;
     }
+    case "SVG": {
+      const canvasData = {
+        canvas,
+        canvasHeight,
+        canvasWidth,
+      };
+      const currentFrameData = {
+        frame: activeFrame,
+        frameHeight,
+        frameWidth,
+        cellSize,
+      };
+      const imageData = renderPixelToCanvas({
+        type,
+        canvasData,
+        currentFrameData,
+        frames,
+      });
+
+      if (imageData) {
+        convert(imageData);
+      }
+      break;
+    }
 
     default: {
       frames.forEach((frame, idx, framesArray) => {
@@ -189,7 +214,7 @@ const downloadFrames = ({
           frameWidth,
           cellSize,
         };
-        const data = renderPixelToCanvas({
+        const { data } = renderPixelToCanvas({
           type,
           canvasData,
           currentFrameData,
