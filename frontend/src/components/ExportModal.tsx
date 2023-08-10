@@ -63,7 +63,7 @@ const ExportModal = ({
       }}
       size="5xl"
     >
-      <Modal.Head>Preview</Modal.Head>
+      <Modal.Head>Export</Modal.Head>
       <Modal.Body>
         <Tab.Frame>
           <Tab.TabPane display="File">
@@ -73,8 +73,9 @@ const ExportModal = ({
               disabled={data.frames.length <= 1}
               onChange={handleToggleAnimation}
               className="ml-1 mt-2"
+              checked={animate}
             />
-            <div className="w-full overflow-auto">
+            <div className="flex w-full justify-center overflow-auto">
               <Preview
                 project={data}
                 duration={duration}
@@ -91,6 +92,14 @@ const ExportModal = ({
                 }}
               >
                 PNG
+              </Button>
+              <Button
+                className="rounded bg-neutral-900 p-2"
+                onClick={() => {
+                  handleDownloadDrawing("SVG");
+                }}
+              >
+                SVG
               </Button>
               <Button
                 className="rounded bg-neutral-900 p-2"
@@ -117,6 +126,7 @@ const ExportModal = ({
               disabled={data.frames.length <= 1}
               onChange={handleToggleAnimation}
               className="ml-1 mt-2"
+              checked={animate}
             />
             <div className="w-full overflow-auto">
               <Preview

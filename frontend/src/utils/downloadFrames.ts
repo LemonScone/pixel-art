@@ -2,8 +2,15 @@ import { GIFEncoder, quantize, applyPalette } from "gifenc";
 import type { FileType } from "../types/FileType";
 import type { Frame } from "../types/Project";
 import { randomStr } from "./random";
+import { convertImage } from "./pixelsToSvg";
 
-const download = ({
+const exportSvg = (svgString: string) => {
+  const buffer = new Blob([svgString], { type: "image/svg+xml" });
+  const filename = `${randomStr()}.svg`;
+  download({ buffer, filename, type: "image/svg+xml" });
+};
+
+export const download = ({
   buffer,
   filename,
   type = "image/png",
@@ -96,7 +103,7 @@ const renderPixelToCanvas = ({
       break;
   }
 
-  return ctx.getImageData(0, 0, canvasWidth, canvasHeight).data;
+  return ctx.getImageData(0, 0, canvasWidth, canvasHeight);
 };
 
 const getPaletteWithTransparent = (data: Uint8ClampedArray) => {
@@ -170,6 +177,56 @@ const downloadFrames = ({
 
       break;
     }
+    case "SVG": {
+      const canvasData = {
+        canvas,
+        canvasHeight,
+        canvasWidth,
+      };
+      const currentFrameData = {
+        frame: activeFrame,
+        frameHeight,
+        frameWidth,
+        cellSize,
+      };
+      const imageData = renderPixelToCanvas({
+        type,
+        canvasData,
+        currentFrameData,
+        frames,
+      });
+
+      if (imageData) {
+        if (!window.Worker) {
+          console.log("No workers support. Larger images may timeout.");
+          const converted = convertImage(imageData);
+          exportSvg(converted);
+        } else {
+          const imageWorker = new Worker(
+            new URL("./worker.ts", import.meta.url),
+            { type: "module" }
+          );
+          imageWorker.postMessage(imageData);
+          imageWorker.addEventListener(
+            "message",
+            (e) => {
+              exportSvg(e.data);
+            },
+            false
+          );
+
+          imageWorker.addEventListener(
+            "error",
+            (e) => {
+              console.error(e.message, e.lineno, e.filename);
+              console.timeEnd("conversion");
+            },
+            false
+          );
+        }
+      }
+      break;
+    }
 
     default: {
       frames.forEach((frame, idx, framesArray) => {
@@ -189,7 +246,7 @@ const downloadFrames = ({
           frameWidth,
           cellSize,
         };
-        const data = renderPixelToCanvas({
+        const { data } = renderPixelToCanvas({
           type,
           canvasData,
           currentFrameData,
