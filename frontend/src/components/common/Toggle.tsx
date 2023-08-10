@@ -7,6 +7,7 @@ const Toggle = ({
   disabled,
   className = "",
   onChange,
+  checked,
 }: ToggleProps) => {
   return (
     <div className={classNames(className, "flex items-center")}>
@@ -24,6 +25,7 @@ const Toggle = ({
         )}
         onChange={onChange}
         disabled={disabled}
+        checked={checked}
       />
     </div>
   );
@@ -35,6 +37,7 @@ type ToggleProps = {
   disabled: boolean;
   className?: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  checked: boolean;
 };
 
 export default Toggle;
