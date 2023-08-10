@@ -1,17 +1,8 @@
 /*! PIXELS to SVG | MIT *
  * https://codepen.io/shshaw/details/XbxvNj !*/
 
-import { download } from "./downloadFrames";
-import { randomStr } from "./random";
-
 type Colors = {
   [key: string]: number[][];
-};
-
-const exportSvg = (converted: string) => {
-  const buffer = new Blob([converted], { type: "image/svg+xml" });
-  const filename = `${randomStr()}.svg`;
-  download({ buffer, filename, type: "image/svg+xml" });
 };
 
 const convertImage = (img: ImageData) => {
@@ -111,7 +102,7 @@ const convertImage = (img: ImageData) => {
     img.width +
     " " +
     img.height +
-    '" shape-rendering="crispEdges">\n<metadata>Made with Grida Pixel https://gridapixel.site/</metadata>\n' +
+    '" shape-rendering="auto">\n<metadata>Made with Grida Pixel https://gridapixel.site/</metadata>\n' +
     paths +
     "</svg>";
 
@@ -119,33 +110,4 @@ const convertImage = (img: ImageData) => {
   return output;
 };
 
-const convert = (imgData: ImageData) => {
-  if (!window.Worker) {
-    console.log("No workers support. Larger images may timeout.");
-    const converted = convertImage(imgData);
-    exportSvg(converted);
-  } else {
-    const imageWorker = new Worker(new URL("./worker.ts", import.meta.url), {
-      type: "module",
-    });
-    imageWorker.postMessage(imgData);
-    imageWorker.addEventListener(
-      "message",
-      (e) => {
-        exportSvg(e.data);
-      },
-      false
-    );
-
-    imageWorker.addEventListener(
-      "error",
-      (e) => {
-        console.error(e.message, e.lineno, e.filename);
-        console.timeEnd("conversion");
-      },
-      false
-    );
-  }
-};
-
-export { convert, convertImage };
+export { convertImage };

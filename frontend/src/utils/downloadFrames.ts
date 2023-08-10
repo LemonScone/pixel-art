@@ -2,7 +2,13 @@ import { GIFEncoder, quantize, applyPalette } from "gifenc";
 import type { FileType } from "../types/FileType";
 import type { Frame } from "../types/Project";
 import { randomStr } from "./random";
-import { convert } from "./pixelsToSvg";
+import { convertImage } from "./pixelsToSvg";
+
+const exportSvg = (svgString: string) => {
+  const buffer = new Blob([svgString], { type: "image/svg+xml" });
+  const filename = `${randomStr()}.svg`;
+  download({ buffer, filename, type: "image/svg+xml" });
+};
 
 export const download = ({
   buffer,
@@ -191,7 +197,33 @@ const downloadFrames = ({
       });
 
       if (imageData) {
-        convert(imageData);
+        if (!window.Worker) {
+          console.log("No workers support. Larger images may timeout.");
+          const converted = convertImage(imageData);
+          exportSvg(converted);
+        } else {
+          const imageWorker = new Worker(
+            new URL("./worker.ts", import.meta.url),
+            { type: "module" }
+          );
+          imageWorker.postMessage(imageData);
+          imageWorker.addEventListener(
+            "message",
+            (e) => {
+              exportSvg(e.data);
+            },
+            false
+          );
+
+          imageWorker.addEventListener(
+            "error",
+            (e) => {
+              console.error(e.message, e.lineno, e.filename);
+              console.timeEnd("conversion");
+            },
+            false
+          );
+        }
       }
       break;
     }
