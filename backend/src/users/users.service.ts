@@ -148,5 +148,7 @@ export class UsersService {
               password = '${password}'
         WHERE id = ${userId}`,
     );
+
+    await this.dbService.execute(`DELETE FROM TOKEN WHERE userId = ${userId}`);
   }
 }
