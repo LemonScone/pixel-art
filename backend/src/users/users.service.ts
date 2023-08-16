@@ -108,4 +108,45 @@ export class UsersService {
 
     return current;
   }
+
+  async createPasswordToken(userId: number, token: string) {
+    await this.dbService.execute(
+      `INSERT INTO RESET_PASSWORD_TOKEN (userId, token) VALUES ('${userId}', '${token}');`,
+    );
+
+    const [lastInsert] = await this.dbService.execute(
+      'SELECT LAST_INSERT_ID() as id',
+    );
+
+    return {
+      id: lastInsert['id'],
+      userId,
+      token,
+    };
+  }
+
+  async removePasswordToken(userId: number) {
+    await this.dbService.execute(
+      `DELETE FROM RESET_PASSWORD_TOKEN
+        WHERE userId = ${userId}`,
+    );
+  }
+
+  async findPasswordToken(
+    userId: number,
+  ): Promise<{ id: number; token: string }> {
+    const [result] = await this.dbService.execute<any>(
+      `SELECT id, token FROM RESET_PASSWORD_TOKEN WHERE userId = '${userId}'`,
+    );
+
+    return result;
+  }
+
+  async updatePassword(userId: string, password: string) {
+    await this.dbService.execute(
+      `UPDATE USER SET 
+              password = '${password}'
+        WHERE id = ${userId}`,
+    );
+  }
 }
