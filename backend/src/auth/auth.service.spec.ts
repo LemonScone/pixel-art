@@ -189,8 +189,8 @@ describe('AuthService', () => {
     });
 
     const token = await service.sendResetPasswordMail(user.email);
-    const valid = await service.verifyPasswordToken(token);
-    expect(valid).toBeTruthy();
+    const verifiedToken = await service.verifyPasswordToken(token);
+    expect(verifiedToken).toBeDefined();
   });
 
   it('throws if verifyPasswordToken is called with an invalid token', async () => {

@@ -39,6 +39,7 @@ import {
   CreateUserSuccessResponseDto,
 } from './dto/create-user-response.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
+import { VerifyResetPasswordDto } from './dto/verify-reset-password.dto';
 
 @Controller('auth')
 @ApiTags('auth')
@@ -174,7 +175,7 @@ export class AuthController {
     description: '비밀번호를 변경을 위한 token의 유효성을 검증합니다.',
   })
   @Post('verify-password-token')
-  async verifyPasswordToken(@Body() { token }: { token: string }) {
+  async verifyPasswordToken(@Body() { token }: VerifyResetPasswordDto) {
     return await this.authService.verifyPasswordToken(token);
   }
 

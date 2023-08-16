@@ -119,7 +119,6 @@ export class AuthService {
   }
 
   async verifyPasswordToken(token: string) {
-    // token 검증
     try {
       const verifiedToken = await this.jwtService.verifyAsync(token, {
         secret: this.configService.get<string>('JWT_RESET_PASSWORD_SECRET'),
@@ -137,7 +136,7 @@ export class AuthService {
         Object.keys(verifiedToken).length &&
         verifiedToken.key === stored.token
       ) {
-        return true;
+        return verifiedToken;
       } else {
         throw new UnauthorizedException('Token verify failed.');
       }
@@ -152,17 +151,14 @@ export class AuthService {
   }
 
   async sendResetPasswordMail(email: string) {
-    // user 확인
     const [user] = await this.usersService.find(email);
 
     if (!user) {
       throw new NotFoundException();
     }
 
-    // DB에서 기존 token 삭제
     await this.usersService.removePasswordToken(user.id);
 
-    // token 생성
     const currentTimeHash = await bcrypt.hash(new Date().toLocaleString(), 10);
     const token = await this.jwtService.signAsync(
       {
@@ -178,10 +174,8 @@ export class AuthService {
       },
     );
 
-    // token db에 저장
     await this.usersService.createPasswordToken(user.id, currentTimeHash);
 
-    // 메일 전송
     this.sendVerifyMail(user.username, user.email, token);
 
     return token;
@@ -192,8 +186,8 @@ export class AuthService {
       service: 'gmail',
       secure: true,
       auth: {
-        user: this.configService.get<string>('EMAIL_ADDRESS'), // 발송자 이메일 주소
-        pass: this.configService.get<string>('EMAIL_PASSWORD'), // 발송자 이메일 비밀번호
+        user: this.configService.get<string>('EMAIL_ADDRESS'),
+        pass: this.configService.get<string>('EMAIL_PASSWORD'),
       },
     });
 
@@ -221,26 +215,10 @@ export class AuthService {
   }
 
   async resetPassword(token: string, password: string) {
-    // DB에서 Token 확인
-    try {
-      const verifiedToken = await this.jwtService.verifyAsync(token, {
-        secret: this.configService.get<string>('JWT_RESET_PASSWORD_SECRET'),
-      });
+    const verifiedToken = await this.verifyPasswordToken(token);
 
-      // token의 유효성 검증
-      if (await this.verifyPasswordToken(token)) {
-        // 비밀번호 업데이트
-        const salt = await bcrypt.genSalt();
-        const hash = await bcrypt.hash(password, salt);
-        this.usersService.updatePassword(verifiedToken.sub, hash);
-      }
-    } catch (error) {
-      if (error instanceof TokenExpiredError) {
-        throw new UnauthorizedException(error);
-      } else if (error instanceof JsonWebTokenError) {
-        throw new JsonWebTokenError(error.message);
-      }
-      throw new InternalServerErrorException(error);
-    }
+    const salt = await bcrypt.genSalt();
+    const hash = await bcrypt.hash(password, salt);
+    this.usersService.updatePassword(verifiedToken.sub, hash);
   }
 }
