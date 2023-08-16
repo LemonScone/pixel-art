@@ -3,10 +3,12 @@ import {
   ForbiddenException,
   HttpException,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { AuthCredentialsDto } from './dto/auth-credentials.dto';
+import { TokenExpiredError, JsonWebTokenError } from 'jsonwebtoken';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
 import { ConfigService } from '@nestjs/config';
@@ -14,9 +16,11 @@ import { AccessTokenPayload } from './payload.model';
 import { User } from './user.model';
 import { CreateUserDto } from './dto/create-user.dto';
 
+import * as nodemailer from 'nodemailer';
 import * as bcrypt from 'bcrypt';
 import { DbService } from '../db/db.service';
 
+import { renderMailContent } from '../utils/mail';
 @Injectable()
 export class AuthService {
   constructor(
@@ -111,6 +115,132 @@ export class AuthService {
       return { accessToken, ...rest };
     } catch (error) {
       throw new HttpException({ message: error.message, error }, error.status);
+    }
+  }
+
+  async verifyPasswordToken(token: string) {
+    // token 검증
+    try {
+      const verifiedToken = await this.jwtService.verifyAsync(token, {
+        secret: this.configService.get<string>('JWT_RESET_PASSWORD_SECRET'),
+      });
+
+      const [user] = await this.usersService.find(verifiedToken.email);
+      if (!user) {
+        throw new NotFoundException('User Not Found.');
+      }
+
+      const stored = await this.usersService.findPasswordToken(user.id);
+
+      if (
+        verifiedToken &&
+        Object.keys(verifiedToken).length &&
+        verifiedToken.key === stored.token
+      ) {
+        return true;
+      } else {
+        throw new UnauthorizedException('Token verify failed.');
+      }
+    } catch (error) {
+      if (error instanceof TokenExpiredError) {
+        throw new UnauthorizedException(error);
+      } else if (error instanceof JsonWebTokenError) {
+        throw new JsonWebTokenError(error.message);
+      }
+      throw new InternalServerErrorException(error);
+    }
+  }
+
+  async sendResetPasswordMail(email: string) {
+    // user 확인
+    const [user] = await this.usersService.find(email);
+
+    if (!user) {
+      throw new NotFoundException();
+    }
+
+    // DB에서 기존 token 삭제
+    await this.usersService.removePasswordToken(user.id);
+
+    // token 생성
+    const currentTimeHash = await bcrypt.hash(new Date().toLocaleString(), 10);
+    const token = await this.jwtService.signAsync(
+      {
+        sub: user.id,
+        email: user.email,
+        key: currentTimeHash,
+      },
+      {
+        secret: this.configService.get<string>('JWT_RESET_PASSWORD_SECRET'),
+        expiresIn: this.configService.get<string>(
+          'JWT_RESET_PASSWORD_EXPIRATION_TIME',
+        ),
+      },
+    );
+
+    // token db에 저장
+    await this.usersService.createPasswordToken(user.id, currentTimeHash);
+
+    // 메일 전송
+    this.sendVerifyMail(user.username, user.email, token);
+
+    return token;
+  }
+
+  async sendVerifyMail(username: string, to: string, token: string) {
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      secure: true,
+      auth: {
+        user: this.configService.get<string>('EMAIL_ADDRESS'), // 발송자 이메일 주소
+        pass: this.configService.get<string>('EMAIL_PASSWORD'), // 발송자 이메일 비밀번호
+      },
+    });
+
+    const redirectUrl = `${this.configService.get<string>(
+      'CLIENT_URL',
+    )}/reset-password?token=${token}`;
+
+    const from = `${this.configService.get<string>(
+      'PROJECT_NAME',
+    )} <${this.configService.get<string>('EMAIL_ADDRESS')}>`;
+
+    const mailOptions = {
+      from,
+      to,
+      html: renderMailContent(username, redirectUrl),
+      subject: 'Password help is arrived!',
+    };
+
+    transporter.sendMail(mailOptions, (error) => {
+      if (error) {
+        throw new InternalServerErrorException(error);
+      }
+      return;
+    });
+  }
+
+  async resetPassword(token: string, password: string) {
+    // DB에서 Token 확인
+    try {
+      const verifiedToken = await this.jwtService.verifyAsync(token, {
+        secret: this.configService.get<string>('JWT_RESET_PASSWORD_SECRET'),
+      });
+
+      // token의 유효성 검증
+      if (await this.verifyPasswordToken(token)) {
+        // 비밀번호 업데이트
+        const salt = await bcrypt.genSalt();
+        const hash = await bcrypt.hash(password, salt);
+        this.usersService.updatePassword(verifiedToken.sub, hash);
+      }
+    } catch (error) {
+      if (error instanceof TokenExpiredError) {
+        throw new UnauthorizedException(error);
+      } else if (error instanceof JsonWebTokenError) {
+        throw new JsonWebTokenError(error.message);
+      }
+      throw new InternalServerErrorException(error);
     }
   }
 }

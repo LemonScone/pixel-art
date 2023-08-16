@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from './auth.service';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
+import { JsonWebTokenError } from 'jsonwebtoken';
 import { User } from './user.model';
 import {
   ConflictException,
@@ -19,6 +20,7 @@ describe('AuthService', () => {
 
   beforeEach(async () => {
     const users: User[] = [];
+    let passwordTokens = [];
     fakeUsersService = {
       find: (email: string) => {
         const filteredUsers = users.filter((user) => user.email === email);
@@ -37,6 +39,27 @@ describe('AuthService', () => {
         users.push(user);
         return Promise.resolve(user);
       },
+
+      findPasswordToken(userId) {
+        const token = passwordTokens.find((item) => item.userId == userId);
+        return Promise.resolve(token);
+      },
+      createPasswordToken(userId, token) {
+        const passwordToken = {
+          id: 1,
+          userId,
+          token,
+        };
+        passwordTokens.push(passwordToken);
+        return Promise.resolve({ id: passwordToken.id, userId, token });
+      },
+      removePasswordToken: (userId: number) => {
+        const filteredPasswordTokens = passwordTokens.filter(
+          (token) => token.userId !== userId,
+        );
+        passwordTokens = filteredPasswordTokens;
+        return Promise.resolve();
+      },
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -53,6 +76,9 @@ describe('AuthService', () => {
     }).compile();
 
     service = module.get<AuthService>(AuthService);
+    service.sendVerifyMail = (username: string, to: string, token: string) => {
+      return null;
+    };
   });
 
   it('should be defined', () => {
@@ -127,5 +153,73 @@ describe('AuthService', () => {
     expect(user).toBeDefined();
     expect(user.accessToken).toBeDefined();
     expect(user.refreshToken).toBeDefined();
+  });
+
+  it('returns token if valid user email is provided', async () => {
+    const user = await service.signup({
+      email: 'test',
+      password: 'mypassword',
+      username: 'test',
+      provider: 'local',
+    });
+
+    const token = await service.sendResetPasswordMail(user.email);
+    expect(token).toBeDefined();
+  });
+
+  it('throws if sendResetPasswordMail is called with an unused email', async () => {
+    await service.signup({
+      email: 'test',
+      password: 'mypassword',
+      username: 'test',
+      provider: 'local',
+    });
+
+    await expect(service.sendResetPasswordMail('unusedEmail')).rejects.toThrow(
+      NotFoundException,
+    );
+  });
+
+  it('returns true if verifyPasswordToken is called with a valid password reset token', async () => {
+    const user = await service.signup({
+      email: 'test',
+      password: 'mypassword',
+      username: 'test',
+      provider: 'local',
+    });
+
+    const token = await service.sendResetPasswordMail(user.email);
+    const valid = await service.verifyPasswordToken(token);
+    expect(valid).toBeTruthy();
+  });
+
+  it('throws if verifyPasswordToken is called with an invalid token', async () => {
+    const user = await service.signup({
+      email: 'test',
+      password: 'mypassword',
+      username: 'test',
+      provider: 'local',
+    });
+
+    await service.sendResetPasswordMail(user.email);
+
+    await expect(service.verifyPasswordToken('invalid-token')).rejects.toThrow(
+      JsonWebTokenError,
+    );
+  });
+
+  it('throws if resetPassword is called with an invalid token', async () => {
+    const user = await service.signup({
+      email: 'test',
+      password: 'mypassword',
+      username: 'test',
+      provider: 'local',
+    });
+
+    await service.sendResetPasswordMail(user.email);
+
+    await expect(
+      service.resetPassword('invalid-token', 'newPassword'),
+    ).rejects.toThrow(JsonWebTokenError);
   });
 });
