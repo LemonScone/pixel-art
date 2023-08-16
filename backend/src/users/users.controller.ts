@@ -19,7 +19,7 @@ import {
   UserRegisterFailedResponseDto,
   UserRegisterSuccessResponseDto,
 } from './dto/users-register-response.dto';
-import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
+import { JwtAuthGuard } from '../auth/guards/jwt.guard';
 import { UpdateUserCurrentDto } from './dto/update-user-current.dto';
 
 @Controller('users')
