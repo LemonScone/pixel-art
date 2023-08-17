@@ -112,6 +112,8 @@ export {
   useLoginMutation,
   useRefreshQuery,
   useForgotPasswordMutation,
+  useVerifyPasswordTokenQuery,
+  useResetPasswordMutation,
 } from "./apis/authApi";
 export { useUpdateCurrentMutation } from "./apis/usersApi";
 export type RootState = ReturnType<typeof rootReducer>;

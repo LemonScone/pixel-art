@@ -123,6 +123,27 @@ const authApi = createApi({
           };
         },
       }),
+      verifyPasswordToken: builder.query<void, { token: string }>({
+        query: (params) => {
+          return {
+            url: "auth/verify-password-token",
+            method: "POST",
+            body: params,
+          };
+        },
+      }),
+      resetPassword: builder.mutation<
+        void,
+        { token: string; password: string }
+      >({
+        query: (body) => {
+          return {
+            url: "auth/reset-password",
+            method: "POST",
+            body,
+          };
+        },
+      }),
     };
   },
 });
@@ -132,5 +153,7 @@ export const {
   useSignupMutation,
   useRefreshQuery,
   useForgotPasswordMutation,
+  useVerifyPasswordTokenQuery,
+  useResetPasswordMutation,
 } = authApi;
 export { authApi };
