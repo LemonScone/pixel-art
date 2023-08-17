@@ -108,7 +108,13 @@ export {
   useUpdateProjectStatusMutation,
   useFetchArtworksQuery,
 } from "./apis/projectsApi";
-export { useLoginMutation, useRefreshQuery } from "./apis/authApi";
+export {
+  useLoginMutation,
+  useRefreshQuery,
+  useForgotPasswordMutation,
+  useVerifyPasswordTokenQuery,
+  useResetPasswordMutation,
+} from "./apis/authApi";
 export { useUpdateCurrentMutation } from "./apis/usersApi";
 export type RootState = ReturnType<typeof rootReducer>;
 export type AppStore = ReturnType<typeof setupStore>;

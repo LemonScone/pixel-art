@@ -115,9 +115,45 @@ const authApi = createApi({
           };
         },
       }),
+      forgotPassword: builder.mutation<void, { email: string }>({
+        query: (params) => {
+          return {
+            url: `auth/forgot-password/${params.email}`,
+            method: "POST",
+          };
+        },
+      }),
+      verifyPasswordToken: builder.query<void, { token: string }>({
+        query: (params) => {
+          return {
+            url: "auth/verify-password-token",
+            method: "POST",
+            body: params,
+          };
+        },
+      }),
+      resetPassword: builder.mutation<
+        void,
+        { token: string; password: string }
+      >({
+        query: (body) => {
+          return {
+            url: "auth/reset-password",
+            method: "POST",
+            body,
+          };
+        },
+      }),
     };
   },
 });
 
-export const { useLoginMutation, useSignupMutation, useRefreshQuery } = authApi;
+export const {
+  useLoginMutation,
+  useSignupMutation,
+  useRefreshQuery,
+  useForgotPasswordMutation,
+  useVerifyPasswordTokenQuery,
+  useResetPasswordMutation,
+} = authApi;
 export { authApi };
