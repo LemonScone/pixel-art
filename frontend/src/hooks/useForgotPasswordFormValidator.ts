@@ -1,11 +1,6 @@
 import { useState } from "react";
 import { emailValidator } from "../utils/validators";
-
-type FormFieldValidation = {
-  dirty: boolean;
-  error: boolean;
-  message: string;
-};
+import { FormFieldValidation } from "../types/FormFieldValidation";
 
 type ForgotPasswordFormField<T> = {
   email: T;
