@@ -1,6 +1,6 @@
 const VALID_USER = {
   email: "valid@valid.com",
-  password: "1234",
+  password: "valid123456",
   username: "valid user",
   provider: "local",
   current: 0,
@@ -8,6 +8,7 @@ const VALID_USER = {
 
 const INVALID_USER = {
   email: "invalid@invalid.com",
+  password: "123",
 };
 
 const VALID_TOKEN =
