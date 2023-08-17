@@ -11,7 +11,13 @@ export async function clearDB() {
   });
 
   try {
-    const tables = ['FRAME', 'PROJECT', 'TOKEN', 'USER'];
+    const tables = [
+      'FRAME',
+      'PROJECT',
+      'RESET_PASSWORD_TOKEN',
+      'TOKEN',
+      'USER',
+    ];
     await pool.execute(`SET FOREIGN_KEY_CHECKS=0;`);
     for (const table of tables) {
       await pool.execute(`TRUNCATE TABLE ${table};`);

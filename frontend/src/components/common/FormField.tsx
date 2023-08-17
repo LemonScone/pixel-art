@@ -1,5 +1,6 @@
 import { ChangeEvent, FocusEvent } from "react";
 import classNames from "../../utils/classNames";
+import { convertToCamelCase } from "../../utils/convertToCamelCase";
 
 type FormFieldProps = {
   type: string;
@@ -29,7 +30,7 @@ const FormField = ({
           "peer mb-2 w-full border-b-2 bg-transparent py-2 text-gray-100 outline-none"
         )}
         id={label}
-        name={label}
+        name={convertToCamelCase(label)}
         value={value}
         onChange={onChange}
         onBlur={onBlur}

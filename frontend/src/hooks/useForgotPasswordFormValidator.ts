@@ -1,14 +1,12 @@
 import { useState } from "react";
-import { emailValidator, emptyValidator } from "../utils/validators";
+import { emailValidator } from "../utils/validators";
 import { FormFieldValidation } from "../types/FormFieldValidation";
 
-type SignUpFormField<T> = {
+type ForgotPasswordFormField<T> = {
   email: T;
-  username: T;
-  password: T;
 };
 
-const touchErrors = (errors: SignUpFormField<FormFieldValidation>) => {
+const touchErrors = (errors: ForgotPasswordFormField<FormFieldValidation>) => {
   return Object.entries(errors).reduce(
     (acc, [field, fieldError]) => {
       acc[field as keyof typeof errors] = {
@@ -21,19 +19,11 @@ const touchErrors = (errors: SignUpFormField<FormFieldValidation>) => {
   );
 };
 
-export const useSignUpFormValidator = (form: SignUpFormField<string>) => {
+export const useForgotPasswordFormValidator = (
+  form: ForgotPasswordFormField<string>
+) => {
   const [errors, setErrors] = useState({
     email: {
-      dirty: false,
-      error: false,
-      message: "",
-    },
-    username: {
-      dirty: false,
-      error: false,
-      message: "",
-    },
-    password: {
       dirty: false,
       error: false,
       message: "",
@@ -46,14 +36,14 @@ export const useSignUpFormValidator = (form: SignUpFormField<string>) => {
     errors,
     forceTouchErrors = false,
   }: {
-    form: SignUpFormField<string>;
-    field?: keyof SignUpFormField<string>;
-    errors: SignUpFormField<FormFieldValidation>;
+    form: ForgotPasswordFormField<string>;
+    field?: keyof ForgotPasswordFormField<string>;
+    errors: ForgotPasswordFormField<FormFieldValidation>;
     forceTouchErrors?: boolean;
   }) => {
     let isValid = true;
 
-    let nextErrors: SignUpFormField<FormFieldValidation> = JSON.parse(
+    let nextErrors: ForgotPasswordFormField<FormFieldValidation> = JSON.parse(
       JSON.stringify(errors)
     );
 
@@ -61,30 +51,12 @@ export const useSignUpFormValidator = (form: SignUpFormField<string>) => {
       nextErrors = touchErrors(errors);
     }
 
-    const { email, username, password } = form;
+    const { email } = form;
 
     if (nextErrors.email.dirty && (field ? field === "email" : true)) {
       const message = emailValidator(email, "Email");
       nextErrors.email.error = !!message;
       nextErrors.email.message = message;
-      if (message) {
-        isValid = false;
-      }
-    }
-
-    if (nextErrors.password.dirty && (field ? field === "password" : true)) {
-      const message = emptyValidator(password, "Password");
-      nextErrors.password.error = !!message;
-      nextErrors.password.message = message;
-      if (message) {
-        isValid = false;
-      }
-    }
-
-    if (nextErrors.username.dirty && (field ? field === "username" : true)) {
-      const message = emptyValidator(username, "Username");
-      nextErrors.username.error = !!message;
-      nextErrors.username.message = message;
       if (message) {
         isValid = false;
       }

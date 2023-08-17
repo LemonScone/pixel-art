@@ -22,4 +22,19 @@ const emailValidator = (input: string, label: string) => {
   }
 };
 
-export { emptyValidator, emailValidator };
+const passwordValidator = (input: string, label: string) => {
+  const empty = emptyValidator(input, label);
+
+  if (empty) {
+    return empty;
+  } else {
+    const passwordPattern = /^[a-zA-Z0-9].{3,19}$/;
+
+    if (!passwordPattern.test(input)) {
+      return "Password must be at least 4 characters, no more than 20 characters, and contain letters and numbers.";
+    }
+    return "";
+  }
+};
+
+export { emptyValidator, emailValidator, passwordValidator };

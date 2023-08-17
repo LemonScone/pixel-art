@@ -1,14 +1,13 @@
 import { useState } from "react";
-import { emailValidator, emptyValidator } from "../utils/validators";
+import { emptyValidator, passwordValidator } from "../utils/validators";
 import { FormFieldValidation } from "../types/FormFieldValidation";
 
-type SignUpFormField<T> = {
-  email: T;
-  username: T;
+type ResetPasswordForm<T> = {
   password: T;
+  confirmPassword: T;
 };
 
-const touchErrors = (errors: SignUpFormField<FormFieldValidation>) => {
+const touchErrors = (errors: ResetPasswordForm<FormFieldValidation>) => {
   return Object.entries(errors).reduce(
     (acc, [field, fieldError]) => {
       acc[field as keyof typeof errors] = {
@@ -21,19 +20,16 @@ const touchErrors = (errors: SignUpFormField<FormFieldValidation>) => {
   );
 };
 
-export const useSignUpFormValidator = (form: SignUpFormField<string>) => {
+export const useResetPasswordFormValidator = (
+  form: ResetPasswordForm<string>
+) => {
   const [errors, setErrors] = useState({
-    email: {
-      dirty: false,
-      error: false,
-      message: "",
-    },
-    username: {
-      dirty: false,
-      error: false,
-      message: "",
-    },
     password: {
+      dirty: false,
+      error: false,
+      message: "",
+    },
+    confirmPassword: {
       dirty: false,
       error: false,
       message: "",
@@ -46,14 +42,14 @@ export const useSignUpFormValidator = (form: SignUpFormField<string>) => {
     errors,
     forceTouchErrors = false,
   }: {
-    form: SignUpFormField<string>;
-    field?: keyof SignUpFormField<string>;
-    errors: SignUpFormField<FormFieldValidation>;
+    form: ResetPasswordForm<string>;
+    field?: keyof ResetPasswordForm<string>;
+    errors: ResetPasswordForm<FormFieldValidation>;
     forceTouchErrors?: boolean;
   }) => {
     let isValid = true;
 
-    let nextErrors: SignUpFormField<FormFieldValidation> = JSON.parse(
+    let nextErrors: ResetPasswordForm<FormFieldValidation> = JSON.parse(
       JSON.stringify(errors)
     );
 
@@ -61,19 +57,10 @@ export const useSignUpFormValidator = (form: SignUpFormField<string>) => {
       nextErrors = touchErrors(errors);
     }
 
-    const { email, username, password } = form;
-
-    if (nextErrors.email.dirty && (field ? field === "email" : true)) {
-      const message = emailValidator(email, "Email");
-      nextErrors.email.error = !!message;
-      nextErrors.email.message = message;
-      if (message) {
-        isValid = false;
-      }
-    }
+    const { password, confirmPassword } = form;
 
     if (nextErrors.password.dirty && (field ? field === "password" : true)) {
-      const message = emptyValidator(password, "Password");
+      const message = passwordValidator(password, "Password");
       nextErrors.password.error = !!message;
       nextErrors.password.message = message;
       if (message) {
@@ -81,10 +68,13 @@ export const useSignUpFormValidator = (form: SignUpFormField<string>) => {
       }
     }
 
-    if (nextErrors.username.dirty && (field ? field === "username" : true)) {
-      const message = emptyValidator(username, "Username");
-      nextErrors.username.error = !!message;
-      nextErrors.username.message = message;
+    if (
+      nextErrors.confirmPassword.dirty &&
+      (field ? field === "confirmPassword" : true)
+    ) {
+      const message = emptyValidator(confirmPassword, "Confirm Password");
+      nextErrors.confirmPassword.error = !!message;
+      nextErrors.confirmPassword.message = message;
       if (message) {
         isValid = false;
       }

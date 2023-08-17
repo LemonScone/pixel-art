@@ -1,5 +1,5 @@
 import { rest } from "msw";
-import { VALID_USER, VALID_TOKEN } from "../fixtures/auth";
+import { VALID_USER, VALID_TOKEN, INVALID_USER } from "../fixtures/auth";
 
 import httpStatus from "../../constants/httpStatus";
 import { GRID_EXAMPLE_1, GRID_EXAMPLE_2 } from "../fixtures/grid";
@@ -579,6 +579,14 @@ const handlers = [
 
   rest.patch("/api/projects/0/status", async (_, res, ctx) => {
     return res(ctx.status(httpStatus.OK));
+  }),
+
+  rest.post("/api/auth/forgot-password/:email", async (req, res, ctx) => {
+    if (req.params.email === INVALID_USER.email) {
+      return res(ctx.status(httpStatus.NOT_FOUND));
+    } else if (req.params.email === VALID_USER.email) {
+      return res(ctx.status(httpStatus.OK));
+    }
   }),
 ];
 
