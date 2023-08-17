@@ -2,12 +2,14 @@ import React, { Suspense } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Root, ErrorPage } from "../pages";
 import { PublicRoute } from "./PublicRoute";
+import { ResetPasswordRoute } from "./ResetPasswordRoute";
 
 const Editor = React.lazy(() => import("../pages/Editor"));
 const Gallery = React.lazy(() => import("../pages/Gallery"));
 const SignIn = React.lazy(() => import("../pages/SignIn"));
 const SignUp = React.lazy(() => import("../pages/SignUp"));
 const SignHelp = React.lazy(() => import("../pages/SignHelp"));
+const ResetPassword = React.lazy(() => import("../pages/ResetPassword"));
 
 const AppRoutes = () => {
   return (
@@ -45,6 +47,14 @@ const AppRoutes = () => {
                 <PublicRoute>
                   <SignHelp />
                 </PublicRoute>
+              }
+            />
+            <Route
+              path="reset-password"
+              element={
+                <ResetPasswordRoute>
+                  <ResetPassword />
+                </ResetPasswordRoute>
               }
             />
           </Route>
