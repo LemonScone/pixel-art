@@ -17,6 +17,8 @@ export type Project = {
   isPublished: boolean;
 
   frames: Frame[];
+  indexedFrames: { [key: number | string]: Frame };
+  frameIds: (string | number)[];
 };
 
 export type Artwork = Project & { username: string; createdAt: string };
