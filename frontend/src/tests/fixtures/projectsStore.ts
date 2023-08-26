@@ -1,7 +1,11 @@
 import { INITIAL_COLOR_PALLETE, INITIAL_TOOL_OPTIONS } from "../../constants";
+
+import { Project } from "../../types/Project";
 import { ToolOption } from "../../types/Tool";
+
 import { randomStr } from "../../utils/random";
 import grid from "./grid";
+
 const initialGrid = JSON.parse(grid);
 const frame = {
   id: 0,
@@ -10,7 +14,7 @@ const frame = {
   animateInterval: 25,
 };
 
-const projectsStore = {
+const projectsStore: ProjectStore = {
   data: {
     id: 0,
     animate: false,
@@ -23,10 +27,14 @@ const projectsStore = {
     isPublished: false,
 
     frames: [frame],
+    frameIds: [frame.id],
+    indexedFrames: {
+      [frame.id]: frame,
+    },
   },
   currentProjectId: 0,
   currentFrameId: 0,
-  selectedTool: "pen" as keyof ToolOption,
+  selectedTool: "pen",
   options: INITIAL_TOOL_OPTIONS,
   duration: 1,
 };
@@ -56,13 +64,22 @@ const exampleState = (
           animateInterval: 25,
         },
       ],
+      frameIds: [0],
+      indexedFrames: {
+        0: {
+          id: 0,
+          projectId: "initial",
+          grid: Array.from({ length: 16 * 16 }, () => ""),
+          animateInterval: 25,
+        },
+      },
     },
     currentProjectId: 0,
     currentFrameId: 0,
     selectedTool: "pen" as keyof ToolOption,
     options: INITIAL_TOOL_OPTIONS,
     duration: 1,
-  };
+  } as ProjectStore;
 };
 
 const initialProject = {
@@ -85,6 +102,15 @@ const initialProject = {
           animateInterval: 25,
         },
       ],
+      frameIds: [0],
+      indexedFrames: {
+        0: {
+          id: 0,
+          projectId: "initial",
+          grid: Array.from({ length: 16 * 16 }, () => ""),
+          animateInterval: 25,
+        },
+      },
     },
     currentProjectId: "initial",
     currentFrameId: 0,
@@ -125,6 +151,15 @@ const getNewProject = () => {
     options: INITIAL_TOOL_OPTIONS,
     duration: 1,
   };
+};
+
+type ProjectStore = {
+  data: Project;
+  currentProjectId: string | number;
+  currentFrameId: string | number;
+  selectedTool: keyof ToolOption;
+  options: ToolOption;
+  duration: number;
 };
 
 export { exampleState, initialProject, getNewProject };
