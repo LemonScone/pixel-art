@@ -31,6 +31,10 @@ export class ProjectsController {
   constructor(private readonly projectsService: ProjectsService) {}
 
   @Get()
+  @ApiOperation({
+    summary: 'User의 전체 프로젝트 조회',
+    description: 'User의 전체 프로젝트를 조회합니다.',
+  })
   getProjectByUserId(@Req() req) {
     return this.projectsService.getProjectByUserId(req.user.userId);
   }
