@@ -4,6 +4,7 @@ import { CreateProjectDto } from './dto/create-project-dto';
 import { UpdateProjectDto } from './dto/update-project-dto';
 import { DbService } from '../db/db.service';
 import { Frame } from './frame.model';
+import { filter, indexBy, map, pipe, toArray, toAsync } from '@fxts/core';
 
 @Injectable()
 export class ProjectsService {
@@ -23,32 +24,58 @@ export class ProjectsService {
                     FROM PROJECT 
                     WHERE userId = '${userId}';
                     `;
-    const result = await this.dbService.execute<Project>(query);
+    const result: Project[] = await this.dbService.execute<Project>(query);
 
     const query_frame = `SELECT A.id AS projectId
-                                , B.id
-                                , B.grid
-                                , B.animateInterval
-                            FROM PROJECT A
-                            JOIN FRAME B
-                              ON A.id = B.projectId
-                            WHERE A.userId = '${userId}';`;
+                              , B.id
+                              , B.grid
+                              , B.animateInterval
+                          FROM PROJECT A
+                          JOIN FRAME B
+                            ON A.id = B.projectId
+                         WHERE A.userId = '${userId}'
+                         ORDER BY B.createdAt;`;
 
-    const result_frame = await this.dbService.execute<Frame>(query_frame);
+    const result_frame: Frame[] = await this.dbService.execute<Frame>(
+      query_frame,
+    );
 
-    const combinedResult = result.map((project) => {
-      const frames = result_frame
-        .filter((frame) => frame.projectId === project.id)
-        .map(({ id, grid, animateInterval }) => ({
-          projectId: project.id,
-          id,
-          grid,
-          animateInterval,
-        }));
-      return { ...project, isPublished: Boolean(project.isPublished), frames };
-    });
+    const projects = await pipe(
+      result,
+      toAsync,
+      map(async (project) => {
+        const frames = await pipe(
+          result_frame,
+          toAsync,
+          filter(({ projectId }) => projectId === project.id),
+          map(({ id, grid, animateInterval }) => ({
+            projectId: project.id,
+            id,
+            grid,
+            animateInterval,
+          })),
+          toArray,
+        );
 
-    return combinedResult;
+        const frameIds = await pipe(
+          frames,
+          toAsync,
+          map(({ id }) => id),
+          toArray,
+        );
+        const indexedFrames = indexBy(({ id }) => id, frames);
+
+        return {
+          ...project,
+          isPublished: Boolean(project.isPublished),
+          indexedFrames,
+          frameIds,
+        };
+      }),
+      toArray,
+    );
+
+    return projects;
   }
 
   async getCurrentProjectByUserId(userId: string) {
@@ -78,12 +105,24 @@ export class ProjectsService {
                             FROM PROJECT A
                             JOIN FRAME B
                               ON A.id = B.projectId
-                            WHERE A.userId = '${userId}'
-                              AND A.id = ${result.id};`;
+                           WHERE A.userId = '${userId}'
+                             AND A.id = ${result.id}
+                           ORDER BY B.createdAt;`;
 
-      const result_frame = await this.dbService.execute<Frame>(query_frame);
+      const result_frame: Frame[] = await this.dbService.execute<Frame>(
+        query_frame,
+      );
 
-      result['frames'] = result_frame;
+      const frameIds = await pipe(
+        result_frame,
+        filter(({ projectId }) => projectId === result.id),
+        map(({ id }) => id),
+        toArray,
+      );
+      const indexedFrames = indexBy((a) => a.id, result_frame);
+
+      result['frameIds'] = frameIds;
+      result['indexedFrames'] = indexedFrames;
       result['isPublished'] = Boolean(result.isPublished);
     }
 
@@ -106,6 +145,10 @@ export class ProjectsService {
     const [result] = await this.dbService.execute<Project>(query_project);
     result.isPublished = Boolean(result.isPublished);
 
+    if (!result) {
+      throw new BadRequestException('존재하지 않는 프로젝트입니다.');
+    }
+
     const query_frame = `SELECT id
                               , projectid
                               , grid
@@ -113,13 +156,18 @@ export class ProjectsService {
                           FROM FRAME 
                           WHERE projectId = ${id};`;
 
-    const result_frame = await this.dbService.execute<Frame>(query_frame);
+    const result_frame = (await this.dbService.execute<Frame>(
+      query_frame,
+    )) as Frame[];
 
-    if (!result) {
-      throw new BadRequestException('존재하지 않는 프로젝트입니다.');
-    }
+    const frameIds = await pipe(
+      result_frame,
+      map((frame) => frame.id),
+      toArray,
+    );
 
-    result['frames'] = result_frame;
+    result['frameIds'] = frameIds;
+    result['indexedFrames'] = indexBy((a) => a.id, result_frame);
     return result;
   }
 
