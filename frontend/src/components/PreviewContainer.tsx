@@ -15,13 +15,12 @@ const PreviewContainer = () => {
     (state) => state.projects.present.duration
   );
   const project = useAppSelector((state) => state.projects.present.data);
-  const { frames } = project;
+  const { frameIds } = project;
   const currentFrameId = useAppSelector(
     (state) => state.projects.present.currentFrameId
   );
-  const activeFrameIndex = frames.findIndex(
-    (frame) => frame.id === currentFrameId
-  );
+
+  const activeFrameIndex = frameIds.findIndex((id) => id === currentFrameId);
 
   const [large, setLarge] = useState(false);
   const [play, setPlay] = useState(false);

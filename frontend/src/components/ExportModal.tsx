@@ -13,6 +13,7 @@ import Toggle from "./common/Toggle";
 import { Modal } from "./common/Modal";
 import { Tab } from "./common/Tab";
 import { useState } from "react";
+import { framesToArray } from "../utils/frames";
 
 const ExportModal = ({
   open,
@@ -25,8 +26,8 @@ const ExportModal = ({
   const { data, duration, currentFrameId } = useAppSelector(
     (state) => state.projects.present
   );
-  const activeFrameIndex = data.frames.findIndex(
-    (frame) => frame.id === currentFrameId
+  const activeFrameIndex = data.frameIds.findIndex(
+    (id) => id === currentFrameId
   );
 
   const [params, setParams] = useSearchParams();
@@ -34,8 +35,15 @@ const ExportModal = ({
   const [animate, setAnimate] = useState(false);
 
   const handleDownloadDrawing = (type: FileType) => {
-    const { frames, gridRows: rows, gridColumns: columns, cellSize } = data;
-    const activeFrame = frames[activeFrameIndex];
+    const {
+      frameIds,
+      indexedFrames,
+      gridRows: rows,
+      gridColumns: columns,
+      cellSize,
+    } = data;
+    const activeFrame = indexedFrames[currentFrameId];
+    const frames = framesToArray(frameIds, indexedFrames);
 
     dispatch(toast({ type: "information", message: "Downloading..." }));
     downloadFrames({
@@ -70,7 +78,7 @@ const ExportModal = ({
             <Toggle
               id="css-animation"
               label="Animation"
-              disabled={data.frames.length <= 1}
+              disabled={data.frameIds.length <= 1}
               onChange={handleToggleAnimation}
               className="ml-1 mt-2"
               checked={animate}
@@ -123,7 +131,7 @@ const ExportModal = ({
             <Toggle
               id="css-animation"
               label="Animation"
-              disabled={data.frames.length <= 1}
+              disabled={data.frameIds.length <= 1}
               onChange={handleToggleAnimation}
               className="ml-1 mt-2"
               checked={animate}

@@ -4,6 +4,7 @@ import { useAppSelector } from "../hooks/useRedux";
 import { useUpdateProjectMutation } from "../store";
 
 import SpinIcon from "./common/icon/SpinIcon";
+import { framesToArray } from "../utils/frames";
 
 const Title = () => {
   const { data: project } = useAppSelector((state) => state.projects.present);
@@ -19,7 +20,11 @@ const Title = () => {
   const autoSave = () => {
     if (storedTitle !== title) {
       if (project.id !== "initial") {
-        updateProject({ ...project, title });
+        updateProject({
+          ...project,
+          frames: framesToArray(project.frameIds, project.indexedFrames),
+          title,
+        });
       }
     }
   };
