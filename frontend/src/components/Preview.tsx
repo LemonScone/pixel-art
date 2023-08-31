@@ -1,9 +1,11 @@
+import { map, pipe, toArray } from "@fxts/core";
 import { Project } from "../types/Project";
 import {
   generateAnimationCSSData,
   generatePixelDrawCSS,
 } from "../utils/cssParse";
 import Animation from "./Animation";
+import { framesToArray } from "../utils/frames";
 
 type PreviewProps = {
   project: Project;
@@ -19,21 +21,22 @@ const Preview = ({
   cellSize,
   activeFrameIndex = 0,
 }: PreviewProps) => {
-  const { gridColumns, gridRows, frames } = project;
+  const { gridColumns, gridRows, frameIds, indexedFrames } = project;
 
-  const animation = frames.length > 1 && animate;
+  const animation = frameIds.length > 1 && animate;
 
   let cssString;
   let animationData;
 
   if (animation) {
-    animationData = generateAnimationCSSData(
-      frames.map((frame) => ({ ...frame, interval: frame.animateInterval })),
-      gridColumns,
-      cellSize
+    const frames = pipe(
+      framesToArray(frameIds, indexedFrames),
+      map((frms) => ({ ...frms, interval: frms.animateInterval })),
+      toArray
     );
+    animationData = generateAnimationCSSData(frames, gridColumns, cellSize);
   } else {
-    const grid = frames[activeFrameIndex].grid;
+    const grid = indexedFrames[frameIds[activeFrameIndex]].grid;
     cssString = generatePixelDrawCSS(grid, gridColumns, cellSize, "string");
   }
 

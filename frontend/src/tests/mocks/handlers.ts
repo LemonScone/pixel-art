@@ -83,8 +83,9 @@ const handlers = [
           title: "untitled",
           description: null,
           isPublished: 0,
-          frames: [
-            {
+          frameIds: [1],
+          indexedFrames: {
+            1: {
               projectId: 1,
               id: 1,
               grid: [
@@ -491,7 +492,7 @@ const handlers = [
               ],
               animateInterval: 10,
             },
-          ],
+          },
         },
         {
           id: 2,
@@ -524,14 +525,16 @@ const handlers = [
           title: "untitled 2",
           description: null,
           isPublished: 0,
-          frames: [
-            {
+
+          frameIds: [2],
+          indexedFrames: {
+            2: {
               projectId: 2,
               id: 2,
               grid: GRID_EXAMPLE_1,
               animateInterval: null,
             },
-          ],
+          },
         },
         {
           id: 3,
@@ -564,14 +567,15 @@ const handlers = [
           title: "untitled 3",
           description: null,
           isPublished: 0,
-          frames: [
-            {
+          frameIds: [3],
+          indexedFrames: {
+            3: {
               projectId: 3,
               id: 3,
               grid: GRID_EXAMPLE_2,
               animateInterval: null,
             },
-          ],
+          },
         },
       ])
     );

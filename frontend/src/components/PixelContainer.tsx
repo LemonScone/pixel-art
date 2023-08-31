@@ -162,9 +162,9 @@ const PixelContainer = () => {
         const { clientX, clientY, cellWidth } = moveCoordinateRef.current;
         const xDiff = e.clientX - clientX;
         const yDiff = e.clientY - clientY;
-        dispatch(applyMove({ xDiff, yDiff, cellWidth }));
 
         if (Math.abs(xDiff) > cellWidth || Math.abs(yDiff) > cellWidth) {
+          dispatch(applyMove({ xDiff, yDiff, cellWidth }));
           moveCoordinateRef.current.clientX = e.clientX;
           moveCoordinateRef.current.clientY = e.clientY;
         }

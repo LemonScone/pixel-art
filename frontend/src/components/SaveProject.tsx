@@ -1,12 +1,17 @@
 import { useAddProjectMutation } from "../store";
 import { Project } from "../types/Project";
 import Button from "./common/Button";
+import { framesToArray } from "../utils/frames";
 
 const SaveProject = ({ project }: { project: Project }) => {
   const [addProject, results] = useAddProjectMutation();
 
   const handleSaveProject = () => {
-    addProject(project);
+    const newProject = {
+      ...project,
+      frames: framesToArray(project.frameIds, project.indexedFrames),
+    };
+    addProject(newProject);
   };
   return (
     <Button

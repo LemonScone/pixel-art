@@ -36,7 +36,7 @@ const ProjectsListItem = ({ project }: ProjectsListItemProps) => {
       <div className="relative">
         <div className="min-h-[5rem] rounded-xl bg-input-color">
           <Preview
-            animate={project.frames.length > 1}
+            animate={project.frameIds.length > 1}
             cellSize={5}
             duration={1}
             project={project}

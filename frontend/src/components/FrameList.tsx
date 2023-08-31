@@ -12,13 +12,14 @@ import {
   DropResult,
 } from "@hello-pangea/dnd";
 import { useState } from "react";
+import { framesToArray } from "../utils/frames";
 
 const FrameList = () => {
   const dispatch = useAppDispatch();
   const [frameUpdated, setFrameUpdated] = useState(false);
   const { data } = useAppSelector((state) => state.projects.present);
 
-  const frames = data.frames;
+  const frames = framesToArray(data.frameIds, data.indexedFrames);
   const columns = data.gridColumns;
   const rows = data.gridRows;
 

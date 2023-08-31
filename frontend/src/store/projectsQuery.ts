@@ -3,6 +3,8 @@ import {
   FetchArgs,
   FetchBaseQueryArgs,
 } from "@reduxjs/toolkit/dist/query/fetchBaseQuery";
+import { indexBy, map, pipe, toArray } from "@fxts/core";
+
 import {
   getCurrentProjectFromStorage,
   getDataFromStorage,
@@ -10,13 +12,15 @@ import {
   saveProjectToStorage,
   updateProjectFromStorage,
 } from "../utils/storage";
+import { pause } from "../utils/pause";
+import { randomStr } from "../utils/random";
+import { frameIds } from "../utils/frames";
 
 import httpMethod from "../constants/httpMethod";
 
-import { pause } from "../utils/pause";
-import { randomStr } from "../utils/random";
-
 import { RootState } from ".";
+
+import { Project } from "../types/Project";
 
 const projectsQuery = ({ baseUrl, prepareHeaders }: FetchBaseQueryArgs) => {
   const baseQuery = fetchBaseQuery({ baseUrl, prepareHeaders });
@@ -44,11 +48,32 @@ const getDataFromLocalStorage = async (
         const localStorageData = getDataFromStorage();
         await pause();
         if (localStorageData.stored.length) {
-          return { data: localStorageData.stored };
+          const stored = localStorageData.stored as Project[];
+
+          const data = pipe(
+            stored,
+            map((project: Project) => {
+              const indexedFrames = indexBy((a) => a.id, project.frames);
+
+              project["indexedFrames"] = indexedFrames;
+              project["frameIds"] = frameIds(project.frames);
+              return project;
+            }),
+            toArray
+          );
+
+          return { data };
         }
         return { data: [] };
       } else {
-        const currentProject = getCurrentProjectFromStorage();
+        const currentProject = getCurrentProjectFromStorage() as Project;
+        if (currentProject) {
+          const indexedFrames = indexBy((a) => a.id, currentProject.frames);
+
+          currentProject["indexedFrames"] = indexedFrames;
+          currentProject["frameIds"] = frameIds(currentProject.frames);
+        }
+
         return { data: currentProject };
       }
     }
@@ -57,7 +82,7 @@ const getDataFromLocalStorage = async (
       const storedData = saveProjectToStorage({
         ...rest,
         id: randomStr(),
-        animate: rest.frames.length > 1,
+        animate: rest.frameIds.length > 1,
       });
       await pause(500);
       return { data: storedData };

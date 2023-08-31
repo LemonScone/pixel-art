@@ -69,12 +69,14 @@ describe("FrameList", () => {
       const grid = Array.from({ length: COLS * ROWS }, () => "");
       const project = exampleState(grid, COLS, ROWS);
 
-      project.data.frames.push({
-        id: 1,
+      const id = 1;
+      project.data.frameIds.push(id);
+      project.data.indexedFrames[id] = {
+        id,
         projectId: project.data.id,
         grid,
         animateInterval: 10,
-      });
+      };
 
       renderComponent(project);
 

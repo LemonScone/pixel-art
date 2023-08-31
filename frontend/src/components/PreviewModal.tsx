@@ -18,8 +18,8 @@ const PreviewModal = ({
     (state) => state.projects.present.currentFrameId
   );
   const [params, setParams] = useSearchParams();
-  const activeFrameIndex = project.frames.findIndex(
-    (frame) => frame.id === currentFrameId
+  const activeFrameIndex = project.frameIds.findIndex(
+    (id) => id === currentFrameId
   );
 
   return (

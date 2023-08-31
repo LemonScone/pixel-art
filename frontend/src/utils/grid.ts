@@ -1,3 +1,4 @@
+import { flat, map, pipe, range, reject, takeUntil, toArray } from "@fxts/core";
 import { GRID_HOVER_COLOR_FIRST, GRID_HOVER_COLOR_SECOND } from "../constants";
 
 export const resizeGrid = (
@@ -51,24 +52,26 @@ export const resizeGrid = (
 };
 
 export const getTargetIndexes = (
-  start: number,
+  startIndex: number,
   size: number,
   columns: number,
   rows: number
 ) => {
-  const indexes = [];
-  for (let i = 0; i < size; i++) {
-    for (let j = 0; j < size; j++) {
-      const value = start + columns * i + j;
-      if (value >= columns * rows) {
-        break;
-      }
-      indexes.push(value);
-      if ((value + 1) % columns === 0) {
-        break;
-      }
-    }
-  }
+  const indexes = pipe(
+    range(size),
+    map((row) =>
+      pipe(
+        range(size),
+        map((col) => columns * row + col),
+        map((index) => index + startIndex),
+        reject((index) => index >= columns * rows),
+        takeUntil((index) => (index + 1) % columns === 0),
+        toArray
+      )
+    ),
+    flat,
+    toArray
+  );
 
   return indexes;
 };
